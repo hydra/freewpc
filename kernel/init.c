@@ -152,7 +152,9 @@ __noreturn__ void freewpc_init (void)
 	order of invocation.  For most things the order doesn't matter. */
 	deff_init ();
 	leff_init ();
+#ifdef CONFIG_PLATFORM_WPC
 	test_init ();
+#endif
 	adj_init ();
 	log_init ();
 	callset_invoke (init);

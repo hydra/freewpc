@@ -25,7 +25,8 @@ KERNEL_SW_OBJS += kernel/ladder.o
 KERNEL_SW_OBJS += kernel/lamplist.o
 KERNEL_SW_OBJS += kernel/player.o
 KERNEL_SW_OBJS += kernel/printf.o
-KERNEL_SW_OBJS += $(if $(CONFIG_WHITESTAR),,kernel/score.o)
+###KERNEL_SW_OBJS += $(if $(CONFIG_WHITESTAR),,kernel/score.o)
+KERNEL_SW_OBJS += kernel/score.o
 
 # Hardware kernel modules are incredibly hardware dependent,
 # and are subject to change on different hardware platforms.

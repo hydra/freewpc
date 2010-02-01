@@ -26,7 +26,11 @@
 extern U8 in_game;
 extern U8 in_bonus;
 extern U8 in_tilt;
+#ifdef CONFIG_PLATFORM_WHITESTAR
+#define in_test 0
+#else
 extern U8 in_test;
+#endif
 extern U8 valid_playfield;
 extern __nvram__ U8 num_players;
 extern U8 player_up;
