@@ -34,7 +34,7 @@
 #endif
 
 /* Only CPU game ROMs have nvram and locals */
-#ifdef CONFIG_PLATFORM_WPC
+#if defined(CONFIG_PLATFORM_WPC) || defined(CONFIG_PLATFORM_WHITESTAR)
 #define HAVE_NVRAM_SECTION
 #define HAVE_LOCAL_SECTION
 #define HAVE_PERMANENT_SECTION
