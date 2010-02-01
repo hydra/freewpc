@@ -221,7 +221,7 @@ extern inline void wpc_write_ticket (U8 val)
 
 extern inline void pinio_write_lamp_strobe (U8 val)
 {
-	writeb (WS_LAMP_COLUMN_STROBE, val);
+	writew (WS_LAMP_COLUMN_STROBE, val);
 }
 
 extern inline void pinio_write_lamp_data (U8 val)
@@ -306,6 +306,23 @@ extern inline U8 pinio_read_dedicated_switches (void)
 /********************************************/
 
 extern inline void pinio_write_triac (U8 val)
+{
+}
+
+/********************************************/
+/* Miscellaneous                            */
+/********************************************/
+
+extern inline void wpc_debug_write (U8 val)
+{
+}
+
+extern inline U8 wpc_debug_read (void)
+{
+	return 0;
+}
+
+extern inline void pinio_watchdog_reset (void)
 {
 }
 
