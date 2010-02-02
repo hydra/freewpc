@@ -20,7 +20,7 @@
 
 #include <freewpc.h>
 
-#if 1
+#ifdef CONFIG_BARE
 __fastram__ U16 sys_time;
 U16 sched_test_count;
 void fatal (U8 err_code) {}
@@ -33,12 +33,6 @@ void freewpc_init (void)
 	{
 		pinio_write_lamp_strobe (0x1);
 		pinio_write_lamp_data (0xFF);
-#if 0
-		pinio_write_lamp_data (0xFF);
-		task_sleep (TIME_500MS);
-		pinio_write_lamp_data (0);
-		task_sleep (TIME_500MS);
-#endif
 	}
 }
 

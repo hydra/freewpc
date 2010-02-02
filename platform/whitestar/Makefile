@@ -4,19 +4,22 @@ P=platform/wpc
 PW=platform/whitestar
 
 CPU := m6809
-CONFIG_TASK := y
-CONFIG_BARE := y
+$(eval $(call have,CONFIG_PERIODIC_FIRQ))
+$(eval $(call have,CONFIG_TASK))
 include cpu/$(CPU)/Makefile
 
 # Subplatform support
 CONFIG_WHITESTAR ?= y
+$(eval $(call have,CONFIG_BARE))
+$(eval $(call have,CONFIG_PLATFORM_WHITESTAR))
+$(eval $(call have,CONFIG_REMOTE_DISPLAY))
+$(eval $(call have,CONFIG_REMOTE_SOUND))
+$(eval $(call nohave,CONFIG_AC))
 CONFIG_FONT ?= $(CONFIG_DMD)
-CONFIG_AC ?= n
 CONFIG_ANIMATION ?= $(CONFIG_DMD)
 
-# Additional CFLAGS required on the WPC platform
-CFLAGS += -mdirect -DCONFIG_PLATFORM_WHITESTAR -fno-builtin -DCONFIG_PINMAME -mcode-section=.text -mdata-section=.text -mbss-section=ram
-EXTRA_ASFLAGS += -DCONFIG_PLATFORM_WHITESTAR
+# Additional CFLAGS required on the Whitestar platform
+CFLAGS += -mdirect -fno-builtin -mcode-section=.text -mdata-section=.text -mbss-section=ram
 
 # Don't check format strings, because we define those differently than ANSI C.
 CFLAGS += -Wno-format
@@ -44,4 +47,6 @@ KERNEL_ASM_OBJS += $(PW)/start.o
 $(P)/start.o : EXTRA_ASFLAGS += -DTOP_BANK=61 -DBOTTOM_BANK=58
 
 # TODO : as long as CONFIG_BARE is defined, we need this!
+ifeq ($(CONFIG_BARE),y)
 KERNEL_OBJS += $(KERNEL_BASIC_OBJS) $(KERNEL_SW_OBJS) $(KERNEL_HW_OBJS)
+endif

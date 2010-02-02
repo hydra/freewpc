@@ -168,6 +168,10 @@ text and centered it well. */
 #define font_render_string_center(f,x,y,s)
 #define font_render_string_right(f,x,y,s)
 
+#define seg_alloc()
+#define seg_write_string(y,x,s)
+#define seg_show()
+
 #endif
 
 /* Derived definitions.  These are truly in common for all
