@@ -578,6 +578,9 @@ extern inline U8 wpc_read_pic (void)
 /* Lamps                                    */
 /********************************************/
 
+#define PINIO_LAMP_MATRIX 1
+#define PINIO_LAMP_ROWS 8
+
 extern inline void pinio_write_lamp_strobe (U8 val)
 {
 	writeb (WPC_LAMP_COL_STROBE, val);
@@ -605,6 +608,8 @@ extern inline void pinio_write_triac (U8 val)
 /********************************************/
 /* Solenoids                                */
 /********************************************/
+
+#define PINIO_SOL_SET 1
 
 extern inline void pinio_write_solenoid_set (U8 set, U8 val)
 {
@@ -637,6 +642,8 @@ extern inline void pinio_write_solenoid_set (U8 set, U8 val)
 	}
 }
 
+#ifndef PINIO_SOL_SET
+
 extern inline void pinio_write_solenoid (U8 solno, U8 val)
 {
 }
@@ -645,6 +652,8 @@ extern inline U8 pinio_read_solenoid (U8 solno)
 {
 	return 0;
 }
+
+#endif /* !PINIO_SOL_SET */
 
 
 /********************************************/
@@ -723,6 +732,17 @@ extern inline U8 pinio_read_dedicated_switches (void)
 	return readb (WPC_SW_CABINET_INPUT);
 }
 
+/********************************************/
+/* Triacs                                   */
+/********************************************/
+
+#define PINIO_HAVE_GI
+#define PINIO_HAVE_GI_TRIAC
+
+extern inline void pinio_write_triac (U8 val)
+{
+	writeb (WPC_GI_TRIAC, val);
+}
 
 /********************************************/
 /* Precision Timer                          */

@@ -165,6 +165,10 @@ __noreturn__ void freewpc_init (void);
 #define SOUND_BOARD
 #include <platform/wpcsound.h>
 #endif
+#ifdef CONFIG_PLATFORM_P2K
+#define CPU_BOARD
+#include <platform/p2k.h>
+#endif
 
 /* Core software structures */
 #include <sys/bitarray.h>
@@ -215,6 +219,8 @@ __noreturn__ void freewpc_init (void);
 /* Uncommon software modules - TODO : shouldn't automatically include */
 #ifdef CONFIG_PLATFORM_WPC
 #include <sys/debug.h>
+#else
+#define db_paused 0
 #endif
 #include <test.h> /* this one HAS to be here for now, for callset.c */
 

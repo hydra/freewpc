@@ -43,9 +43,9 @@ void platform_init (void)
 #endif /* __m6809__ */
 
 	/* Set up protected RAM */
-	wpc_set_ram_protect (RAM_UNLOCKED);
+	pinio_nvram_unlock ();
 	wpc_set_ram_protect_size (PROT_BASE_0x1800);
-	wpc_set_ram_protect (RAM_LOCKED);
+	pinio_nvram_lock ();
 
 	/* Initialize the ROM page register
 	 * page of ROM adjacent to the system area is mapped.

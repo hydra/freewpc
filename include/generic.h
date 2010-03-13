@@ -60,7 +60,7 @@ but they are otherwise generic. */
 /** The call_far, wpc_push_page, and wpc_pop_page
  * macros are only safe when calling from the system
  * page, so don't define them otherwise. */
-#if (PAGE == SYS_PAGE) || !defined(HAVE_PAGING)
+#if (PAGE == SYS_PAGE)
 
 #define call_far(page, fncall) \
 do { \
@@ -83,5 +83,10 @@ do { \
 
 #endif /* PAGE == SYS_PAGE */
 
+#if !defined(HAVE_PAGING)
+#define call_far(page, fncall)   fncall
+#define page_push(page)
+#define page_pop()
+#endif
 
 #endif /* _GENERIC_H */

@@ -114,6 +114,7 @@ void amode_score_page (void)
 #if (MACHINE_DMD == 1)
 void amode_logo_page (void)
 {
+#ifdef IMG_FREEWPC
 	U16 fno;
 
 	for (fno = IMG_FREEWPC_SMALL; fno <= IMG_FREEWPC; fno += 2)
@@ -124,6 +125,7 @@ void amode_logo_page (void)
 		task_sleep (TIME_66MS);
 	}
 	amode_page_end (3);
+#endif
 }
 #endif
 

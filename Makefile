@@ -112,17 +112,17 @@ check_prereqs : clean_err
 KERNEL_OBJS :=
 COMMON_BASIC_OBJS :=
 
-ifdef NATIVE
-include platform/native/Makefile
-else
-PMAKEFILE := platform/$(PLATFORM)/Makefile
--include $(PMAKEFILE)
-endif
-
 # Set this to the name of the CPU.  In simulation this is always
 # 'native'; otherwise it is already set by the platform.
 ifdef NATIVE
 CPU := native
+endif
+
+ifeq ($(CPU), native)
+include platform/native/Makefile
+else
+PMAKEFILE := platform/$(PLATFORM)/Makefile
+-include $(PMAKEFILE)
 endif
 
 # Build date (now)
@@ -132,7 +132,7 @@ BUILD_YEAR := $(shell date +%Y)
 
 
 .PHONY : platform_target
-ifdef NATIVE
+ifeq ($(CPU), native)
 platform_target : native
 else
 ifdef TARGET_ROMPATH
