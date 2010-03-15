@@ -231,9 +231,7 @@ include common/Makefile
 ifeq ($(CONFIG_FONT),y)
 include fonts/Makefile
 endif
-ifdef CONFIG_WPC
 include test/Makefile
-endif
 include effect/Makefile
 
 

@@ -1,22 +1,22 @@
 # The configuration for the WPC platform
 
-CONFIG_GAME_ROM := y
-
 # Root directory for the platform files
 P := platform/wpc
 
 # Common 6809 configuration
 CPU := m6809
-CONFIG_TASK := y
-CONFIG_MALLOC := y
+$(eval $(call have,CONFIG_PERIODIC_IRQ))
+$(eval $(call have,CONFIG_TASK))
+$(eval $(call have,CONFIG_MALLOC))
 include cpu/$(CPU)/Makefile
 
 # Subplatform support
 # Eventually, this section will contain conditionals for building on the
 # different WPC variations.  For now, all of these are mandatory though.
-CONFIG_WPC ?= y
+$(eval $(call have,CONFIG_WPC))
+$(eval $(call have,CONFIG_PLATFORM_WPC))
 CONFIG_FONT ?= $(CONFIG_DMD)
-CONFIG_AC ?= y
+$(eval $(call have,CONFIG_AC))
 $(eval $(call have,CONFIG_RTC))
 CONFIG_ANIMATION ?= $(CONFIG_DMD)
 
@@ -29,10 +29,8 @@ CONFIG_ANIMATION ?= $(CONFIG_DMD)
 # This is non-standard but it generates much better code.  It should be
 # possible to build without this, though.
 #
-INT_CFLAGS = -mint8
 # TODO : Don't hardcode code/data sections here like this!
-CFLAGS += $(INT_CFLAGS) -DHAVE_NVRAM -mdirect -DCONFIG_PLATFORM_WPC -mwpc -fno-builtin -mcode-section=.text -mdata-section=.text -mbss-section=ram -Wno-format
-EXTRA_ASFLAGS += -DCONFIG_PLATFORM_WPC
+CFLAGS += -mint8 -DHAVE_NVRAM -mdirect -mwpc -fno-builtin -mcode-section=.text -mdata-section=.text -mbss-section=ram -Wno-format
 
 # Say which source files need to be compiled in for the WPC platform only.
 # Use KERNEL_HW_OBJS for C sources, and KERNEL_ASM_OBJS for assembler files.

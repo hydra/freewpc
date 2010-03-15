@@ -313,6 +313,8 @@ extern inline void pinio_write_triac (U8 val)
 /* Miscellaneous                            */
 /********************************************/
 
+extern U8 db_paused;
+
 extern inline void wpc_debug_write (U8 val)
 {
 }

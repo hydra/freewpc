@@ -70,7 +70,7 @@ ALL: 11..88
 Ball Save: MACHINE_BALL_SAVE_LAMP
 
 [deffs]
-NULL: c_decl(deff_exit), 0
+NULL: c_decl(deff_exit), PRI_NULL
 Amode: page(EFFECT_PAGE), c_decl(default_amode_deff), runner, PRI_AMODE
 Inspector: page(COMMON_PAGE), runner, PRI_DEBUGGER
 Scores: runner, PRI_SCORES

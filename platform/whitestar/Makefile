@@ -9,32 +9,24 @@ $(eval $(call have,CONFIG_TASK))
 include cpu/$(CPU)/Makefile
 
 # Subplatform support
-CONFIG_WHITESTAR ?= y
-$(eval $(call have,CONFIG_BARE))
+$(eval $(call have,CONFIG_WHITESTAR))
+# $(eval $(call have,CONFIG_BARE))
 $(eval $(call have,CONFIG_PLATFORM_WHITESTAR))
 $(eval $(call have,CONFIG_REMOTE_DISPLAY))
 $(eval $(call have,CONFIG_REMOTE_SOUND))
 $(eval $(call nohave,CONFIG_AC))
 CONFIG_FONT ?= $(CONFIG_DMD)
 CONFIG_ANIMATION ?= $(CONFIG_DMD)
+FREEWPC_DEBUGGER := n
 
 # Additional CFLAGS required on the Whitestar platform
-CFLAGS += -mdirect -fno-builtin -mcode-section=.text -mdata-section=.text -mbss-section=ram
-
-# Don't check format strings, because we define those differently than ANSI C.
-CFLAGS += -Wno-format
-
-# Optional CFLAGS
-CFLAGS += -mint8
+CFLAGS += -mint8 -mdirect -fno-builtin -mcode-section=.text -mdata-section=.text -mbss-section=ram -Wno-format
 
 ### NOTE:  -mwpc is totally not acceptable, as Whitestar doesn't have
 # the shifter hardware.  But gcc6809 is crashing on some bit shift
 # statements, so for _now_, keep this here until the compiler can be
 # fixed, so we can fix up other problems.  TODO
 CFLAGS += -mwpc
-
-# Optimization flags
-CFLAGS += -O2 -fomit-frame-pointer -fstrength-reduce -frerun-loop-opt -Wunknown-pragmas -foptimize-sibling-calls -fstrict-aliasing -fregmove
 
 KERNEL_SW_OBJS += $(P)/main.o
 KERNEL_HW_OBJS += $(PW)/init-whitestar.o

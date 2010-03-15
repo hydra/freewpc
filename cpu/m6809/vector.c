@@ -29,14 +29,16 @@
 
 extern __attribute__((noreturn)) void start (void);
 
+extern void tick_driver (void);
+
 #ifdef CONFIG_PLATFORM_WPC
+extern void do_firq (void);
+#endif
+
 extern void do_swi3 (void);
 extern void do_swi2 (void);
-extern void do_firq (void);
-extern void tick_driver (void);
 extern void do_swi (void);
 extern void do_nmi (void);
-#endif
 
 #ifdef CONFIG_PLATFORM_WPCSOUND
 extern void wpcs_invalid_interrupt (void);
@@ -95,6 +97,9 @@ __attribute__((section("vector"))) m6809_vector_table_t vectors = {
 	.firq = wpcs_periodic_interrupt,
 	.swi = wpcs_invalid_interrupt,
 	.nmi = wpcs_invalid_interrupt,
+#endif
+#ifdef CONFIG_PLATFORM_WHITESTAR
+	.firq = tick_driver,
 #endif
 	.reset = start,
 };

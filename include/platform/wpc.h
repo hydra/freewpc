@@ -759,5 +759,35 @@ extern inline void pinio_write_timer (U8 timerno, U8 val)
 }
 
 
-#endif /* _WPC_H */
+/********************************************/
+/* Debugging                                */
+/********************************************/
+#define WPC_DEBUG_WRITE_READY 0x1
+#define WPC_DEBUG_READ_READY 0x2
 
+extern inline U8 wpc_debug_get_status (void)
+{
+	return readb (WPC_DEBUG_CONTROL_PORT);
+}
+
+extern inline U8 wpc_debug_write_ready (void)
+{
+	return wpc_debug_get_status () & WPC_DEBUG_WRITE_READY;
+}
+
+extern inline U8 wpc_debug_read_ready (void)
+{
+	return wpc_debug_get_status () & WPC_DEBUG_READ_READY;
+}
+
+extern inline void wpc_debug_write (U8 data)
+{
+	writeb (WPC_DEBUG_DATA_PORT, data);
+}
+
+extern inline U8 wpc_debug_read (void)
+{
+	return readb (WPC_DEBUG_DATA_PORT);
+}
+
+#endif /* _WPC_H */
