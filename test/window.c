@@ -3241,11 +3241,15 @@ void gi_test_draw (void)
 		browser_print_operation (sprintf_buffer);
 	}
 
+	triac_leff_disable (TRIAC_GI_MASK);
+#ifdef CONFIG_TRIAC
 	sprintf ("BRIGHTNESS %d", gi_test_brightness);
 	print_row_center (&font_mono5, 29);
 
-	triac_leff_disable (TRIAC_GI_MASK);
 	triac_leff_dim (gi_test_values[menu_selection], gi_test_brightness);
+#else
+	gi_enable (gi_test_values[menu_selection]);
+#endif
 }
 
 void gi_test_right (void)

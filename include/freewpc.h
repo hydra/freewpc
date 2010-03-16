@@ -203,12 +203,12 @@ __noreturn__ void freewpc_init (void);
 #ifdef CONFIG_GI
 #include <sys/triac.h>
 #else
-#define triac_enable(strings)
-#define triac_disable(strings)
-#define triac_leff_allocate(strings)
-#define triac_leff_free(strings)
-#define triac_leff_enable(strings)
-#define triac_leff_disable(strings)
+#define gi_enable(strings)
+#define gi_disable(strings)
+#define gi_leff_allocate(strings)
+#define gi_leff_free(strings)
+#define gi_leff_enable(strings)
+#define gi_leff_disable(strings)
 #define PINIO_GI_STRINGS 0
 #endif
 #include <sys/rtc.h>

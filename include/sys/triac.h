@@ -32,18 +32,29 @@ per AC cycle */
 
 typedef U8 triacbits_t;
 
-void triac_enable (triacbits_t bits);
-void triac_disable (triacbits_t bits);
-void triac_leff_allocate (U8 triac);
-void triac_leff_free (U8 triac);
-void triac_leff_enable (U8 triac);
-void triac_leff_disable (U8 triac);
+void gi_enable (triacbits_t bits);
+void gi_disable (triacbits_t bits);
+void gi_leff_allocate (U8 triac);
+void gi_leff_free (U8 triac);
+void gi_leff_enable (U8 triac);
+void gi_leff_disable (U8 triac);
 #ifdef CONFIG_TRIAC
 void triac_rtt (void);
 void gi_dim (U8 bits, U8 brightness);
-void triac_leff_dim (U8 bits, U8 brightness);
+void gi_leff_dim (U8 bits, U8 brightness);
 #endif
 
-void triac_init (void);
+void gi_init (void);
+
+/* Compatiblity APIs */
+#define triac_enable gi_enable
+#define triac_disable gi_disable
+#define triac_leff_allocate gi_leff_allocate
+#define triac_leff_free gi_leff_free
+#define triac_leff_enable gi_leff_enable
+#define triac_leff_disable gi_leff_disable
+#define triac_dim gi_dim
+#define triac_leff_dim gi_leff_dim
+#define TRIAC_GI_MASK PINIO_GI_STRINGS
 
 #endif /* _SYS_TRIAC_H */

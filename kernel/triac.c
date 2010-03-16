@@ -164,7 +164,7 @@ void triac_update (void)
 
 
 /** Turns on one or more triacs */
-void triac_enable (U8 triac)
+void gi_enable (U8 triac)
 {
 	log_event (SEV_INFO, MOD_TRIAC, EV_TRIAC_ON, triac);
 #ifdef CONFIG_TRIAC
@@ -176,7 +176,7 @@ void triac_enable (U8 triac)
 
 
 /** Turns off one or more triacs */
-void triac_disable (U8 triac)
+void gi_disable (U8 triac)
 {
 	log_event (SEV_INFO, MOD_TRIAC, EV_TRIAC_OFF, triac);
 #ifdef CONFIG_TRIAC
@@ -201,7 +201,7 @@ void gi_dim (U8 triac, U8 intensity)
 
 /** Allocates one or more triacs for a lamp effect.
 The leff can override the default value for the strings. */
-void triac_leff_allocate (U8 triac)
+void gi_leff_allocate (U8 triac)
 {
 	/* Only allow unallocated strings to be manipulated
 	 * by this effect. */
@@ -220,7 +220,7 @@ void triac_leff_allocate (U8 triac)
 
 
 /** Frees a set of triacs at the end of a lamp effect */
-void triac_leff_free (U8 triac)
+void gi_leff_free (U8 triac)
 {
 #ifdef CONFIG_TRIAC
 	gi_clear_dimming (triac, gi_leff_dimming);
@@ -233,7 +233,7 @@ void triac_leff_free (U8 triac)
 
 
 /** Enables a triac from a lamp effect at full brightness */
-void triac_leff_enable (U8 triac)
+void gi_leff_enable (U8 triac)
 {
 #ifdef CONFIG_TRIAC
 	gi_clear_dimming (triac, gi_leff_dimming);
@@ -244,7 +244,7 @@ void triac_leff_enable (U8 triac)
 
 
 /** Disables a triac from a lamp effect */
-void triac_leff_disable (U8 triac)
+void gi_leff_disable (U8 triac)
 {
 #ifdef CONFIG_TRIAC
 	gi_clear_dimming (triac, gi_leff_dimming);
@@ -256,7 +256,7 @@ void triac_leff_disable (U8 triac)
 
 /** Sets the intensity (brightness) of a single GI triac */
 #ifdef CONFIG_TRIAC
-void triac_leff_dim (U8 triac, U8 brightness)
+void gi_leff_dim (U8 triac, U8 brightness)
 {
 	/* Disable the GI string first. */
 	gi_clear_dimming (triac, gi_leff_dimming);
@@ -289,7 +289,7 @@ void triac_leff_dim (U8 triac, U8 brightness)
 
 
 /** Initialize the triac module */
-void triac_init (void)
+void gi_init (void)
 {
 	gi_leff_alloc = 0;
 	triac_output = 0;
