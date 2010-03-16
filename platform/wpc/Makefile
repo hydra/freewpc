@@ -17,7 +17,10 @@ $(eval $(call have,CONFIG_WPC))
 $(eval $(call have,CONFIG_PLATFORM_WPC))
 CONFIG_FONT ?= $(CONFIG_DMD)
 $(eval $(call have,CONFIG_AC))
+$(eval $(call have,CONFIG_GI))
+$(eval $(call have,CONFIG_TRIAC))
 $(eval $(call have,CONFIG_RTC))
+$(eval $(call have,CONFIG_BUYIN))
 CONFIG_ANIMATION ?= $(CONFIG_DMD)
 
 # The default CFLAGS required on the WPC platform

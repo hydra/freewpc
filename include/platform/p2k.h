@@ -242,6 +242,14 @@ extern inline U8 pinio_read_dedicated_switches (void)
 	return readb (P2K_EOS_DIR_INPUT);
 }
 
+extern inline void pinio_enable_flippers (void)
+{
+}
+
+extern inline void pinio_disable_flippers (void)
+{
+}
+
 extern inline void pinio_clear_periodic (void)
 {
 }

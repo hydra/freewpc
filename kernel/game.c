@@ -293,7 +293,7 @@ void end_ball (void)
 	{
 		if (system_config.buy_extra_ball == YES)
 		{
-#ifdef CONFIG_PLATFORM_WPC
+#ifdef CONFIG_BUYIN
 			SECTION_VOIDCALL (__common__, buyin_offer);
 			/* TODO - if buyin is bought, then need to stay on this
 			player, avoid end_player etc. */

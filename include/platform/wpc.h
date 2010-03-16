@@ -401,7 +401,7 @@ extern inline U8 pinio_read_ac_zerocross (void)
 #define U1_FLIPPER_RELAY 0x80
 
 #define TRIAC_GI_STRING(n)			(1 << (n))
-#define TRIAC_GI_MASK \
+#define PINIO_GI_STRINGS \
 	(TRIAC_GI_STRING(0) | TRIAC_GI_STRING(1) | TRIAC_GI_STRING(2) | \
 	TRIAC_GI_STRING(3) | TRIAC_GI_STRING(4))
 
@@ -595,6 +595,9 @@ extern inline void pinio_write_lamp_data (U8 val)
 /* General Illumination via Triacs          */
 /********************************************/
 
+#define PINIO_HAVE_GI
+#define PINIO_HAVE_GI_TRIAC
+
 extern inline U8 pinio_read_triac (void)
 {
 	return wpc_u1_read ();
@@ -603,6 +606,11 @@ extern inline U8 pinio_read_triac (void)
 extern inline void pinio_write_triac (U8 val)
 {
 	wpc_u1_write (val);
+}
+
+extern inline void pinio_write_gi (U8 val)
+{
+	pinio_write_triac (val);
 }
 
 /********************************************/
@@ -732,17 +740,6 @@ extern inline U8 pinio_read_dedicated_switches (void)
 	return readb (WPC_SW_CABINET_INPUT);
 }
 
-/********************************************/
-/* Triacs                                   */
-/********************************************/
-
-#define PINIO_HAVE_GI
-#define PINIO_HAVE_GI_TRIAC
-
-extern inline void pinio_write_triac (U8 val)
-{
-	writeb (WPC_GI_TRIAC, val);
-}
 
 /********************************************/
 /* Precision Timer                          */

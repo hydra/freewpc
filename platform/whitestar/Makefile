@@ -15,6 +15,7 @@ $(eval $(call have,CONFIG_PLATFORM_WHITESTAR))
 $(eval $(call have,CONFIG_REMOTE_DISPLAY))
 $(eval $(call have,CONFIG_REMOTE_SOUND))
 $(eval $(call nohave,CONFIG_AC))
+$(eval $(call nohave,CONFIG_GI))
 CONFIG_FONT ?= $(CONFIG_DMD)
 CONFIG_ANIMATION ?= $(CONFIG_DMD)
 FREEWPC_DEBUGGER := n

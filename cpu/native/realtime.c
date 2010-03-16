@@ -16,6 +16,16 @@ unsigned long realtime_read (void)
 	return realtime_counter;
 }
 
+/** True if the IRQ is enabled */
+bool linux_irq_enable;
+
+/** Nonzero if an IRQ is pending */
+int linux_irq_pending;
+
+/** True if the FIRQ is enabled */
+bool linux_firq_enable;
+
+
 
 /**
  * Implement a realtime loop on a non-realtime OS.
@@ -73,5 +83,7 @@ void realtime_loop (void)
 CALLSET_ENTRY (native_realtime, init)
 {
 	realtime_counter = 0;
+	linux_irq_enable = linux_firq_enable = TRUE;
+	linux_irq_pending = 0;
 }
 

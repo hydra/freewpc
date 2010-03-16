@@ -196,7 +196,17 @@ __noreturn__ void freewpc_init (void);
 #include <sys/flip.h>
 #endif
 #include <sys/display.h>
+#ifdef CONFIG_GI
 #include <sys/triac.h>
+#else
+#define triac_enable(strings)
+#define triac_disable(strings)
+#define triac_leff_allocate(strings)
+#define triac_leff_free(strings)
+#define triac_leff_enable(strings)
+#define triac_leff_disable(strings)
+#define PINIO_GI_STRINGS 0
+#endif
 #include <sys/rtc.h>
 
 /* Common software structures */

@@ -1,5 +1,5 @@
 /*
- * Copyright 2006, 2007, 2008, 2009, 2010 by Brian Dominy <brian@oddchange.com>
+ * Copyright 2006-2010 by Brian Dominy <brian@oddchange.com>
  *
  * This file is part of FreeWPC.
  *
@@ -188,6 +188,14 @@ extern inline void wpc_write_flippers (U8 val)
 {
 }
 
+extern inline void pinio_enable_flippers (void)
+{
+}
+
+extern inline void pinio_disable_flippers (void)
+{
+}
+
 
 /********************************************/
 /* Locale                                   */
@@ -305,7 +313,7 @@ extern inline U8 pinio_read_dedicated_switches (void)
 /* Triacs                                   */
 /********************************************/
 
-extern inline void pinio_write_triac (U8 val)
+extern inline void pinio_write_gi (U8 val)
 {
 }
 

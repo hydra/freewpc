@@ -74,15 +74,6 @@ U8 linux_lamp_matrix[NUM_LAMP_COLS];
 /** The simulated solenoid outputs */
 U8 linux_solenoid_outputs[SOL_COUNT / 8];
 
-/** True if the IRQ is enabled */
-bool linux_irq_enable;
-
-/** Nonzero if an IRQ is pending */
-int linux_irq_pending;
-
-/** True if the FIRQ is enabled */
-bool linux_firq_enable;
-
 volatile int sim_debug_init = 0;
 
 /** Pointer to the current switch matrix element */
@@ -1169,8 +1160,6 @@ int main (int argc, char *argv[])
 	/** Do initialization that the hardware would normally do before
 	 * the reset vector is invoked. */
 	signal_update (SIGNO_RESET, 1);
-	linux_irq_enable = linux_firq_enable = TRUE;
-	linux_irq_pending = 0;
 	linux_debug_output_ptr = linux_debug_output_buffer;
 	simulated_orkin_control_port = 0;
 	sim_zc_init ();
