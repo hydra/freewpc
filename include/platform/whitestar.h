@@ -328,5 +328,12 @@ extern inline void pinio_watchdog_reset (void)
 {
 }
 
+extern inline void pinio_clear_periodic (void)
+{
+}
+
+#define flipper_disable()
+#define flipper_enable()
+
 #endif /* _WHITESTAR_H */
 

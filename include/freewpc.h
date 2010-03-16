@@ -192,7 +192,9 @@ __noreturn__ void freewpc_init (void);
 #include <sys/lamp.h>
 #include <sys/sound.h>
 #include <sys/switch.h>
+#ifdef CONFIG_PLATFORM_WPC
 #include <sys/flip.h>
+#endif
 #include <sys/display.h>
 #include <sys/triac.h>
 #include <sys/rtc.h>

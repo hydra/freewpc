@@ -30,7 +30,8 @@ CONFIG_ANIMATION ?= $(CONFIG_DMD)
 # possible to build without this, though.
 #
 # TODO : Don't hardcode code/data sections here like this!
-CFLAGS += -mint8 -DHAVE_NVRAM -mdirect -mwpc -fno-builtin -mcode-section=.text -mdata-section=.text -mbss-section=ram -Wno-format
+INT_CFLAGS = -mint8
+CFLAGS += $(INT_CFLAGS) -DHAVE_NVRAM -mdirect -mwpc -fno-builtin -mcode-section=.text -mdata-section=.text -mbss-section=ram -Wno-format
 
 # Say which source files need to be compiled in for the WPC platform only.
 # Use KERNEL_HW_OBJS for C sources, and KERNEL_ASM_OBJS for assembler files.
@@ -60,7 +61,7 @@ FIRST_BANK=$(shell echo $$((64 - $(ROM_PAGE_COUNT) )))
 
 # The math code must be compiled in 16-bit mode, since it interfaces
 # to the system libraries which expect this.
-$(P)/math.o : INT_CFLAGS=-mint16
+$(P)/math.o : INT_CFLAGS = -mint16
 
 # The startup code needs to know the number of paged regions in the ROM
 # to checksum.  The pages between BOTTOM_BANK and TOP_BANK are paged in
