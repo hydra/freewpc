@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 by Brian Dominy <brian@oddchange.com>
+ * Copyright 2009-2010 by Brian Dominy <brian@oddchange.com>
  *
  * This file is part of FreeWPC.
  *
@@ -7,12 +7,12 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * FreeWPC is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with FreeWPC; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -26,6 +26,16 @@
 #ifndef _PROC_H
 #define _PROC_H
 
+#undef DEBUGGER
+#undef MACHINE_DMD
+#define MACHINE_DMD 1
+/* TODO */
+#define WPC_DMD_LOW_PAGE 0
+#define WPC_DMD_HIGH_PAGE 1
+#define WPC_DMD_FIRQ_ROW_VALUE 2
+#define WPC_DMD_ACTIVE_PAGE 3
+#define DMD_LOW_BASE (U8 *)0
+#define DMD_HIGH_BASE (U8 *)0
 /* A hack -- code should not be calling this unless CONFIG_WPC */
 #define WPC_HAS_CAP(cap) 0
 
@@ -88,73 +98,13 @@
 
 #define LOCAL_SIZE      0x40
 
-/***************************************************************
- * ASIC / DMD memory map
- ***************************************************************/
-
-/* In native mode, the DMD is emulated using ordinary character
-buffers. */
-extern U8 *linux_dmd_low_page;
-extern U8 *linux_dmd_high_page;
-#define DMD_LOW_BASE linux_dmd_low_page
-#define DMD_HIGH_BASE linux_dmd_high_page
-
-/********************************************/
-/* Diagnostic LED                           */
-/********************************************/
+/*
+ * Pinball I/O (pinio) functions
+ */
 
 #define MACHINE_DIAG_LED 0
 
-/** Toggle the diagnostic LED. */
 extern inline void pinio_active_led_toggle (void)
-{
-}
-
-
-/********************************************/
-/* Printer / Parallel Port                  */
-/********************************************/
-
-
-/** Writes a single byte to the parallel port.  The data
- * is first latched into the data register, then the
- * strobe line is brought low and then released. */
-extern inline void wpc_parport_write (U8 data)
-{
-}
-
-/********************************************/
-/* NVRAM Protection                         */
-/********************************************/
-
-#define pinio_nvram_unlock()
-#define pinio_nvram_lock()
-
-/********************************************/
-/* Bank Switching                           */
-/********************************************/
-
-#define PINIO_BANK_ROM 0
-
-extern inline void pinio_set_bank (U8 bankno, U8 val)
-{
-}
-
-extern inline U8 pinio_get_bank (U8 bankno)
-{
-	return 0;
-}
-
-/********************************************/
-/* Zero Crossing/IRQ Clear Register         */
-/********************************************/
-
-
-extern inline void pinio_watchdog_reset (void)
-{
-}
-
-extern inline void pinio_clear_periodic (void)
 {
 }
 
@@ -162,73 +112,6 @@ extern inline U8 wpc_read_ac_zerocross (void)
 {
 	return 0;
 }
-
-
-/***************************************************************
- * Flippers
- ***************************************************************/
-
-#define WPC_LR_FLIP_EOS		0x1
-#define WPC_LR_FLIP_SW		0x2
-#define WPC_LL_FLIP_EOS		0x4
-#define WPC_LL_FLIP_SW		0x8
-#define WPC_UR_FLIP_EOS		0x10
-#define WPC_UR_FLIP_SW		0x20
-#define WPC_UL_FLIP_EOS		0x40
-#define WPC_UL_FLIP_SW		0x80
-
-extern inline U8 wpc_read_flippers (void)
-{
-	return 0;
-}
-
-extern inline U8 wpc_read_flipper_buttons (void)
-{
-	return 0;
-}
-
-extern inline U8 wpc_read_flipper_eos (void)
-{
-	return 0;
-}
-
-
-#define WPC_LR_FLIP_POWER	0x1
-#define WPC_LR_FLIP_HOLD	0x2
-#define WPC_LL_FLIP_POWER	0x4
-#define WPC_LL_FLIP_HOLD	0x8
-#define WPC_UR_FLIP_POWER	0x10
-#define WPC_UR_FLIP_HOLD	0x20
-#define WPC_UL_FLIP_POWER	0x40
-#define WPC_UL_FLIP_HOLD	0x80
-
-extern inline void wpc_write_flippers (U8 val)
-{
-}
-
-extern inline U8 wpc_get_jumpers (void)
-{
-	return 0;
-}
-
-extern inline U8 pinio_read_locale (void)
-{
-	return 0;
-}
-
-
-/* Read the current ticket switches. */
-extern inline U8 pinio_read_ticket (void)
-{
-	return 0;
-}
-
-
-/* Write the ticket output drivers. */
-extern inline void pinio_write_ticket (U8 val)
-{
-}
-
 
 /********************************************/
 /* Lamps                                    */
@@ -259,6 +142,110 @@ extern inline U8 pinio_read_solenoid (U8 solno)
 	return 0;
 }
 
+/********************************************/
+/* Switches                                 */
+/********************************************/
+
+extern inline void pinio_write_switch_column (U8 val)
+{
+}
+
+extern inline U8 pinio_read_switch_rows (void)
+{
+	return 0;
+}
+
+extern inline U8 pinio_read_dedicated_switches (void)
+{
+	return 0;
+}
+
+/***************************************************************
+ * Flippers
+ ***************************************************************/
+
+extern inline U8 wpc_read_flippers (void)
+{
+	return 0;
+}
+
+extern inline U8 wpc_read_flipper_buttons (void)
+{
+	return 0;
+}
+
+extern inline U8 wpc_read_flipper_eos (void)
+{
+	return 0;
+}
+
+
+extern inline void wpc_write_flippers (U8 val)
+{
+}
+
+extern inline void pinio_clear_periodic (void)
+{
+}
+
+extern inline void pinio_watchdog_reset (void)
+{
+}
+
+
+
+/********************************************/
+/* Printer / Parallel Port                  */
+/********************************************/
+
+extern inline void wpc_parport_write (U8 data)
+{
+}
+
+/********************************************/
+/* Bank Switching                           */
+/********************************************/
+
+#define PINIO_BANK_ROM 0
+
+extern inline void pinio_set_bank (U8 bankno, U8 val)
+{
+}
+
+extern inline U8 pinio_get_bank (U8 bankno)
+{
+	return 0;
+}
+
+/********************************************/
+/* Zero Crossing/IRQ Clear Register         */
+/********************************************/
+
+
+extern inline U8 wpc_get_jumpers (void)
+{
+	return 0;
+}
+
+extern inline U8 pinio_read_locale (void)
+{
+	return 0;
+}
+
+
+/* Read the current ticket switches. */
+extern inline U8 pinio_read_ticket (void)
+{
+	return 0;
+}
+
+
+/* Write the ticket output drivers. */
+extern inline void pinio_write_ticket (U8 val)
+{
+}
+
+
 
 /********************************************/
 /* Sound                                    */
@@ -284,24 +271,6 @@ extern inline U8 pinio_read_sound (void)
 
 
 /********************************************/
-/* Switches                                 */
-/********************************************/
-
-extern inline void pinio_write_switch_column (U8 val)
-{
-}
-
-extern inline U8 pinio_read_switch_rows (void)
-{
-	return 0;
-}
-
-extern inline U8 pinio_read_dedicated_switches (void)
-{
-	return 0;
-}
-
-/********************************************/
 /* Triacs                                   */
 /********************************************/
 
@@ -309,19 +278,10 @@ extern inline void pinio_write_triac (U8 val)
 {
 }
 
-/********************************************/
-/* Precision Timer                          */
-/********************************************/
+#define pinio_nvram_unlock()
+#define pinio_nvram_lock()
 
-extern inline U8 pinio_read_timer (U8 timerno)
-{
-	return 0;
-}
-
-extern inline void pinio_write_timer (U8 timerno, U8 val)
-{
-}
-
+#undef HAVE_PARALLEL_PORT /* pinio_parport_write() will not be called */
 
 #endif /* _PROC_H */
 

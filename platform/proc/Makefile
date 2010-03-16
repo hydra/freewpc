@@ -1,19 +1,22 @@
-# This Makefile is used to control a P-ROC build, where FreeWPC runs
-# on a PC and connects to an external FPGA-based board for I/O.
 
 N := platform/native
 P := platform/proc
-
-CONFIG_PROC := y
-CONFIG_REMOTEIO := y
-CONFIG_DMD := y
-CONFIG_PTH := y
-CONFIG_ANIMATION ?= $(CONFIG_DMD)
-CONFIG_FONT ?= $(CONFIG_DMD)
+NATIVE_OBJS :=
 
 # Common native mode CPU configuration
+PLATFORM := proc
 CPU := native
+CONFIG_PTH := y
+CONFIG_SOFT_REALTIME := y
+
 include cpu/$(CPU)/Makefile
+
+$(eval $(call have,CONFIG_PLATFORM_PROC))
+$(eval $(call have,CONFIG_DMD))
+$(eval $(call have,CONFIG_FONT))
+$(eval $(call have,CONFIG_ANIMATION))
+$(eval $(call have,CONFIG_REMOTEIO))
+
 
 # Platform dependent files
 KERNEL_HW_OBJS += $(P)/init-proc.o
@@ -21,7 +24,9 @@ KERNEL_HW_OBJS += $(P)/serial.o
 KERNEL_HW_OBJS += $(P)/procdmd.o
 
 # Additional defines
-CFLAGS += -I$(P) -DCONFIG_PLATFORM_PROC -DCONFIG_REMOTEIO
+CFLAGS += -I$(P)
+
+CFLAGS += -DMACHINE_SHORTNAME=\"$(MACHINE)\"
 
 # Import images that are common to all games.
 IMAGE_MAP += $(P)/../wpc/wpc.ild

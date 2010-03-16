@@ -91,7 +91,7 @@ the ordinary 8x8 switch matrix.  On Fliptronic games, these are
 accessed separately and tracked in a "9th" switch column internally.
 Define SW_LEFT_BUTTON and SW_RIGHT_BUTTON to the correct values
 depending on the system type. */
-#if (MACHINE_FLIPTRONIC == 1) || defined(CONFIG_PLATFORM_P2K)
+#if (MACHINE_FLIPTRONIC == 1) || defined(CONFIG_PLATFORM_P2K) || defined(CONFIG_PLATFORM_PROC)
 #define NUM_FLIPTRONIC_SWITCHES 8
 #define SW_LEFT_BUTTON SW_L_L_FLIPPER_BUTTON
 #define SW_RIGHT_BUTTON SW_L_R_FLIPPER_BUTTON

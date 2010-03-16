@@ -169,6 +169,10 @@ __noreturn__ void freewpc_init (void);
 #define CPU_BOARD
 #include <platform/p2k.h>
 #endif
+#ifdef CONFIG_PLATFORM_PROC
+#define CPU_BOARD
+#include <platform/proc.h>
+#endif
 
 /* Core software structures */
 #include <sys/bitarray.h>
