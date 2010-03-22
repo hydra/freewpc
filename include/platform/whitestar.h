@@ -76,6 +76,12 @@ AREA_DECL(nvram)
  * Whitestar memory map
  ***************************************************************/
 
+#define WPC_DMD_HIGH_PAGE       0x0
+#define WPC_DMD_FIRQ_ROW_VALUE  0x0
+#define WPC_DMD_LOW_PAGE        0x0
+#define WPC_DMD_ACTIVE_PAGE     0x0
+extern U8 *pinio_dmd_low_page, *pinio_dmd_high_page;
+
 #define WS_SOLA                 0x2000
 #define WS_SOLB                 0x2001
 #define WS_SOLC                 0x2002
@@ -339,9 +345,6 @@ extern inline void pinio_watchdog_reset (void)
 extern inline void pinio_clear_periodic (void)
 {
 }
-
-#define flipper_disable()
-#define flipper_enable()
 
 #endif /* _WHITESTAR_H */
 

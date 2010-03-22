@@ -98,9 +98,13 @@
 
 #define LOCAL_SIZE      0x40
 
+#define AREA_SIZE(name) 1
+
 /*
  * Pinball I/O (pinio) functions
  */
+
+extern U8 *pinio_dmd_low_page, *pinio_dmd_high_page;
 
 #define MACHINE_DIAG_LED 0
 
@@ -181,6 +185,14 @@ extern inline U8 wpc_read_flipper_eos (void)
 
 
 extern inline void wpc_write_flippers (U8 val)
+{
+}
+
+extern inline void pinio_enable_flippers (void)
+{
+}
+
+extern inline void pinio_disable_flippers (void)
 {
 }
 

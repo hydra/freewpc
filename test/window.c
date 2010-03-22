@@ -3219,12 +3219,12 @@ void gi_test_init (void)
 	browser_init ();
 	browser_max = NUM_GI_TRIACS+1;
 	gi_test_brightness = 8;
-	triac_leff_allocate (TRIAC_GI_MASK);
+	gi_leff_allocate (TRIAC_GI_MASK);
 }
 
 void gi_test_exit (void)
 {
-	triac_leff_free (TRIAC_GI_MASK);
+	gi_leff_free (TRIAC_GI_MASK);
 }
 
 void gi_test_draw (void)
@@ -3241,12 +3241,12 @@ void gi_test_draw (void)
 		browser_print_operation (sprintf_buffer);
 	}
 
-	triac_leff_disable (TRIAC_GI_MASK);
+	gi_leff_disable (TRIAC_GI_MASK);
 #ifdef CONFIG_TRIAC
 	sprintf ("BRIGHTNESS %d", gi_test_brightness);
 	print_row_center (&font_mono5, 29);
 
-	triac_leff_dim (gi_test_values[menu_selection], gi_test_brightness);
+	gi_leff_dim (gi_test_values[menu_selection], gi_test_brightness);
 #else
 	gi_enable (gi_test_values[menu_selection]);
 #endif

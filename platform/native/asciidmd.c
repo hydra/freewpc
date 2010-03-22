@@ -35,7 +35,14 @@ U8 asciidmd_pages[MAX_PHASES] = { 0, 0 };
 
 unsigned int asciidmd_phase = 0;
 
+/** The page number that is currently visible */
 U8 asciidmd_visible_page;
+
+/** A pointer to the low mapped DMD page */
+U8 *pinio_dmd_low_page;
+
+/** A pointer to the high mapped DMD page */
+U8 *pinio_dmd_high_page;
 
 
 /**
@@ -58,9 +65,9 @@ void asciidmd_map_page (int mapping, int page)
 {
 	page &= 0x0F;
 	if (mapping == 0)
-		linux_dmd_low_page = asciidmd_buffers[page]->_data;
+		pinio_dmd_low_page = asciidmd_buffers[page]->_data;
 	else if (mapping == 1)
-		linux_dmd_high_page = asciidmd_buffers[page]->_data;
+		pinio_dmd_high_page = asciidmd_buffers[page]->_data;
 }
 
 

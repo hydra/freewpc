@@ -85,12 +85,13 @@ include $(MMAKEFILE)
 $(eval $(call require,MACHINE_FILE))
 PLATFORM ?= wpc
 CONFIG_DMD := $(call md_config,DMD)
+ifeq ($(PLATFORM), wpc)
 CONFIG_ALPHA := $(call md_config,Alphanumeric)
 CONFIG_PIC := $(call md_config,PIC)
 CONFIG_FLIPTRONIC := $(call md_config,Fliptronic)
 CONFIG_DCS := $(call md_config,DCS)
 CONFIG_WPC95 := $(call md_config,WPC95)
-
+endif
 
 # PLATFORM says which hardware platform is targeted.  Valid values
 # are 'wpc' and 'whitestar'.  The MACHINE Makefile should have
@@ -355,7 +356,9 @@ MD_OBJS = $(PAGED_MD_OBJS) $(SYSTEM_MD_OBJS)
 # Alphanumeric games like Funhouse are restricted to 128KB total,
 # so only 6 non-system pages.  DMD games are allowed to use more.
 ifeq ($(CONFIG_DMD),y)
+ifdef CONFIG_PLATFORM_WPC
 PAGE_NUMBERS += 52 53 54 55
+endif
 endif
 PAGE_NUMBERS += 56 57 58 59 60 61
 ifeq ($(PLATFORM),wpcsound)
@@ -483,14 +486,9 @@ C_OBJS := $(MD_OBJS) $(KERNEL_OBJS) $(COMMON_OBJS) $(EVENT_OBJS) \
 	$(MACHINE2_OBJS) $(FONT_OBJS) $(EFFECT_OBJS) $(INIT_OBJS) \
 	$(DEFF_OBJS) $(LEFF_OBJS) $(SCHED_OBJ)
 
-ifeq ($(PLATFORM),wpc)
-OBJS = $(C_OBJS) $(AS_OBJS) $(FON_OBJS)
-else
-ifeq ($(PLATFORM),whitestar)
-OBJS = $(C_OBJS) $(AS_OBJS)
-else
-OBJS = $(C_OBJS) $(FON_OBJS)
-endif
+OBJS := $(C_OBJS) $(FON_OBJS)
+ifeq ($(CPU), m6809)
+OBJS += $(AS_OBJS)
 endif
 
 MACH_LINKS = .mach .include_mach

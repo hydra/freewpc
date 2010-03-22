@@ -60,13 +60,7 @@ extern void sim_switch_init (void);
 
 
 /** The rate at which the simulated clock should run */
-int linux_irq_multiplier = 1;
-
-/** A pointer to the low DMD page */
-U8 *linux_dmd_low_page;
-
-/** A pointer to the high DMD page */
-U8 *linux_dmd_high_page;
+extern int linux_irq_multiplier;
 
 /** The simulated lamp matrix outputs. */
 U8 linux_lamp_matrix[NUM_LAMP_COLS];

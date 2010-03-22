@@ -39,7 +39,7 @@ U8 task_count = 0;
 
 U8 task_max_count = 0;
 
-extern int linux_irq_multiplier;
+U8 linux_irq_multiplier;
 
 #define PTH_USECS_PER_TICK (16000 / linux_irq_multiplier)
 
@@ -414,6 +414,7 @@ void task_init (void)
 	
 	pth_init ();
 
+	linux_irq_multiplier = 1;
 	task_data_table[0].pid = task_getpid ();
 	task_data_table[0].gid = GID_FIRST_TASK;
 	task_data_table[0].duration = TASK_DURATION_INF;

@@ -211,6 +211,7 @@ extern inline void switch_rowpoll (const U8 col)
 		__asm__ volatile ("ldb\t" C_STRING (WPC_SW_ROW_INPUT));
 #endif
 	}
+#if (MACHINE_FLIPTRONIC == 1)
 	else if (col == 9)
 	{
 		/* Column 9 = Flipper Inputs
@@ -221,6 +222,7 @@ extern inline void switch_rowpoll (const U8 col)
 		__asm__ volatile ("ldb\t" C_STRING (WPC_FLIPTRONIC_PORT_A));
 #endif
 	}
+#endif
 
 	/* Save the raw switch */
 	__asm__ volatile ("stb\t%0" :: "m" (sw_raw[col]) );
@@ -282,8 +284,10 @@ extern inline void switch_rowpoll (const U8 col)
 		sw_raw[col] = pinio_read_dedicated_switches ();
 	else if (col <= 8)
 		sw_raw[col] = pinio_read_switch_rows ();
+#if (MACHINE_FLIPTRONIC == 1)
 	else if (col == 9)
 		sw_raw[col] = wpc_read_flippers ();
+#endif
 
 	/* Set up the column strobe for the next read (on the next
 	 * iteration) */

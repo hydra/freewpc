@@ -17,10 +17,15 @@ include cpu/$(CPU)/Makefile
 # Subplatform support
 # Eventually, this section will contain conditionals for building on the
 # different WPC variations.  For now, all of these are mandatory though.
-CONFIG_WPC=y
+# TODO : copied all of this from platform/wpc/Makefile
+$(eval $(call have,CONFIG_WPC))
+$(eval $(call have,CONFIG_PLATFORM_WPC))
 CONFIG_FONT ?= $(CONFIG_DMD)
-CONFIG_AC=y
+$(eval $(call have,CONFIG_AC))
+$(eval $(call have,CONFIG_GI))
+$(eval $(call have,CONFIG_TRIAC))
 $(eval $(call have,CONFIG_RTC))
+$(eval $(call have,CONFIG_BUYIN))
 CONFIG_ANIMATION ?= $(CONFIG_DMD)
 
 # Platform dependent files

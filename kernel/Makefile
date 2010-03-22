@@ -25,7 +25,6 @@ KERNEL_SW_OBJS += kernel/ladder.o
 KERNEL_SW_OBJS += kernel/lamplist.o
 KERNEL_SW_OBJS += kernel/player.o
 KERNEL_SW_OBJS += kernel/printf.o
-###KERNEL_SW_OBJS += $(if $(CONFIG_WHITESTAR),,kernel/score.o)
 KERNEL_SW_OBJS += kernel/score.o
 
 # Hardware kernel modules are incredibly hardware dependent,
@@ -40,7 +39,7 @@ KERNEL_HW_OBJS += kernel/audit.o
 KERNEL_HW_OBJS += kernel/csum.o
 KERNEL_HW_OBJS += $(if $(CONFIG_DMD),kernel/dmd.o)
 KERNEL_HW_OBJS += kernel/error.o
-KERNEL_HW_OBJS += $(if $(CONFIG_WHITESTAR),,kernel/flip.o)
+KERNEL_HW_OBJS += kernel/flip.o
 KERNEL_HW_OBJS += kernel/freetimer.o   # could be KERNEL_SW_OBJS
                                        # except for RTT.
 KERNEL_HW_OBJS += kernel/init.o

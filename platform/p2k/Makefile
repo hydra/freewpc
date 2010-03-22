@@ -13,6 +13,7 @@ include cpu/$(CPU)/Makefile
 
 # FreeWPC module configuration
 $(eval $(call have,CONFIG_DMD))
+$(eval $(call have,CONFIG_DMD_STUB))
 $(eval $(call have,CONFIG_FONT))
 $(eval $(call have,CONFIG_AC))
 $(eval $(call nohave,CONFIG_GI))

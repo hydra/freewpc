@@ -13,6 +13,7 @@ include cpu/$(CPU)/Makefile
 
 $(eval $(call have,CONFIG_PLATFORM_PROC))
 $(eval $(call have,CONFIG_DMD))
+$(eval $(call have,CONFIG_DMD_STUB))
 $(eval $(call have,CONFIG_FONT))
 $(eval $(call have,CONFIG_ANIMATION))
 $(eval $(call have,CONFIG_REMOTEIO))

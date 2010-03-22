@@ -21,7 +21,6 @@
 #include <freewpc.h>
 
 U8 in_test;
-U8 linux_irq_multiplier;
 
 void proc_debug_write (U8 c)
 {
@@ -52,10 +51,10 @@ void platform_main_loop (void)
 				VOIDCALL (lamp_rtt_3);
 			tick_driver ();
 		}
-		db_idle ();
-		if (likely (idle_ok))
+		db_periodic ();
+		if (likely (periodic_ok))
 		{
-			do_idle ();
+			do_periodic ();
 		}
 	}
 }
@@ -64,7 +63,6 @@ void platform_main_loop (void)
 void platform_init (void)
 {
 	in_test = 0;
-	linux_irq_multiplier = 1;
 	remote_dmd_init ();
 }
 
@@ -75,10 +73,10 @@ void linux_init (void)
 }
 
 
-void linux_shutdown (void)
+void linux_shutdown (U8 error_code)
 {
 	printf ("P-ROC: Shutdown\n");
-	exit (0);
+	exit (error_code);
 }
 
 

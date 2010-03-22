@@ -196,10 +196,13 @@ __noreturn__ void freewpc_init (void);
 #include <sys/lamp.h>
 #include <sys/sound.h>
 #include <sys/switch.h>
-#ifdef CONFIG_PLATFORM_WPC
 #include <sys/flip.h>
-#endif
+
 #include <sys/display.h>
+/* Compatibility with older names */
+#define dmd_low_buffer    pinio_dmd_low_page
+#define dmd_high_buffer   pinio_dmd_high_page
+
 #ifdef CONFIG_GI
 #include <sys/triac.h>
 #else

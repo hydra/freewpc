@@ -29,14 +29,13 @@
 #define WPC_DMD_HIGH_PAGE 1
 #define WPC_DMD_FIRQ_ROW_VALUE 2
 #define WPC_DMD_ACTIVE_PAGE 3
-#define DMD_LOW_BASE (U8 *)0
-#define DMD_HIGH_BASE (U8 *)0
+extern U8 *pinio_dmd_low_page, *pinio_dmd_high_page;
 
 /*
  * Miscellaneous
  */
 #define LOCAL_SIZE 0x40U
-#define AREA_SIZE(name) 0
+#define AREA_SIZE(name) 1
 
 /*
  * Parallel port registers
@@ -131,6 +130,7 @@ extern inline U8 p2k_read (U8 reg)
 	writeb (LPT_CONTROL, 0x29);
 	val = readb (LPT_DATA);
 	writeb (LPT_CONTROL, 0);
+	return val;
 }
 
 
@@ -261,6 +261,24 @@ extern inline U8 pinio_read_ticket (void)
 
 extern inline void pinio_watchdog_reset (void)
 {
+}
+
+extern inline void pinio_reset_sound (void)
+{
+}
+
+extern inline void pinio_write_sound (U8 val)
+{
+}
+
+extern inline bool pinio_sound_ready_p (void)
+{
+	return FALSE;
+}
+
+extern inline U8 pinio_read_sound (void)
+{
+	return 0xFF;
 }
 
 #define pinio_nvram_unlock()

@@ -186,9 +186,11 @@ task_pid_t leff_create_handler (const leff_t *leff)
 		tp = task_create_gid (GID_SHARED_LEFF, leff->fn);
 	else
 	{
+#ifdef CONFIG_GI
 		/* Allocate general illumination needed by the lamp effect */
 		if (leff->gi != L_NOGI)
-			triac_leff_allocate (leff->gi);
+			gi_leff_allocate (leff->gi);
+#endif
 
 		/* Start the task */
 		tp = task_recreate_gid (GID_LEFF, leff->fn);
@@ -285,8 +287,10 @@ void leff_stop (leffnum_t dn)
 	{
 		lamp_leff1_erase (); /* TODO : these two functions go together */
 		lamp_leff1_free_all ();
+#ifdef CONFIG_GI
 		if (leff->gi != L_NOGI)
-			triac_leff_free (leff->gi);
+			gi_leff_free (leff->gi);
+#endif
 		leff_start_highest_priority ();
 	}
 }
@@ -346,9 +350,10 @@ __noreturn__ void leff_exit (void)
 		/* Note: global leffs can do leff_exit with peer
 		tasks still running ... they will eventually be
 		stopped, too */
+#ifdef CONFIG_GI
 		if (leff->gi != L_NOGI)
-			triac_leff_free (leff->gi);
-
+			gi_leff_free (leff->gi);
+#endif
 		/* Change the GID so that we are no longer
 		 * considered a leff. */
 		task_setgid (GID_LEFF_EXITING);
@@ -374,7 +379,9 @@ void leff_stop_all (void)
 {
 	task_kill_gid (GID_LEFF);
 	task_kill_gid (GID_SHARED_LEFF);
-	triac_leff_free (PINIO_GI_STRINGS);
+#ifdef CONFIG_GI
+	gi_leff_free (PINIO_GI_STRINGS);
+#endif
 	lamp_leff1_free_all ();
 	lamp_leff1_erase ();
 	lamp_leff2_free_all ();

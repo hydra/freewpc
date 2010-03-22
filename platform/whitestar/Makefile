@@ -16,8 +16,12 @@ $(eval $(call have,CONFIG_REMOTE_DISPLAY))
 $(eval $(call have,CONFIG_REMOTE_SOUND))
 $(eval $(call nohave,CONFIG_AC))
 $(eval $(call nohave,CONFIG_GI))
-CONFIG_FONT ?= $(CONFIG_DMD)
-CONFIG_ANIMATION ?= $(CONFIG_DMD)
+
+$(eval $(call have,MACHINE_DMD))
+$(eval $(call have,CONFIG_DMD_STUB))
+$(eval $(call have,CONFIG_FONT))
+$(eval $(call have,CONFIG_ANIMATION))
+
 FREEWPC_DEBUGGER := n
 
 # Additional CFLAGS required on the Whitestar platform

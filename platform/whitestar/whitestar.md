@@ -5,6 +5,8 @@
 # See tools/genmachine for more information about the format of this file.
 #--------------------------------------------------------------------------
 
+DMD: Yes
+
 [lamps]
 11: First Lamp
 88: Last Lamp
@@ -85,6 +87,7 @@ Slam Tilt: page(COMMON_PAGE), runner, PRI_SLAMTILT
 Status Report: page(COMMON_PAGE), runner, PRI_STATUS
 Nonfatal Error: page(EFFECT_PAGE), PRI_DEBUGGER
 HSEntry: page(COMMON_PAGE), runner, PRI_HSENTRY
+HSCredits: page(COMMON_PAGE), runner, PRI_HSENTRY
 Match: page(COMMON_PAGE), runner, PRI_MATCH
 Buyin Offer: page(COMMON_PAGE), PRI_MATCH
 Onecoin Buyin: page(COMMON_PAGE), PRI_MATCH
@@ -113,6 +116,7 @@ cu17:
 fixed10:
 term6:
 times8:
+bitmap8:
 
 [timers]
 Ignore Tilt:

@@ -153,9 +153,6 @@ typedef struct
  */
 #define wpc_dmd_set_visible_page(v)	writeb (WPC_DMD_ACTIVE_PAGE, v)
 
-#define dmd_low_buffer			((dmd_buffer_t)DMD_LOW_BASE)
-#define dmd_high_buffer			((dmd_buffer_t)DMD_HIGH_BASE)
-
 extern U8 *dmd_trans_data_ptr;
 extern bool dmd_in_transition;
 extern dmd_transition_t *dmd_transition;

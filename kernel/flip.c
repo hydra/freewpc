@@ -31,6 +31,7 @@
  * When TRUE, the flipper will operate when the button is pressed. */
 __fastram__ bool flippers_enabled;
 
+#if (MACHINE_FLIPTRONIC == 1)
 /** Stores the last computed values for the flipper outputs. */
 __fastram__ U8 fliptronic_powered_coil_outputs;
 
@@ -43,7 +44,6 @@ volatile __fastram__ U8 flipper_outputs;
 /** Software controlled flipper inputs for Fliptronic games.
  * These inputs are ORed into the actual cabinet inputs to determine the
  * flipper logic. */
-#if (MACHINE_FLIPTRONIC == 1)
 __fastram__ U8 flipper_overrides;
 #endif
 
@@ -66,7 +66,9 @@ void flipper_disable (void)
 	pinio_disable_flippers ();
 	disable_interrupts ();
 	flippers_enabled = FALSE;
+#if (MACHINE_FLIPTRONIC == 1)
 	flipper_outputs = 0;
+#endif
 	enable_interrupts ();
 }
 
@@ -219,7 +221,9 @@ CALLSET_ENTRY (fliptronic, ball_search)
 void flipper_init (void)
 {
 	flipper_disable ();
+#if (MACHINE_FLIPTRONIC == 1)
 	fliptronic_powered_coil_outputs = 0;
+#endif
 }
 
 

@@ -67,7 +67,7 @@ AREA_DECL(permanent)
 AREA_DECL(nvram)
 
 #else
-#define AREA_SIZE(name) 0
+#define AREA_SIZE(name) 1
 #endif /* __m6809__ */
 
 
@@ -178,10 +178,7 @@ AREA_DECL(nvram)
 
 /* In native mode, the DMD is emulated using ordinary character
 buffers. */
-extern U8 *linux_dmd_low_page;
-extern U8 *linux_dmd_high_page;
-#define DMD_LOW_BASE linux_dmd_low_page
-#define DMD_HIGH_BASE linux_dmd_high_page
+extern U8 *pinio_dmd_low_page, *pinio_dmd_high_page;
 
 #else
 
@@ -199,8 +196,8 @@ extern U8 *linux_dmd_high_page;
 /* Define addresses for the two page buffer locations we
  * call low and high. */
 
-#define DMD_LOW_BASE 					DMD_MAPPED(4)
-#define DMD_HIGH_BASE 					DMD_MAPPED(5)
+#define pinio_dmd_low_page  DMD_MAPPED(4)
+#define pinio_dmd_high_page DMD_MAPPED(5)
 
 #endif /* CONFIG_NATIVE */
 
@@ -754,7 +751,6 @@ extern inline void pinio_write_timer (U8 timerno, U8 val)
 {
 	writeb (WPC_PERIPHERAL_TIMER_FIRQ_CLEAR, val);
 }
-
 
 /********************************************/
 /* Debugging                                */
