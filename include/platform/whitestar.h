@@ -121,6 +121,7 @@ extern U8 *pinio_dmd_low_page, *pinio_dmd_high_page;
 	#define WS_DMD_BUSY       0x80
 #define WS_SOUND_OUT            0x3800
 
+extern U8 ws_page_led_io;
 
 /********************************************/
 /* LED                                      */
@@ -129,7 +130,8 @@ extern U8 *pinio_dmd_low_page, *pinio_dmd_high_page;
 /** Toggle the diagnostic LED. */
 extern inline void pinio_active_led_toggle (void)
 {
-	io_toggle_bits (WS_PAGE_LED, WS_LED_MASK);
+	ws_page_led_io ^= WS_LED_MASK;
+	writeb (WS_PAGE_LED, ws_page_led_io);
 }
 
 
@@ -161,7 +163,9 @@ extern inline void pinio_set_bank (U8 bankno, U8 val)
 	switch (bankno)
 	{
 		case PINIO_BANK_ROM:
-			writeb (WS_PAGE_LED, val & WS_PAGE_MASK);
+			ws_page_led_io &= ~WS_PAGE_MASK;
+			ws_page_led_io |= val;
+			writeb (WS_PAGE_LED, ws_page_led_io);
 			break;
 		default:
 			break;

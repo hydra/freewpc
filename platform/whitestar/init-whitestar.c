@@ -45,6 +45,8 @@ void do_sprintf_hex_byte () {}
 void log_event1 (U16 module_event, U8 arg) {}
 #endif
 
+U8 ws_page_led_io;
+
 /**
  * Initialize the Whitestar platform.
  */
@@ -67,7 +69,7 @@ void platform_init (void)
 }
 
 
-CALLSET_ENTRY (whitestart, amode_start)
+CALLSET_ENTRY (whitestar, init_complete)
 {
 	lamp_all_on ();
 }

@@ -24,7 +24,33 @@
 ;;; TODO: Put only the constants in .h without the C-structs and it
 ;;; it *can* be included.
 STACK_BASE         = 6133
+
+#ifdef CONFIG_PLATFORM_WPC
 WPC_ROM_BANK       = 0x3FFC
+
+.macro task_save_bank
+	ldb	*_wpc_rom_bank         ; 5 cycles
+	stb	ROMPAGE_SAVE_OFF,x     ; 5 cycles
+.endm
+.macro task_restore_bank
+	ldb	ROMPAGE_SAVE_OFF,x     ; 5 cycles
+	stb	*_wpc_rom_bank
+	stb	WPC_ROM_BANK           ; 5 cycles
+.endm
+#endif
+
+#ifdef CONFIG_PLATFORM_WHITESTAR
+WS_PAGE_LED        = 0x3200
+WS_PAGE_MASK       = 0x3F
+WS_LED_MASK        = 0x80
+
+.macro task_save_bank
+	; TODO
+.endm
+.macro task_restore_bank
+	; TODO
+.endm
+#endif
 
 STATE_OFF          = 0
 PCREG_SAVE_OFF     = 3
@@ -58,8 +84,7 @@ _task_save:
 	ldu	*_task_save_U          ; 5 cycles
 	stu	UREG_SAVE_OFF,x        ; 6 cycles
 	sty	YREG_SAVE_OFF,x        ; 7 cycles
-	ldb	*_wpc_rom_bank         ; 5 cycles
-	stb	ROMPAGE_SAVE_OFF,x     ; 5 cycles
+	task_save_bank
 
 	;;; Copy the runtime stack into the task save area.
 	;;; Y points to the save area (destination), while S points
@@ -248,9 +273,7 @@ _task_restore:
 
 restore_stack_done:
 	;;; Restore volatile registers
-	ldb	ROMPAGE_SAVE_OFF,x
-	stb	*_wpc_rom_bank
-	stb	WPC_ROM_BANK
+	task_restore_bank
 	ldu	PCREG_SAVE_OFF,x
 	pshs	u
 	ldy	YREG_SAVE_OFF,x
@@ -286,8 +309,7 @@ _task_create:
 	jsr	_task_allocate
 	stu	PCREG_SAVE_OFF,x
 	puls	u
-	ldb	*_wpc_rom_bank
-	stb	ROMPAGE_SAVE_OFF,x
+	task_save_bank
 
 	;;; Note: we could push the address of task_exit onto the
 	;;; stack so that the task could simply return and it
@@ -336,8 +358,7 @@ _task_fork:
 
 	; Ensure the child runs in the same page as
 	; the parent.
-	ldb	*_wpc_rom_bank
-	stb	ROMPAGE_SAVE_OFF,x
+	task_save_bank
 
 	; Return from the parent with nonzero.
 	ldb	#1
