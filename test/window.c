@@ -1720,7 +1720,7 @@ struct menu dev_force_error_item = {
 
 /**********************************************************************/
 
-#if (MACHINE_DMD == 1)
+#ifdef IMAGEMAP_PAGE
 
 U16 test_frameno;
 
@@ -1770,7 +1770,7 @@ struct menu dev_frametest_item = {
 	.var = { .subwindow = { &dev_frametest_window, NULL } },
 };
 
-#endif /* MACHINE_DMD == 1 */
+#endif /* IMAGEMAP_PAGE */
 
 /**********************************************************************/
 
@@ -2152,7 +2152,7 @@ struct menu *dev_menu_items[] = {
 	&dev_balldev_test_item,
 	&dev_random_test_item,
 	&dev_trans_test_item,
-#if (MACHINE_DMD == 1)
+#ifdef IMAGEMAP_PAGE
 	&dev_frametest_item,
 #endif
 	&dev_force_error_item,
@@ -2592,6 +2592,8 @@ struct menu bookkeeping_menu = {
 
 /**********************************************************************/
 
+#ifdef CONFIG_WPC
+
 void printout_thread (void)
 {
 	extern __common__ void print_all_audits (void);
@@ -2638,6 +2640,7 @@ struct menu printouts_menu = {
 	.var = { .submenus = printouts_menu_items },
 };
 
+#endif
 
 /**********************************************************************/
 
@@ -2699,7 +2702,7 @@ struct menu adjustments_menu = {
 
 /**********************************************************************/
 
-#if (MACHINE_DMD == 1)
+#if (MACHINE_DMD == 1) && !CONFIG_DMD_STUB
 extern __test2__ void switch_matrix_draw (void);
 extern __test2__ void switch_edges_update (void);
 extern __test2__ void switch_levels_update (void);
@@ -3201,6 +3204,8 @@ struct menu flasher_test_item = {
 
 /****************** GI Test **************************/
 
+#ifdef CONFIG_GI
+
 U8 gi_test_brightness;
 
 U8 gi_test_values[] = {
@@ -3210,7 +3215,7 @@ U8 gi_test_values[] = {
 	TRIAC_GI_STRING(2),
 	TRIAC_GI_STRING(3),
 	TRIAC_GI_STRING(4),
-	TRIAC_GI_MASK,
+	PINIO_GI_STRINGS,
 };
 
 
@@ -3282,6 +3287,7 @@ struct menu gi_test_item = {
 	.var = { .subwindow = { &gi_test_window, NULL } },
 };
 
+#endif /* CONFIG_GI */
 
 /****************** Lamp Test **************************/
 
@@ -3661,7 +3667,9 @@ struct menu *test_menu_items[] = {
 	 * Everything can be accessed in solenoid test. */
 	&flasher_test_item,
 #endif
+#ifdef CONFIG_GI
 	&gi_test_item,
+#endif
 	&sound_test_item,
 	&lamp_test_item,
 	&all_lamp_test_item,
@@ -3700,7 +3708,9 @@ struct menu *main_menu_items[] = {
 	&adjustments_menu,
 	&test_menu,
 	&utilities_menu,
+#ifdef CONFIG_WPC
 	&printouts_menu,
+#endif
 	&development_menu,
 	NULL,
 };

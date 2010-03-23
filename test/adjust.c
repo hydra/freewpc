@@ -35,7 +35,9 @@
 #include <format.h>
 #include <text.h>
 
-#if (MACHINE_DMD == 1)
+#ifdef CONFIG_DMD_STUB
+#define print_row_center(f, row)
+#elif (MACHINE_DMD == 1)
 extern __test__ void print_row_center (const font_t *f, U8 row);
 #else
 extern __test__ void print_row_center1 (U8 row);

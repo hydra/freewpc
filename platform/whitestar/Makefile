@@ -10,8 +10,9 @@ include cpu/$(CPU)/Makefile
 
 # Subplatform support
 $(eval $(call have,CONFIG_WHITESTAR))
-# $(eval $(call have,CONFIG_BARE))
 $(eval $(call have,CONFIG_PLATFORM_WHITESTAR))
+$(eval $(call have,CONFIG_PERIODIC_FIRQ))
+$(eval $(call have,CONFIG_PARANOID))
 $(eval $(call have,CONFIG_REMOTE_DISPLAY))
 $(eval $(call have,CONFIG_REMOTE_SOUND))
 $(eval $(call nohave,CONFIG_AC))

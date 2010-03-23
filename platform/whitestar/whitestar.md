@@ -73,8 +73,7 @@ Ball Save: MACHINE_BALL_SAVE_LAMP
 
 [deffs]
 NULL: c_decl(deff_exit), PRI_NULL
-Amode: page(EFFECT_PAGE), c_decl(default_amode_deff), runner, PRI_AMODE
-Inspector: page(COMMON_PAGE), runner, PRI_DEBUGGER
+Amode: page(COMMON_PAGE), c_decl(system_amode_deff), runner, PRI_AMODE
 Scores: runner, PRI_SCORES
 Scores Important: PRI_SCORES_IMPORTANT
 Score Goal: page(EFFECT_PAGE), runner, PRI_SCORE_GOAL
@@ -89,14 +88,12 @@ Nonfatal Error: page(EFFECT_PAGE), PRI_DEBUGGER
 HSEntry: page(COMMON_PAGE), runner, PRI_HSENTRY
 HSCredits: page(COMMON_PAGE), runner, PRI_HSENTRY
 Match: page(COMMON_PAGE), runner, PRI_MATCH
-Buyin Offer: page(COMMON_PAGE), PRI_MATCH
-Onecoin Buyin: page(COMMON_PAGE), PRI_MATCH
 Locating Balls: page(EFFECT_PAGE), PRI_BALL_SEARCH
 Player Tournament Ready: page(COMMON_PAGE), PRI_STATUS
 System Reset: PRI_RESET, page(COMMON_PAGE)
-Coin Door Buttons: page(COMMON_PAGE), PRI_JACKPOT
+# Coin Door Buttons: page(COMMON_PAGE), PRI_JACKPOT
 Plunge Ball: page(EFFECT_PAGE), PRI_SCORE_GOAL
-Coin Door Power: page(COMMON_PAGE), PRI_JACKPOT
+# Coin Door Power: page(COMMON_PAGE), PRI_JACKPOT
 Ball Save: page(EFFECT_PAGE), c_decl(ball_save_deff), PRI_BALLSAVE
 Enter Initials: page(COMMON_PAGE), PRI_HSENTRY
 

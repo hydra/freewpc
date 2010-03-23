@@ -54,7 +54,9 @@ __fastram__ U8 flipper_overrides;
 void flipper_enable (void)
 {
 	pinio_enable_flippers ();
+#if (MACHINE_FLIPTRONIC == 1)
 	flippers_enabled = TRUE;
+#endif
 }
 
 
@@ -64,12 +66,12 @@ void flipper_enable (void)
 void flipper_disable (void)
 {
 	pinio_disable_flippers ();
+#if (MACHINE_FLIPTRONIC == 1)
 	disable_interrupts ();
 	flippers_enabled = FALSE;
-#if (MACHINE_FLIPTRONIC == 1)
 	flipper_outputs = 0;
-#endif
 	enable_interrupts ();
+#endif
 }
 
 

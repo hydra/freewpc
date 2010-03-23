@@ -10,7 +10,7 @@ COMMON_BASIC_OBJS +=	common/amode.o
 COMMON_BASIC_OBJS +=	$(if $(CONFIG_PLAYABLE), common/ballsave.o)
 COMMON_BASIC_OBJS +=	common/coin.o
 COMMON_BASIC_OBJS +=	common/db.o
-COMMON_BASIC_OBJS +=	$(if $(CONFIG_DMD_STUB), common/dmd_stub.o)
+KERNEL_OBJS       += $(if $(CONFIG_DMD_STUB), common/dmd_stub.o)
 COMMON_BASIC_OBJS += $(if $(CONFIG_EBFLEX), common/ebflex.o)
 COMMON_BASIC_OBJS +=	common/event-audit.o
 COMMON_BASIC_OBJS +=	$(if $(CONFIG_PIC),,common/flipcode.o)
@@ -29,7 +29,7 @@ COMMON_BASIC_OBJS +=	$(if $(CONFIG_WPC), common/service.o)
 COMMON_BASIC_OBJS +=	common/start_button.o
 COMMON_BASIC_OBJS +=	$(if $(CONFIG_WPC), common/ticket.o)
 COMMON_BASIC_OBJS +=	common/tilt.o
-COMMON_BASIC_OBJS +=	$(if $(CONFIG_WHITESTAR),,common/tournament.o)
+COMMON_BASIC_OBJS +=	common/tournament.o
 COMMON_BASIC_OBJS +=	common/trough.o
 
 # The 'init' objects are only used during startup.
@@ -45,7 +45,7 @@ COMMON_SW_OBJS += common/highscore.o
 COMMON_SW_OBJS += common/knocker.o
 COMMON_SW_OBJS += $(if $(CONFIG_PLAYABLE), common/replay.o)
 COMMON_SW_OBJS += common/search.o
-COMMON_SW_OBJS += $(if $(CONFIG_WPC), common/status.o)
+COMMON_SW_OBJS += common/status.o
 COMMON_SW_OBJS += $(if $(CONFIG_PLAYABLE), common/special.o)
 
 COMMON_OBJS = $(COMMON_BASIC_OBJS) $(COMMON_SW_OBJS)

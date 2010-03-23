@@ -457,7 +457,11 @@ else
 $(eval $(call PAGE_ALLOC, 55, MACHINE2))
 $(eval $(call PAGE_ALLOC, 59, MACHINE))
 endif
+ifeq ($(CONFIG_PLATFORM_WPC), y)
 $(eval $(call PAGE_ALLOC, 55, TRANS))
+else
+$(eval $(call PAGE_ALLOC, 59, TRANS))
+endif
 $(eval $(call PAGE_ALLOC, 56, COMMON))
 $(eval $(call PAGE_ALLOC, 57, EFFECT))
 $(eval $(call PAGE_ALLOC, 57, DEFF))

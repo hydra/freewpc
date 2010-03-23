@@ -180,6 +180,7 @@ void bmp_draw (U8 x, U8 y, U16 id)
 	page_pop ();
 }
 
+#endif /* IMAGEMAP_PAGE */
 
 CALLSET_ENTRY (frame, init)
 {
@@ -196,6 +197,4 @@ CALLSET_ENTRY (frame, init)
 	fread (IMAGEMAP_BASE, sizeof (U8), 262144, fp);
 #endif
 }
-
-#endif /* IMAGEMAP_PAGE */
 

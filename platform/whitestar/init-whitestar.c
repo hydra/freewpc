@@ -66,3 +66,9 @@ void platform_init (void)
 	pinio_set_bank (PINIO_BANK_ROM, MACHINE_PAGE);
 }
 
+
+CALLSET_ENTRY (whitestart, amode_start)
+{
+	lamp_all_on ();
+}
+
