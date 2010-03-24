@@ -44,6 +44,7 @@ initialized during startup before debug messages can be written.
 See db_init(). */
 void (*db_puts) (const char *s);
 
+#ifdef CONFIG_PLATFORM_WPC
 
 /** Writes a constant string to the ORKIN debugger port */
 void db_puts_orkin (const char *s)
@@ -62,3 +63,4 @@ void db_puts_parallel (const char *s)
 		pinio_parport_write (c);
 }
 
+#endif

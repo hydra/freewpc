@@ -34,6 +34,19 @@ U8 readb (IOPTR addr)
 	return 0;
 }
 
+void linux_shutdown (U8 error_code)
+{
+	exit (error_code);
+}
+
+void platform_init (void)
+{
+}
+
+void linux_init (void)
+{
+}
+
 int main (int argc, char *argv[])
 {
 	in_test = FALSE;

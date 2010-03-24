@@ -157,6 +157,9 @@ void dmd_new_rtt (void)
  */
 void dmd_init (void)
 {
+#ifdef CONFIG_DMD_STUB
+	dmd_stub_init ();
+#endif
 	//dmd_rtt = dmd_rtt0;
 	dmd_rtt = dmd_new_rtt;
 	dmd_phase_ptr = dmd_phase_table;

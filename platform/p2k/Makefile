@@ -7,7 +7,7 @@ NATIVE_OBJS :=
 PLATFORM := p2k
 CPU := native
 CONFIG_PTH := y
-CONFIG_CURSES := y
+# CONFIG_CURSES := y
 CONFIG_SOFT_REALTIME := y
 include cpu/$(CPU)/Makefile
 

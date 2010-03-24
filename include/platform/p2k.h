@@ -281,6 +281,11 @@ extern inline U8 pinio_read_sound (void)
 	return 0xFF;
 }
 
+extern inline U8 pinio_read_locale (void)
+{
+	return 0;
+}
+
 #define pinio_nvram_unlock()
 #define pinio_nvram_lock()
 

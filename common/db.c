@@ -254,6 +254,7 @@ void db_init (void)
 	bpt_mem_addr = 0;
 	bpt_debounce_timer = 0x1C00;
 
+#ifdef CONFIG_PLATFORM_WPC
 	/* Signal the debugger that the system has just reset. */
 	if (wpc_debug_read_ready ())
 	{
@@ -264,6 +265,9 @@ void db_init (void)
 	{
 		db_puts = db_puts_parallel;
 	}
+#else
+	/* TODO */
+#endif
 
 	/* Announce myself to the world. */
 	dbprintf ("FreeWPC\n");

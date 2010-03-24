@@ -3454,6 +3454,8 @@ struct menu lamp_row_col_test_item = {
 
 /***************** DIP Switch Test **********************/
 
+#ifdef CONFIG_PLATFORM_WPC
+
 void dipsw_test_draw (void)
 {
 	U8 sw;
@@ -3515,6 +3517,8 @@ struct menu dipsw_test_item = {
 	.flags = M_ITEM,
 	.var = { .subwindow = { &dipsw_test_window, NULL } },
 };
+
+#endif
 
 /*************** Empty Balls Test ********************/
 
@@ -3682,7 +3686,9 @@ struct menu *test_menu_items[] = {
 #endif
 	/* TODO : ordered_lamp_test_item */
 	&lamp_row_col_test_item,
+#ifdef CONFIG_PLATFORM_WPC
 	&dipsw_test_item,
+#endif
 #ifdef MACHINE_TEST_MENU_ITEMS
 	MACHINE_TEST_MENU_ITEMS
 #endif

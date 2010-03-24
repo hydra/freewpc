@@ -45,7 +45,7 @@ U8 linux_irq_multiplier;
 
 #define MAX_TASKS (NUM_TASKS)
 
-#ifdef CURSES	
+#ifdef CONFIG_UI	
 extern void ui_write_task (int, task_gid_t);
 #endif
 
@@ -119,7 +119,7 @@ task_pid_t task_create_gid (task_gid_t gid, task_function_t fn)
 			task_data_table[i].duration = TASK_DURATION_INF;
 			task_data_table[i].arg.u16 = 0;
 			task_data_table[i].duration = TASK_DURATION_BALL;
-#ifdef CURSES	
+#ifdef CONFIG_UI	
 			ui_write_task (i, gid);
 #endif
 			return (pid);
@@ -185,7 +185,7 @@ void task_exit (void)
 		if (task_data_table[i].pid == task_getpid ())
 		{
 			task_data_table[i].pid = 0;
-#ifdef CURSES	
+#ifdef CONFIG_UI	
 			ui_write_task (i, 0);
 #endif
 			for (;;)
@@ -237,7 +237,7 @@ void task_kill_pid (task_pid_t tp)
 		if (task_data_table[i].pid == tp)
 		{
 			task_data_table[i].pid = 0;
-#ifdef CURSES	
+#ifdef CONFIG_UI	
 			ui_write_task (i, 0);
 #endif
 			if (tp != 0)

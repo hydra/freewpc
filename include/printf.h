@@ -84,7 +84,9 @@ do { \
 } while (0)
 
 
-#ifdef DEBUGGER
+#if defined(CONFIG_PLATFORM_PROC) || defined(CONFIG_PLATFORM_P2K)
+#define dbprintf(format, rest...) printf (format, ## rest)
+#elif defined(DEBUGGER)
 #define dbprintf(format, rest...) \
 	do { \
 		sprintf (format, ## rest ); \
