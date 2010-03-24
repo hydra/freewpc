@@ -45,7 +45,8 @@ void do_sprintf_hex_byte () {}
 void log_event1 (U16 module_event, U8 arg) {}
 #endif
 
-U8 ws_page_led_io;
+__fastram__ U8 ws_page_led_io;
+
 
 /**
  * Initialize the Whitestar platform.
