@@ -84,7 +84,12 @@ U8 bit_matrix[BITS_TO_BYTES (MAX_FLAGS)];
 
 U8 global_bits[BITS_TO_BYTES (MAX_GLOBAL_FLAGS)];
 
-__fastram__ U8 lamp_strobe_mask;
+#ifdef CONFIG_LAMP_STROBE16
+typedef U16 lamp_strobe_t;
+#else
+typedef U8 lamp_strobe_t;
+#endif
+__fastram__ lamp_strobe_t lamp_strobe_mask;
 
 __fastram__ U8 lamp_strobe_column;
 

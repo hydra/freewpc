@@ -51,7 +51,7 @@ WS_LED_MASK        = 0x80
 .endm
 .macro task_restore_bank
 	ldb	*_ws_page_led_io
-	andb	#0x7F
+	andb	#0x80
 	orb	ROMPAGE_SAVE_OFF,x     ; 5 cycles
 	stb	*_ws_page_led_io
 	stb	WS_PAGE_LED            ; 5 cycles

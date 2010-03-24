@@ -177,7 +177,7 @@ extern inline U8 pinio_get_bank (U8 bankno)
 	switch (bankno)
 	{
 		case PINIO_BANK_ROM:
-			return readb (WS_PAGE_LED) & WS_PAGE_MASK;
+			return ws_page_led_io & WS_PAGE_MASK;
 		default:
 			return 0;
 	}
@@ -237,7 +237,10 @@ extern inline void wpc_write_ticket (U8 val)
 /* Lamps                                    */
 /********************************************/
 
-extern inline void pinio_write_lamp_strobe (U8 val)
+#define CONFIG_LAMP_STROBE16
+#define CONFIG_LAMP_ROW8
+
+extern inline void pinio_write_lamp_strobe (U16 val)
 {
 	writew (WS_LAMP_COLUMN_STROBE, val);
 }

@@ -39,6 +39,9 @@ __nvram__ U8 freewpc_accepted[3];
 
 extern __common__ void opto_check (void);
 
+#ifndef CONFIG_PLATFORM_WPC
+#define CONFIG_NO_ACCEPT
+#endif
 
 /**
  * Wait for a button to be pressed and released.
