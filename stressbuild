@@ -6,7 +6,7 @@
 typeset -i count
 typeset -i mincount
 
-machines="funhouse t2 tz wcs afm corvette tester tspp p2ktest"
+machines="funhouse t2 tz wcs afm corvette tester"
 native_options="n y"
 gcc_options="4.3.4"
 debugger_options="n y"
@@ -36,6 +36,7 @@ case $option in
 esac
 done
 
+# Test WPC machines (lots of options)
 count=0
 rm -f stressbuild.log
 for native in $native_options; do
@@ -83,5 +84,23 @@ for native in $native_options; do
 		done
 	done
 done
+
+# Test non-WPC machines (less options)
+for mach in tspp p2ktest proctest; do
+	count=$(($count + 1))
+	if [ "$count" -lt "$mincount" ]; then continue; fi
+	echo "Begin: ($count) MACHINE=$mach" | tee -a stressbuild.log
+	export GCC_VERSION=4.3.4
+	make -j3 DOTCONFIG="" MACHINE=$mach clean 2>&1 > /dev/null
+	make -j3 DOTCONFIG="" MACHINE=$mach default_target 2>&1 > /dev/null
+	rc="$?"
+	echo "End: ($count) MACHINE=$mach" | tee -a stressbuild.log
+	echo "Exit code: ($count) $rc" | tee -a stressbuild.log
+	echo "" | tee -a stressbuild.log
+	if [ "$rc" != "0" ]; then
+		exit $rc
+	fi
+done
+
 echo "All done".
 exit 0

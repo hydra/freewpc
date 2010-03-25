@@ -42,13 +42,9 @@ void realtime_loop (void)
 	for (;;)
 	{
 		/* Sleep before the next iteration of the loop */
-		//task_sleep ((RT_FREQ * TIME_16MS) / 16);
 		int usecs_asked = 1000 - usecs_elapsed - 100;
-		if ((usecs_asked < 0) || (usecs_asked > 1000000))
-		{
-			dbprintf (SLC_DEBUG, "warning: realtime sleep for %d ticks\n", usecs_asked);
-		}
-		pth_nap (pth_time (0, usecs_asked));
+		if (usecs_asked > 0)
+			pth_nap (pth_time (0, usecs_asked));
 
 		/* Now see how long we actually slept.  This takes into account the
 		actual sleep time, which is typically longer on a multitasking OS,

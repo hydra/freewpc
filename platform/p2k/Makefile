@@ -27,7 +27,7 @@ CFLAGS += -I$(D) -DCONFIG_PLATFORM_P2K -DPAGE=0
 
 # Additional object files to be linked into the kernel region
 NATIVE_OBJS += $(P)/main.o
-NATIVE_OBJS += $(D)/task.o
+# NATIVE_OBJS += $(D)/task.o
 NATIVE_OBJS += $(D)/bcd_string.o
 
 #
