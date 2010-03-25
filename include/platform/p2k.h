@@ -25,10 +25,10 @@
 #undef MACHINE_DMD
 #define MACHINE_DMD 1
 /* TODO */
-#define WPC_DMD_LOW_PAGE 0
-#define WPC_DMD_HIGH_PAGE 1
-#define WPC_DMD_FIRQ_ROW_VALUE 2
-#define WPC_DMD_ACTIVE_PAGE 3
+#define WPC_DMD_LOW_PAGE 0xF0
+#define WPC_DMD_HIGH_PAGE 0xF1
+#define WPC_DMD_FIRQ_ROW_VALUE 0xF2
+#define WPC_DMD_ACTIVE_PAGE 0xF3
 extern U8 *pinio_dmd_low_page, *pinio_dmd_high_page;
 
 /*
@@ -102,36 +102,8 @@ extern U8 *pinio_dmd_low_page, *pinio_dmd_high_page;
 
 extern U8 p2k_write_cache[];
 
-
-/**
- * Write to a P2K output register.
- */
-extern inline void p2k_write (U8 reg, U8 val)
-{
-	p2k_write_cache[reg] = val;
-	writeb (LPT_DATA, reg);
-	writeb (LPT_CONTROL, LPT_REG_LATCH);
-	writeb (LPT_CONTROL, 0);
-	writeb (LPT_DATA, val);
-	writeb (LPT_CONTROL, LPT_REG_OE);
-	writeb (LPT_CONTROL, 0);
-}
-
-
-/**
- * Read from a P2K input register.
- */
-extern inline U8 p2k_read (U8 reg)
-{
-	U8 val;
-	writeb (LPT_DATA, reg);
-	writeb (LPT_CONTROL, LPT_REG_LATCH);
-	writeb (LPT_CONTROL, 0);
-	writeb (LPT_CONTROL, 0x29);
-	val = readb (LPT_DATA);
-	writeb (LPT_CONTROL, 0);
-	return val;
-}
+void p2k_write (U8 reg, U8 val);
+U8 p2k_read (U8 reg);
 
 
 /**
@@ -229,17 +201,17 @@ extern inline void pinio_write_solenoid_set (U8 set, U8 val)
 
 extern inline void pinio_write_switch_column (U8 val)
 {
-	writeb (P2K_SWITCH_COL_OUTPUT, 1 << val);
+	p2k_write (P2K_SWITCH_COL_OUTPUT, 1 << val);
 }
 
 extern inline U8 pinio_read_switch_rows (void)
 {
-	return readb (P2K_SWITCH_ROW_INPUT);
+	return p2k_read (P2K_SWITCH_ROW_INPUT);
 }
 
 extern inline U8 pinio_read_dedicated_switches (void)
 {
-	return readb (P2K_EOS_DIR_INPUT);
+	return p2k_read (P2K_EOS_DIR_INPUT);
 }
 
 extern inline void pinio_enable_flippers (void)

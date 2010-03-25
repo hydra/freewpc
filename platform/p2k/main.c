@@ -25,14 +25,48 @@ U8 p2k_write_cache[0x20];
 
 void writeb (IOPTR addr, U8 val)
 {
-	dbprintf ("IO write(%X,%02X)\n", addr, val);
+	//dbprintf ("IO write(%X,%02X)\n", addr, val);
 }
 
 U8 readb (IOPTR addr)
 {
-	dbprintf ("IO read(%X)\n", addr);
+	//dbprintf ("IO read(%X)\n", addr);
 	return 0;
 }
+
+
+/**
+ * Write to a P2K output register.
+ */
+void p2k_write (U8 reg, U8 val)
+{
+	dbprintf ("p2k_write: [%d] <- %02X\n", reg, val);
+	p2k_write_cache[reg] = val;
+	writeb (LPT_DATA, reg);
+	writeb (LPT_CONTROL, LPT_REG_LATCH);
+	writeb (LPT_CONTROL, 0);
+	writeb (LPT_DATA, val);
+	writeb (LPT_CONTROL, LPT_REG_OE);
+	writeb (LPT_CONTROL, 0);
+}
+
+
+/**
+ * Read from a P2K input register.
+ */
+U8 p2k_read (U8 reg)
+{
+	U8 val;
+	writeb (LPT_DATA, reg);
+	writeb (LPT_CONTROL, LPT_REG_LATCH);
+	writeb (LPT_CONTROL, 0);
+	writeb (LPT_CONTROL, 0x29);
+	val = readb (LPT_DATA);
+	writeb (LPT_CONTROL, 0);
+	dbprintf ("p2k_read: [%d] -> %02X\n", reg, val);
+	return val;
+}
+
 
 void linux_shutdown (U8 error_code)
 {

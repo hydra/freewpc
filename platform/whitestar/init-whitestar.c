@@ -70,8 +70,19 @@ void platform_init (void)
 }
 
 
-CALLSET_ENTRY (whitestar, init_complete)
+void ws_lamp_test (void)
 {
-	lamp_all_on ();
+	for (;;)
+	{
+		lamp_all_on ();
+		task_sleep (TIME_100MS);
+		lamp_all_off ();
+		task_sleep (TIME_100MS);
+	}
+}
+
+CALLSET_ENTRY (whitestar, amode_start)
+{
+	task_create_anon (ws_lamp_test);
 }
 

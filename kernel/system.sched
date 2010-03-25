@@ -81,6 +81,9 @@ free_timer_rtt        32		94c
 # Update the segmented displays, if CONFIG_SEG is defined.
 seg_rtt?CONFIG_SEG    1       50c # guess?
 
+# Update the remote display on Whitestar
+dmd_ws_rtt?CONFIG_PLATFORM_WHITESTAR  2   20c
+
 # Common processing required at the end of every IRQ
 ### process_check_rtt     1       50c
 !do_irq_end           1       0c

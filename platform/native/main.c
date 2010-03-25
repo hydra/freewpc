@@ -41,6 +41,7 @@
 #include "/usr/include/sys/time.h"
 #include <simulation.h>
 
+extern __noreturn__ void freewpc_init (void);
 extern void do_swi3 (void);
 extern void do_swi2 (void);
 extern void do_firq (void);
@@ -747,10 +748,6 @@ CALLSET_ENTRY (native, realtime_tick)
 	/* Update all of the simulator modules that need periodic processing */
 	sim_time_step ();
 
-	/* Simulate an IRQ every 1ms */
-	if (linux_irq_enable)
-		tick_driver ();
-
 	/* Simulate an FIRQ every 8ms */
 	if (linux_firq_enable)
 	{
@@ -1054,7 +1051,6 @@ void linux_init (void)
 
 	/* This is done here, because the task subsystem isn't ready
 	inside main () */
-	task_create_gid_while (GID_LINUX_REALTIME, realtime_loop, TASK_DURATION_INF);
 	task_create_gid_while (GID_LINUX_INTERFACE, linux_interface_thread, TASK_DURATION_INF);
 
 	/* Initial the trough to contain all the balls.  By default,

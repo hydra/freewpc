@@ -23,6 +23,7 @@ $(eval $(call have,CONFIG_REMOTEIO))
 KERNEL_HW_OBJS += $(P)/init-proc.o
 KERNEL_HW_OBJS += $(P)/serial.o
 KERNEL_HW_OBJS += $(P)/procdmd.o
+NATIVE_OBJS += $(N)/bcd_string.o
 
 # Additional defines
 CFLAGS += -I$(P)

@@ -21,13 +21,14 @@ $(eval $(call have,CONFIG_ANIMATION))
 
 # Platform dependent files
 #KERNEL_HW_OBJS += $(P)/interrupt.o
-#KERNEL_HW_OBJS += $(P)/init-wpc.o
 
 # Additional defines
 CFLAGS += -I$(D) -DCONFIG_PLATFORM_P2K -DPAGE=0
 
 # Additional object files to be linked into the kernel region
-NATIVE_OBJS += $(P)/main.o $(D)/task.o $(D)/bcd_string.o
+NATIVE_OBJS += $(P)/main.o
+NATIVE_OBJS += $(D)/task.o
+NATIVE_OBJS += $(D)/bcd_string.o
 
 #
 #NATIVE_OBJS += $(D)/switch.o $(D)/section.o \

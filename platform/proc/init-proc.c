@@ -48,7 +48,7 @@ void platform_main_loop (void)
 		{
 			sys_time++;
 			if (n & 1)
-				VOIDCALL (lamp_rtt_3);
+				VOIDCALL (lamp_rtt);
 			tick_driver ();
 		}
 		db_periodic ();
@@ -57,6 +57,15 @@ void platform_main_loop (void)
 			do_periodic ();
 		}
 	}
+}
+
+void writeb (IOPTR addr, U8 val)
+{
+}
+
+U8 readb (IOPTR addr)
+{
+	return 0;
 }
 
 

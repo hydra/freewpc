@@ -64,7 +64,6 @@
  */
 
 #include <freewpc.h>
-#include <coin.h>
 
 __fastram__ U8 lamp_matrix[NUM_LAMP_COLS];
 
@@ -92,8 +91,6 @@ typedef U8 lamp_strobe_t;
 __fastram__ lamp_strobe_t lamp_strobe_mask;
 
 __fastram__ U8 lamp_strobe_column;
-
-#define NUM_LAMP_RTTS 4
 
 
 /** Initialize the lamp subsystem at startup. */
@@ -197,7 +194,11 @@ void lamp_rtt (void)
 	Keep this together with the above so that lamp_strobe_mask
 	is already in a register. */
 	lamp_strobe_mask <<= 1;
+#ifdef CONFIG_PLATFORM_WHITESTAR
+	if (lamp_strobe_mask == 0x200UL)
+#else
 	if (lamp_strobe_mask == 0)
+#endif
 	{
 		/* All columns strobed : reset strobe */
 		lamp_strobe_mask++;

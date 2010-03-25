@@ -135,6 +135,11 @@ __noreturn__ void freewpc_init (void)
 	task_init ();
 	pinio_watchdog_reset ();
 
+#ifndef __m6809__
+	realtime_init ();
+	pinio_watchdog_reset ();
+#endif
+
 #ifdef CONFIG_NATIVE
 	linux_init ();
 #endif
@@ -174,7 +179,12 @@ __noreturn__ void freewpc_init (void)
 	system_reset ();
 
 	/* The system can run itself now, this task is done! */
+#ifdef CONFIG_PLATFORM_P2K
+	while (1)
+		task_sleep (TIME_33MS);
+#else
 	task_exit ();
+#endif
 }
 
 

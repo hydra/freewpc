@@ -82,10 +82,10 @@ AREA_DECL(nvram)
 #define WPC_DMD_ACTIVE_PAGE     0x0
 extern U8 *pinio_dmd_low_page, *pinio_dmd_high_page;
 
-#define WS_SOLA                 0x2000
-#define WS_SOLB                 0x2001
-#define WS_SOLC                 0x2002
-#define WS_FLASHERS             0x2003
+#define WS_SOLA                 0x2000   /* done */
+#define WS_SOLB                 0x2001   /* done */
+#define WS_SOLC                 0x2002   /* done */
+#define WS_FLASHERS             0x2003   /* done */
 #define WS_FLIP0                0x2004
 #define WS_FLIP1                0x2005
 #define WS_AUX_OUT              0x2006
@@ -96,10 +96,10 @@ extern U8 *pinio_dmd_low_page, *pinio_dmd_high_page;
 	#define WS_AUX_ESTB       0x40
 	#define WS_AUX_ASTB       0x80
 #define WS_AUX_IN               0x2007
-#define WS_LAMP_COLUMN_STROBE   0x2008
-#define WS_LAMP_ROW_OUTPUT      0x200A
+#define WS_LAMP_COLUMN_STROBE   0x2008   /* done */
+#define WS_LAMP_ROW_OUTPUT      0x200A   /* done */
 #define WS_AUX_CTRL             0x200B
-#define WS_SW_DEDICATED         0x3000
+#define WS_SW_DEDICATED         0x3000  /* done */
    #define WS_DED_LEFT       0x1
 	#define WS_DED_LEFT_EOS   0x2
 	#define WS_DED_RIGHT      0x4
@@ -108,18 +108,19 @@ extern U8 *pinio_dmd_low_page, *pinio_dmd_high_page;
 	#define WS_SERVICE_GREEN  0x40
 	#define WS_TEST_BLACK     0x80
 #define WS_SW_DIP               0x3100
-#define WS_PAGE_LED             0x3200
+#define WS_PAGE_LED             0x3200  /* done */
    #define WS_PAGE_MASK      0x3F
    #define WS_LED_MASK       0x80
-#define WS_SW_COLUMN_STROBE     0x3300
-#define WS_SW_ROW_INPUT         0x3400
-#define WS_PLASMA_IN            0x3500
-#define WS_PLASMA_OUT           0x3600
+#define WS_SW_COLUMN_STROBE     0x3300  /* done */
+#define WS_SW_ROW_INPUT         0x3400  /* done */
+#define WS_PLASMA_STROBE        0x3500
+#define WS_PLASMA_DATA          0x3600
 #define WS_PLASMA_RESET         0x3601
 #define WS_PLASMA_STATUS        0x3700
-   #define WS_SOUND_BUSY     0x1
-	#define WS_DMD_BUSY       0x80
+	#define WS_PLASMA_BUSY      0x80
+	#define WS_PLASMA_TX_READY  0x10  /* 1=ok to send */
 #define WS_SOUND_OUT            0x3800
+   #define WS_SOUND_BUSY       0x1
 
 extern U8 ws_page_led_io;
 
@@ -214,7 +215,7 @@ extern inline void pinio_disable_flippers (void)
 
 extern inline U8 wpc_get_jumpers (void)
 {
-	return 0;
+	return ~readb (WS_SW_DIP);
 }
 
 extern inline U8 pinio_read_locale (void)
@@ -239,10 +240,12 @@ extern inline void wpc_write_ticket (U8 val)
 
 #define CONFIG_LAMP_STROBE16
 #define CONFIG_LAMP_ROW8
+#define PINIO_NUM_LAMPS 80
 
 extern inline void pinio_write_lamp_strobe (U16 val)
 {
-	writew (WS_LAMP_COLUMN_STROBE, val);
+	writeb (WS_LAMP_COLUMN_STROBE, val & 0xFF);
+	writeb (WS_LAMP_COLUMN_STROBE+1, val >> 8);
 }
 
 extern inline void pinio_write_lamp_data (U8 val)
@@ -309,16 +312,17 @@ extern inline U8 pinio_read_sound (void)
 
 extern inline void pinio_write_switch_column (U8 val)
 {
+	writeb (WS_SW_COLUMN_STROBE, val);
 }
 
 extern inline U8 pinio_read_switch_rows (void)
 {
-	return 0;
+	return ~readb (WS_SW_ROW_INPUT);
 }
 
 extern inline U8 pinio_read_dedicated_switches (void)
 {
-	return 0;
+	return ~readb (WS_SW_DEDICATED);
 }
 
 

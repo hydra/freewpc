@@ -44,6 +44,10 @@ void realtime_loop (void)
 		/* Sleep before the next iteration of the loop */
 		//task_sleep ((RT_FREQ * TIME_16MS) / 16);
 		int usecs_asked = 1000 - usecs_elapsed - 100;
+		if ((usecs_asked < 0) || (usecs_asked > 1000000))
+		{
+			dbprintf (SLC_DEBUG, "warning: realtime sleep for %d ticks\n", usecs_asked);
+		}
 		pth_nap (pth_time (0, usecs_asked));
 
 		/* Now see how long we actually slept.  This takes into account the
@@ -63,7 +67,10 @@ void realtime_loop (void)
 
 		/* Invoke realtime tick at least once */
 		realtime_counter++;
+		if (linux_irq_enable)
+			tick_driver ();
 		callset_invoke (realtime_tick);
+
 		usecs_elapsed -= usecs_asked;
 
 		/* If any remaining millseconds occurred during the wait, handle them */
@@ -80,10 +87,11 @@ void realtime_loop (void)
 }
 
 
-CALLSET_ENTRY (native_realtime, init)
+CALLSET_ENTRY (realtime, init)
 {
 	realtime_counter = 0;
 	linux_irq_enable = linux_firq_enable = TRUE;
 	linux_irq_pending = 0;
+	task_create_gid_while (GID_LINUX_REALTIME, realtime_loop, TASK_DURATION_INF);
 }
 
