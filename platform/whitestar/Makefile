@@ -11,12 +11,13 @@ include cpu/$(CPU)/Makefile
 # Subplatform support
 $(eval $(call have,CONFIG_WHITESTAR))
 $(eval $(call have,CONFIG_PLATFORM_WHITESTAR))
+$(eval $(call have,CONFIG_MMIO))
 $(eval $(call have,CONFIG_PERIODIC_FIRQ))
 $(eval $(call have,CONFIG_PARANOID))
 $(eval $(call have,CONFIG_REMOTE_DISPLAY))
 $(eval $(call have,CONFIG_REMOTE_SOUND))
+$(eval $(call have,CONFIG_GI))
 $(eval $(call nohave,CONFIG_AC))
-$(eval $(call nohave,CONFIG_GI))
 
 $(eval $(call have,MACHINE_DMD))
 $(eval $(call have,CONFIG_DMD_STUB))
@@ -44,7 +45,3 @@ KERNEL_ASM_OBJS += $(PW)/start.o
 # BOTTOM_BANK varies according to the machine-specific ROM usage.
 $(P)/start.o : EXTRA_ASFLAGS += -DTOP_BANK=61 -DBOTTOM_BANK=58
 
-# TODO : as long as CONFIG_BARE is defined, we need this!
-ifeq ($(CONFIG_BARE),y)
-KERNEL_OBJS += $(KERNEL_BASIC_OBJS) $(KERNEL_SW_OBJS) $(KERNEL_HW_OBJS)
-endif

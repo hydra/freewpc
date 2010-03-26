@@ -52,9 +52,9 @@ void dmd_ws_rtt (void)
 void plasma_send (void)
 {
 	disable_interrupts ();
-	plasma_queue_insert (&plasma_msg.len);
-	plasma_queue_insert (&plasma_msg.options);
-	plasma_queue_insert (&plasma_msg.cmd);
+	plasma_queue_insert (plasma_msg.len);
+	plasma_queue_insert (plasma_msg.options);
+	plasma_queue_insert (plasma_msg.cmd);
 	enable_interrupts ();
 }
 

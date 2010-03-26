@@ -20,33 +20,9 @@
 
 #include <freewpc.h>
 
-#ifdef CONFIG_BARE
-__fastram__ U16 sys_time;
-U16 sched_test_count;
-void fatal (U8 err_code) {}
-
-void freewpc_init (void)
-{
-	VOIDCALL (platform_init);
-	task_init ();
-	for (;;)
-	{
-		pinio_write_lamp_strobe (0x1);
-		pinio_write_lamp_data (0xFF);
-	}
-}
-
-__local__ U8 tmp_local;
-__permanent__ U8 tmp_permanent;
-__nvram__ U8 tmp_nvram;
-void dbprintf1 (void) {}
-char sprintf_buffer[PRINTF_BUFFER_SIZE];
-void do_sprintf_hex_byte () {}
-void log_event1 (U16 module_event, U8 arg) {}
-#endif
-
 __fastram__ U8 ws_page_led_io;
 
+U8 ws_aux_ctrl_io;
 
 /**
  * Initialize the Whitestar platform.
@@ -67,6 +43,8 @@ void platform_init (void)
 	 * page of ROM adjacent to the system area is mapped.
 	 * This is the default location for machine-specific files. */
 	pinio_set_bank (PINIO_BANK_ROM, MACHINE_PAGE);
+
+	writeb (WS_AUX_CTRL, (ws_aux_ctrl_io = 0xFE));
 }
 
 
@@ -78,6 +56,13 @@ void ws_lamp_test (void)
 		task_sleep (TIME_100MS);
 		lamp_all_off ();
 		task_sleep (TIME_100MS);
+
+		gi_enable (0x1);
+		task_sleep (TIME_100MS);
+		gi_disable (0x1);
+		task_sleep (TIME_100MS);
+
+		sol_request_async (0);
 	}
 }
 

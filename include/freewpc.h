@@ -236,7 +236,7 @@ __noreturn__ void freewpc_init (void);
 #include <generic.h>
 
 /* Uncommon software modules - TODO : shouldn't automatically include */
-#ifdef CONFIG_PLATFORM_WPC
+#ifdef DEBUGGER
 #include <sys/debug.h>
 #else
 #define db_paused 0

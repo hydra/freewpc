@@ -245,20 +245,6 @@ extern inline U8 pinio_read_locale (void)
 }
 
 
-/* Read the current ticket switches. */
-extern inline U8 pinio_read_ticket (void)
-{
-	return 0;
-}
-
-
-/* Write the ticket output drivers. */
-extern inline void pinio_write_ticket (U8 val)
-{
-}
-
-
-
 /********************************************/
 /* Sound                                    */
 /********************************************/

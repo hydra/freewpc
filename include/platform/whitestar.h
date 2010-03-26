@@ -83,16 +83,17 @@ AREA_DECL(nvram)
 #define WS_FLIP0                0x2004
 #define WS_FLIP1                0x2005
 #define WS_AUX_OUT              0x2006
-   #define WS_AUX_GI_RELAY   0x1
+#define WS_AUX_IN               0x2007
+#define WS_LAMP_COLUMN_STROBE   0x2008   /* done */
+#define WS_LAMP_ROW_OUTPUT      0x200A   /* done */
+#define WS_AUX_CTRL             0x200B
+   #define WS_AUX_GI         0x1   /* 0=GI on, 1=GI off */
+	#define WS_AUX_LEFT_POST_SAVE 0x2
 	#define WS_AUX_BSTB       0x8
 	#define WS_AUX_CSTB       0x10
 	#define WS_AUX_DSTB       0x20
 	#define WS_AUX_ESTB       0x40
 	#define WS_AUX_ASTB       0x80
-#define WS_AUX_IN               0x2007
-#define WS_LAMP_COLUMN_STROBE   0x2008   /* done */
-#define WS_LAMP_ROW_OUTPUT      0x200A   /* done */
-#define WS_AUX_CTRL             0x200B
 #define WS_SW_DEDICATED         0x3000  /* done */
    #define WS_DED_LEFT       0x1
 	#define WS_DED_LEFT_EOS   0x2
@@ -117,6 +118,18 @@ AREA_DECL(nvram)
    #define WS_SOUND_BUSY       0x1
 
 extern U8 ws_page_led_io;
+extern U8 ws_aux_ctrl_io;
+
+
+extern inline void ws_aux_strobe (const U8 bits)
+{
+	register U8 reg = ws_aux_ctrl_io;
+	reg &= ~bits;
+	writeb (WS_AUX_CTRL, reg);
+	reg |= bits;
+	writeb (WS_AUX_CTRL, reg);
+}
+
 
 /********************************************/
 /* LED                                      */
@@ -218,16 +231,6 @@ extern inline U8 pinio_read_locale (void)
 }
 
 
-extern inline U8 wpc_read_ticket (void)
-{
-	return 0;
-}
-
-
-extern inline void wpc_write_ticket (U8 val)
-{
-}
-
 /********************************************/
 /* Lamps                                    */
 /********************************************/
@@ -281,6 +284,7 @@ extern inline void pinio_reset_sound (void)
 
 extern inline void pinio_write_sound (U8 val)
 {
+	writeb (WS_SOUND_OUT, val);
 }
 
 extern inline bool pinio_sound_ready_p (void)
@@ -324,8 +328,13 @@ extern inline U8 pinio_read_dedicated_switches (void)
 /* Triacs                                   */
 /********************************************/
 
+#define PINIO_GI_STRINGS 0x1
+
 extern inline void pinio_write_gi (U8 val)
 {
+	val = ~val;
+	ws_aux_ctrl_io = 0xFE | (val & 0x1);
+	writeb (WS_AUX_CTRL, ws_aux_ctrl_io);
 }
 
 /********************************************/

@@ -1,7 +1,6 @@
 
 # Root directory for the platform files
 P := platform/wpcsound
-CONFIG_BARE := y
 
 # Common 6809 configuration
 CPU := m6809
