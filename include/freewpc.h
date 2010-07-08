@@ -240,7 +240,6 @@ __noreturn__ void freewpc_init (void);
 #include <sys/debug.h>
 #else
 #define db_paused 0
-#define db_puts puts
 #endif
 #include <test.h> /* this one HAS to be here for now, for callset.c */
 
