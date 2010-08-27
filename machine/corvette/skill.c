@@ -26,6 +26,7 @@
  *       There can be up to about 1 second before the state is reflected by the lamp.
  *       Use something like: lamplist_rotate_previous (LAMPLIST_INLANES, lamp_matrix) instead?
  */
+#ifdef SKILL_ENABLED
 #include <freewpc.h>
 
 U8 current_rollover; // there are 3
@@ -167,3 +168,4 @@ CALLSET_ENTRY (skill, serve_ball) {
 	skillshot_enable();
 }
 
+#endif

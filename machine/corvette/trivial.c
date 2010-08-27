@@ -18,6 +18,7 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#ifdef TRIVIAL_ENABLED
 #include <freewpc.h>
 
 CALLSET_ENTRY (trivial, any_jet)
@@ -88,3 +89,4 @@ CALLSET_ENTRY (trivial, end_ball, start_ball)
 CALLSET_ENTRY (trivial, start_player)
 {
 }
+#endif

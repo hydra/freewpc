@@ -212,7 +212,7 @@ F8: U.L. Flip Hold, duty(SOL_DUTY_100), time(TIME_100MS)
 4: Backbox Title
 
 [tests]
-corvette_zr1:
+#corvette_zr1:
 #corvette_racetrack:
 
 #############################################################
@@ -294,12 +294,12 @@ ZR1 Solenoids Powered:
 
 [deffs]
 
-ZR-1 Ball Locked: page(MACHINE_PAGE), PRI_GAME_QUICK4
-ZR-1 MB Lit: page(MACHINE_PAGE), PRI_GAME_QUICK5
-ZR-1 MB Start: page(MACHINE_PAGE), PRI_GAME_QUICK6, D_PAUSE
-ZR-1 MB Running: runner, page(MACHINE_PAGE), PRI_GAME_MODE5
-ZR-1 MB HP JP: page(MACHINE_PAGE), PRI_GAME_QUICK7, D_SCORE
-ZR-1 MB TRQ JP: page(MACHINE_PAGE), PRI_GAME_QUICK7, D_SCORE 
+#ZR-1 Ball Locked: page(MACHINE_PAGE), PRI_GAME_QUICK4
+#ZR-1 MB Lit: page(MACHINE_PAGE), PRI_GAME_QUICK5
+#ZR-1 MB Start: page(MACHINE_PAGE), PRI_GAME_QUICK6, D_PAUSE
+#ZR-1 MB Running: runner, page(MACHINE_PAGE), PRI_GAME_MODE5
+#ZR-1 MB HP JP: page(MACHINE_PAGE), PRI_GAME_QUICK7, D_SCORE
+#ZR-1 MB TRQ JP: page(MACHINE_PAGE), PRI_GAME_QUICK7, D_SCORE 
 
 Kickback Relit: page(MACHINE_PAGE), PRI_GAME_QUICK2
 Jet: page(MACHINE_PAGE), PRI_GAME_QUICK1, D_SCORE+D_RESTARTABLE

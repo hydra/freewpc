@@ -18,6 +18,7 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#ifdef SKILL_ENABLED
 #include <freewpc.h>
 
 void left_orbit_task (void)
@@ -116,3 +117,4 @@ CALLSET_ENTRY (shot, sw_inner_loop_entry)
 	sound_start (ST_SAMPLE, SND_ENGINE_REV_05, SL_2S, PRI_GAME_QUICK5);
 	callset_invoke (inner_loop_shot);
 }
+#endif

@@ -23,7 +23,7 @@
  * - Calibrate the left right and center positions.
  * - Shake engine.
  */
-
+#ifdef ZR1_TEST_ENABLED
 #include <freewpc.h>
 #include <window.h>
 #include <test.h>
@@ -308,3 +308,4 @@ struct menu corvette_zr1_test_item = {
 	.flags = M_ITEM,
 	.var = { .subwindow = { &corvette_zr1_test_window, NULL } },
 };
+#endif

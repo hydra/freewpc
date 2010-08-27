@@ -31,6 +31,7 @@
  *
  */
 
+#ifdef ZR1_MULTIBALL_ENABLED
 #include <freewpc.h>
 
 __local__ U8 lock_count;
@@ -313,3 +314,4 @@ CALLSET_ENTRY (zr_1_multiball, start_ball) {
 		lock_count = zr_1_ball_count;
 	}
 }
+#endif

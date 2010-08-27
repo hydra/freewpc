@@ -18,6 +18,7 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#ifdef SIMPLE_ENABLED
 #include <freewpc.h>
 #include <loop_gate.h>
 #include <zr_1_up_rev_gate.h>
@@ -50,3 +51,4 @@ CALLSET_ENTRY (simple, start_ball) {
 	flag_on (FLAG_ZR_1_UP_REV_GATE_OPENED);
 }
 
+#endif

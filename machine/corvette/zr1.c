@@ -23,6 +23,7 @@
  *
  * @TODO add ball search functionality (another state?)
  */
+#ifdef ZR1_ENABLED
 #include <freewpc.h>
 #include <diag.h>
 #include <corvette/zr1.h>
@@ -585,3 +586,4 @@ CALLSET_ENTRY (zr1, init_complete, amode_start) {
 
 	dbprintf ("zr1: init_complete/amode_start exit\n");
 }
+#endif
