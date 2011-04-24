@@ -26,6 +26,9 @@
 #include <freewpc.h>
 #include <coin.h>
 
+#define SCORE_DRAW_ALL 0
+
+
 /** Nonzero if the current score has changed and needs to be redrawn */
 bool score_update_needed;
 
@@ -98,7 +101,7 @@ const struct score_font_info
 {
 	/* The function to call to draw the string.  This determines
 	the justification */
-	void (*render) (void);
+	void (*render) (const char *);
 
 	/* The font to be used */
 	const font_t *font;
@@ -167,7 +170,12 @@ const U8 score_font_info_key[4][5][4] = {
 #endif
 
 
-/** Render the default score screen. */
+/**
+ * Render the default score screen.
+ * single_player indicates which player's score gets drawn.
+ * If nonzero, it means to draw only that player's score.
+ * If zero, it means to draw all scores.
+ */
 void scores_draw_current (U8 single_player)
 {
 	U8 p;
@@ -196,7 +204,7 @@ void scores_draw_current (U8 single_player)
 		DECL_FONTARGS (info->font, info->x, info->y, sprintf_buffer);
 
 		/* Start printing to the display */
-		info->render ();
+		info->render (sprintf_buffer);
 #else
 		seg_write_string (0, 0, sprintf_buffer);
 #endif
@@ -212,7 +220,7 @@ void scores_draw (void)
 		scores_draw_ball ();
 	else if (MACHINE_DMD)
 		scores_draw_credits ();
-	scores_draw_current (0);
+	scores_draw_current (SCORE_DRAW_ALL);
 }
 
 
@@ -229,11 +237,15 @@ void scores_important_deff (void)
 }
 
 
-/** The score screen display effect.  This function redraws the scores
+/** The normal score screen display effect.  This function redraws the scores
  * in the default manner when there are no other high priority effects
  * running. */
 void scores_deff (void)
 {
+	/* Some machines may want to run a background effect while
+	scores are shown (e.g. TZ's starfield, the swimming fish on Fish
+	Tales, etc.)  Give the effect a chance to initialize whenever
+	the main display effect starts. */
 	callset_invoke (score_deff_start);
 
 	/* This effect always runs, until it is preempted. */
@@ -251,14 +263,14 @@ void scores_deff (void)
 		dmd_map_overlay ();
 		dmd_clean_page_low ();
 		scores_draw_ball ();
-		scores_draw_current (0);
+		scores_draw_current (SCORE_DRAW_ALL);
 		dmd_copy_low_to_high ();
 		scores_draw_current (player_up);
 #else
 		seg_alloc ();
 		seg_erase ();
 		scores_draw_ball ();
-		scores_draw_current (0);
+		scores_draw_current (SCORE_DRAW_ALL);
 		seg_copy_low_to_high ();
 		scores_draw_current (player_up);
 		seg_show ();
@@ -279,7 +291,7 @@ void scores_deff (void)
 			else
 			{
 				dmd_alloc_low_clean ();
-				wpc_dmd_set_high_page (DMD_OVERLAY_PAGE+1);
+				pinio_dmd_window_set (PINIO_DMD_WINDOW_1, DMD_OVERLAY_PAGE+1);
 				dmd_copy_page (dmd_low_buffer, dmd_high_buffer);
 				dmd_show_low ();
 			}

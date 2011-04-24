@@ -65,8 +65,3 @@ GAME_PAGED_OBJS = sling.o kickback.o jets.o leffs.o deffs.o
 	#simple.o driver.o skill.o\
 	#trivial.o zr_1_multiball.o shots.o \
 
-SCHED_HEADERS += build/left_sling.h build/right_sling.h \
-	build/left_jet.h build/lower_jet.h build/upper_jet.h \
-	build/kickback_driver.h build/spinner.h build/loop_gate.h \
-	build/zr_1_up_rev_gate.h build/zr_1_low_rev_gate.h
-
