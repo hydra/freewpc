@@ -145,6 +145,8 @@ void zr1_mb_light_torque_jackpot (void)
 void zr1_mb_start_task( void )
 {
 	flag_off (FLAG_ZR1_MULTIBALL_LOCK_LIT);
+	flag_off (FLAG_DIVERTER_OPENED); // FIXME what about other modes that may have set this?
+	callset_invoke(device_update);
 
 	zr1_set_shake_speed(ZR1_SHAKE_SPEED_MEDIUM);
 	zr1_shake();
@@ -167,15 +169,17 @@ void zr1_mb_start_task( void )
 	zr1_mb_light_torque_jackpot ();
 	zr1_mb_light_horsepower_jackpot ();
 
+
+
 	// start unlocking balls
 
+	ballsave_disable();
+
+	// FIXME 'Ball Serve' section of manual says preferred way to start MB is to use set_ball_count() but this just causes a crash, we use device_unlock_ball() instead.
+	/*set_ball_count(3);*/
+
 	device_unlock_ball (device_entry (DEVNO_ZR1_POPPER));
-
-	task_sleep_sec (3);
 	device_unlock_ball (device_entry (DEVNO_ZR1_POPPER));
-
-	task_sleep_sec (3);
-
 	// third ball kicked out by returning from callset zr1_multiball dev_zr1_popper_enter
 	task_exit ();
 }
@@ -284,6 +288,11 @@ CALLSET_BOOL_ENTRY (zr1_multiball, dev_zr1_popper_kick_request)
 }
 
 CALLSET_ENTRY (zr1_multiball, dev_zr1_popper_kick_attempt) {
+
+	if (flag_test (FLAG_ZR1_MULTIBALL_RUNNING) && live_balls != 3) {
+		// need enough time to hit inner orbit then skidpad before ejecting another ball
+		task_sleep_sec (4);
+	}
 	// TODO use custom flasher timings
 	flasher_pulse(FLASH_ZR1_RAMP);
 	task_sleep(TIME_100MS);
