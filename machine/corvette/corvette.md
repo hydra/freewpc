@@ -108,8 +108,7 @@ define MACHINE_HAS_UPPER_LEFT_FLIPPER
 12: Right Out Lane, ingame
 13: Start Button, start-button, cabinet, intest
 14: Tilt, cabinet, tilt, ingame, noplay
-# not called 'Shooter', see: trivial.c/CALLSET_ENTRY (trivial, sw_plunger)
-15: Plunger, shooter, edge, debounce(TIME_200MS)
+15: Shooter, edge, noscore, shooter, debounce(TIME_200MS)
 16: Left Return Lane, ingame
 17: Right Return Lane, ingame
 18: Spinner, ingame
@@ -184,7 +183,7 @@ L8: Loop Gate, duty(SOL_DUTY_50), time(TIME_66MS)
 G1: Race Direction, nosearch
 G2: Left Race Enable, motor
 G3: Right Race Enable, motor
-G4: Future Car, flash, duty(SOL_DUTY_75), time(TIME_16MS)
+G4: Future Car, flash, duty(SOL_DUTY_100), time(TIME_33MS)
 # playfield flashers
 G5: Jets, flash, duty(SOL_DUTY_100), time(TIME_33MS)
 G6: Right Ramps, flash, duty(SOL_DUTY_75), time(TIME_16MS)
@@ -240,6 +239,7 @@ Route 66 Popper: Route 66 Kickout, Route 66 Kickout
 
 [adjustments]
 #TODO allow and enable the ball saver when it doesn't save balls during multi-ball on a machine with no autofire
+#FIXME this doesn't want to default to NO!
 Ball Saver: yes_no, NO
 
 Enable ZR1_Engine: yes_no, YES
@@ -293,7 +293,9 @@ ZR1 Low Rev Gate Opened:
 Diverter Opened:
 
 [globalflags]
+Skillshot Menu Enabled:
 Skillshot Rollover Enabled:
+Skillshot Skidpad Enabled:
 ZR1 Working:
 ZR1 Solenoids Powered:
 Racetrack Working:
