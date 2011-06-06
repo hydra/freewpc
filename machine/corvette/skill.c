@@ -34,6 +34,7 @@ void skillshot_skidpad_disable( void ) {
 	lamp_tristate_off (LM_SKID_PAD_JACKPOT);
 
 	task_kill_gid (GID_SKILLSHOT_SKIDPAD_TIMER);
+	global_flag_off(GLOBAL_FLAG_SKILLSHOT_SKIDPAD_ENABLED);
 }
 
 void skillshot_skidpad_timer( void ) {
@@ -46,11 +47,12 @@ void skillshot_skidpad_enable( void ) {
 	// kill any existing task, just to make sure
 	task_kill_gid (GID_SKILLSHOT_SKIDPAD_TIMER);
 	task_create_gid1 (GID_SKILLSHOT_SKIDPAD_TIMER, skillshot_skidpad_timer);
+	global_flag_on(GLOBAL_FLAG_SKILLSHOT_SKIDPAD_ENABLED);
 }
 
 
 CALLSET_ENTRY(skillshot_skidpad, skid_pad_shot) {
-	if (!task_find_gid (GID_SKILLSHOT_SKIDPAD_TIMER)) {
+	if (!global_flag_test(GLOBAL_FLAG_SKILLSHOT_SKIDPAD_ENABLED)) {
 		return;
 	}
 	skillshot_skidpad_disable();
@@ -59,7 +61,7 @@ CALLSET_ENTRY(skillshot_skidpad, skid_pad_shot) {
 
 CALLSET_ENTRY (skillshot_skidpad, lamp_update)
 {
-	if (!task_find_gid(GID_SKILLSHOT_SKIDPAD_TIMER)) {
+	if (!global_flag_test(GLOBAL_FLAG_SKILLSHOT_SKIDPAD_ENABLED)) {
 		return;
 	}
 
@@ -190,7 +192,6 @@ CALLSET_ENTRY (skillshot_rollover, sw_right_button) {
 // SKILL MENU
 //
 
-U8 skill_menu_enabled;
 U8 skill_menu_draw_count;
 enum skill_menu_selections {
 	SKILL_MIN = 0,
@@ -225,8 +226,10 @@ void skill_menu_draw(void) {
 	// 2 = alternate between 2 things
 	if (skill_menu_draw_count % (SKILL_SHOW_SHOT_INFO * 2) > SKILL_SHOW_SHOT_INFO) {
 		current_skill_menu_text = &skill_menu_text[skill_menu_selection + 1];
+		font_render_string_center (&font_var5, 64, 29, "LAUNCH BALL TO START");
 	} else {
 		current_skill_menu_text = skill_menu_text[0];
+		font_render_string_center (&font_var5, 64, 29, "USE FLIPPERS TO SELECT");
 	}
 
 	//dmd_draw_border (dmd_low_buffer);
@@ -241,8 +244,6 @@ void skill_menu_draw(void) {
 	font_render_string_center (&font_var5, 96, 5, "ROLLOVER");
 	font_render_string_center (&font_var5, 96, 13, "SKIDPAD");
 	font_render_string_center (&font_var5, 96, 4 + 5 + 5 + 4 + 3, "DRAGRACE");
-
-	font_render_string_center (&font_var5, 64, 29, "USE FLIPPERS TO SELECT");
 
 	// TODO flash box around selected item
 	switch (skill_menu_selection) {
@@ -266,25 +267,25 @@ void skill_menu_draw(void) {
 
 void skill_menu_deff (void)
 {
-	dbprintf ("skill_menu_deff, enabled: %d\n", skill_menu_enabled);
+	dbprintf ("skill_menu_deff, enabled: %d\n", global_flag_test(GLOBAL_FLAG_SKILLSHOT_MENU_ENABLED));
 	do {
 		skill_menu_draw();
 		task_sleep(TIME_250MS);
-	} while (skill_menu_enabled == 1);
+	} while (global_flag_test(GLOBAL_FLAG_SKILLSHOT_MENU_ENABLED));
 	dbprintf ("skill_menu_deff: exit, selection:%d\n", skill_menu_selection);
 	deff_exit ();
 }
 
 void skill_menu_start(void) {
 	skill_menu_draw_count = 0;
-	skill_menu_enabled = 1;
+	global_flag_on(GLOBAL_FLAG_SKILLSHOT_MENU_ENABLED);
 	skill_menu_selection = SKILL_ROLLOVER;
 	dbprintf ("skill_menu_start\n");
 	deff_start (DEFF_SKILL_MENU);
 }
 
 void skill_menu_select(void) {
-	skill_menu_enabled = 0;
+	global_flag_off(GLOBAL_FLAG_SKILLSHOT_MENU_ENABLED);
 	dbprintf ("skill_menu_select: selection:%d\n", skill_menu_selection);
 	switch(skill_menu_selection) {
 		case SKILL_ROLLOVER:
@@ -298,20 +299,25 @@ void skill_menu_select(void) {
 	}
 }
 
+/**
+ * disables skillshot menu and skillshots,
+ * should kill all skillshot timers and also reset any flashing lamps.
+ */
 void skillshot_disable(void) {
 	skillshot_rollover_disable();
-	skill_menu_enabled = 0;
+	skillshot_skidpad_disable();
+	global_flag_off(GLOBAL_FLAG_SKILLSHOT_MENU_ENABLED);
 }
 
 CALLSET_ENTRY (skill_menu, display_update) {
 	// the volume up/down, status reports, etc will cancel the menu, show it again if we should.
-	if (skill_menu_enabled == 1 && deff_get_active() != DEFF_SKILL_MENU) {
+	if (global_flag_test(GLOBAL_FLAG_SKILLSHOT_MENU_ENABLED) && deff_get_active() != DEFF_SKILL_MENU) {
 		deff_start (DEFF_SKILL_MENU);
 	}
 }
 
 CALLSET_ENTRY (skill_menu, sw_left_button) {
-	if (skill_menu_enabled == 0) {
+	if (!global_flag_test(GLOBAL_FLAG_SKILLSHOT_MENU_ENABLED)) {
 		return;
 	}
 	if (skill_menu_selection == SKILL_MIN) {
@@ -324,7 +330,7 @@ CALLSET_ENTRY (skill_menu, sw_left_button) {
 }
 
 CALLSET_ENTRY (skill_menu, sw_right_button) {
-	if (skill_menu_enabled == 0) {
+	if (!global_flag_test(GLOBAL_FLAG_SKILLSHOT_MENU_ENABLED)) {
 		return;
 	}
 	if (skill_menu_selection == SKILL_MAX) {
@@ -337,29 +343,35 @@ CALLSET_ENTRY (skill_menu, sw_right_button) {
 }
 
 
-CALLSET_ENTRY (skill_menu, sw_plunger) {
-	if (!switch_poll_logical (SW_PLUNGER)) {
-		dbprintf ("skill_menu: sw_plunger\n");
+CALLSET_ENTRY (skill_menu, sw_shooter) {
+	if (!global_flag_test(GLOBAL_FLAG_SKILLSHOT_MENU_ENABLED)) {
+		return;
+	}
+
+	if (!switch_poll_logical (SW_SHOOTER)) {
+		dbprintf ("skill_menu: sw_shooter\n");
 		skill_menu_select();
 	}
 }
 
 CALLSET_ENTRY (skill_menu, any_pf_switch) {
 	dbprintf ("skill_menu: any_pf_switch\n");
-	if (skill_menu_enabled == 0) {
+	if (!global_flag_test(GLOBAL_FLAG_SKILLSHOT_MENU_ENABLED)) {
 		return;
 	}
 	// wait for the ball to be fired off the plunger switch, which is marked as a playfield switch so
 	// that ball-search does not start when a ball is resting on it.
+	/*
 	if (switch_poll_logical (SW_PLUNGER)) {
 		return;
 	}
+	*/
 
 	skill_menu_select();
 }
 
-CALLSET_ENTRY (skill, serve_ball) {
-	dbprintf ("skill_menu: serve_ball\n");
+CALLSET_ENTRY (skill, start_ball, shoot_again) {
+	dbprintf ("skill_menu: start_ball/shoot_again\n");
 	skill_menu_start();
 }
 
@@ -367,9 +379,3 @@ CALLSET_ENTRY (skill, end_ball, stop_game) {
 	dbprintf ("skill_menu: end_ball/stop_game\n");
 	skillshot_disable();
 }
-
-CALLSET_ENTRY (skill, shoot_again) {
-	// the player clearly sucks, that, or the machine was being evil. :D
-	skillshot_rollover_disable();
-}
-
