@@ -629,9 +629,9 @@ void zr1_shake_2sec_task (void)
 }
 
 /**
- * Shake the engine at the start of a ball.
+ * Shake the engine at the start of a valid playfield.
  */
-CALLSET_ENTRY (zr1, shooter)
+CALLSET_ENTRY (zr1, valid_playfield)
 {
 	task_create_gid1 (GID_ZR1_SHAKE, zr1_shake_2sec_task);
 }
