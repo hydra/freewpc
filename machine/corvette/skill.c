@@ -232,32 +232,33 @@ void skill_menu_draw(void) {
 		font_render_string_center (&font_var5, 64, 29, "USE FLIPPERS TO SELECT");
 	}
 
-	//dmd_draw_border (dmd_low_buffer);
-	// 5 = y offset, 5 = height, 2 = space between lines
-	font_render_string_center (&font_var5, 32, 6, current_skill_menu_text[0]);
-	font_render_string_center (&font_var5, 32, 6 + 5 + 2, current_skill_menu_text[1]);
-	font_render_string_center (&font_var5, 32, 6 + 5 + 5 + 2 + 2, current_skill_menu_text[2]);
+	dmd_draw_horiz_line ((U16 *)dmd_low_buffer, 25);
 
-	// 5 = y offset, 5 = height, 4 = space between lines
+	//dmd_draw_border (dmd_low_buffer);
+	font_render_string_center (&font_renew8, 32, 3, current_skill_menu_text[0]);
+	font_render_string_center (&font_renew8, 32, 2 + 8 + 1, current_skill_menu_text[1]);
+	font_render_string_center (&font_renew8, 32, 1 + 8 + 8 + 1 + 1, current_skill_menu_text[2]);
+
+	// 4 = y offset, 5 = height, 3 = space between lines
 	// bigger gap between lines, so we can draw box around them
 	// TODO draw boxes round each item
-	font_render_string_center (&font_var5, 96, 5, "ROLLOVER");
-	font_render_string_center (&font_var5, 96, 13, "SKIDPAD");
-	font_render_string_center (&font_var5, 96, 4 + 5 + 5 + 4 + 3, "DRAGRACE");
+	font_render_string_center (&font_var5, 96, 4, "ROLLOVER");
+	font_render_string_center (&font_var5, 96, 12, "SKIDPAD");
+	font_render_string_center (&font_var5, 96, 4 + 5 + 5 + 3 + 3, "DRAGRACE");
 
 	// TODO flash box around selected item
 	switch (skill_menu_selection) {
 		case SKILL_ROLLOVER:
-			font_render_string_center (&font_var5, 70, 5, ">");
-			font_render_string_center (&font_var5, 122, 5, "<");
+			font_render_string_center (&font_var5, 70, 4, ">");
+			font_render_string_center (&font_var5, 122, 4, "<");
 		break;
 		case SKILL_SKIDPAD:
-			font_render_string_center (&font_var5, 70, 13, ">");
-			font_render_string_center (&font_var5, 122, 13, "<");
+			font_render_string_center (&font_var5, 70, 12, ">");
+			font_render_string_center (&font_var5, 122, 12, "<");
 		break;
 		case SKILL_QUICK_MB:
-			font_render_string_center (&font_var5, 70, 3 + 6 + 6 + 4 + 2, ">");
-			font_render_string_center (&font_var5, 122, 3 + 6 + 6 + 4 + 2, "<");
+			font_render_string_center (&font_var5, 70, 4 + 5 + 5 + 3 + 3, ">");
+			font_render_string_center (&font_var5, 122, 4 + 5 + 5 + 3 + 3, "<");
 		break;
 	}
 
