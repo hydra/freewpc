@@ -293,11 +293,12 @@ CALLSET_ENTRY (rtc, idle_every_ten_seconds)
 	last_minute = minute;
 }
 
-
 CALLSET_ENTRY (rtc, diagnostic_check)
 {
+#ifdef IGNORE_RTC_DIAG_CHECK
 	if (year == 0)
 		diag_post_error ("TIME AND DATE\nNOT SET\n", COMMON_PAGE);
+#endif
 }
 
 

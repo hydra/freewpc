@@ -19,6 +19,7 @@
 #MACHINE := tester
 #MACHINE := tzsound
 #MACHINE := tspp
+#MACHINE := corvette
 
 #
 # Set this to the directory in which MAME roms should be installed.
@@ -32,6 +33,7 @@
 # Set to 'y' if you wish to use the FreeWPC console debugger.
 #
 #FREEWPC_DEBUGGER := n
+#CONFIG_BPT := y
 
 #
 # Set if you wish to override the major/minor version numbers
@@ -54,6 +56,8 @@ GCC_VERSION := 4.3.4
 #EXTRA_CFLAGS += -DCONFIG_DEBUG_STACK
 #EXTRA_CFLAGS += -DCONFIG_PARALLEL_DEBUG
 #EXTRA_CFLAGS += -DFREE_ONLY
+#EXTRA_CFLAGS += -DDEBUGGER
+#EXTRA_CLFAGS += -DIGNORE_RTC_DIAG_CHECK
 
 # For debugging the compiler itself.
 #DEBUG_COMPILER := y

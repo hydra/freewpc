@@ -152,6 +152,10 @@ Enables Free Play all the time.
 
 Enables idle-time profiling, to see how much CPU is free.
 
+@item	IGNORE_RTC_DIAG_CHECK
+
+Skips 'Time and date not set' diagnostic check, handy when developing.
+
 @item	MALLOC_TEST
 
 @item	NOSTATIC
