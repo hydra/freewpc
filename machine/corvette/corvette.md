@@ -322,6 +322,7 @@ Build Up: runner, PRI_LEFF3, LAMPS(ALL), page(MACHINE_PAGE)
 pcsenior:
 misctype:
 lithograph:
+supercar9:
 
 [timers]
 Kickback Made:

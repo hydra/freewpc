@@ -50,5 +50,5 @@ FON_OBJS += $(if $(CONFIG_FON_JOYSTIX), fonts/free/joystix.o)
 FON_OBJS += $(if $(CONFIG_FON_ARIAL11A), fonts/free/arial11a.o)
 FON_OBJS += $(if $(CONFIG_FON_ARIAL11B), fonts/free/arial11b.o)
 FON_OBJS += $(if $(CONFIG_FON_FFFEXTRA), fonts/free/fffextra.o)
-
+FON_OBJS += $(if $(CONFIG_FON_SUPERCAR9), fonts/free/supercar9.o)
 
