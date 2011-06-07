@@ -76,11 +76,13 @@ CALLSET_ENTRY (shot, sw_left_rollover, sw_middle_rollover, sw_right_rollover)
 
 
 CALLSET_ENTRY (shot, left_orbit_shot) {
+	// TODO count combos and use SND_TRAFFIC_ZOOM_01 - SND_TRAFFIC_ZOOM_05
 	sound_start (ST_SAMPLE, SND_TRAFFIC_ZOOM_01, SL_2S, PRI_GAME_QUICK1);
 	score (SC_50K);
 }
 
 CALLSET_ENTRY (shot, right_orbit_shot) {
+	// TODO count combos and use SND_TRAFFIC_ZOOM_01 - SND_TRAFFIC_ZOOM_05
 	sound_start (ST_SAMPLE, SND_TRAFFIC_ZOOM_02, SL_2S, PRI_GAME_QUICK1);
 	score (SC_50K);
 }
