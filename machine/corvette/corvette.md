@@ -319,10 +319,9 @@ Color Cycle: runner, PRI_LEFF3, LAMPS(ALL), page(MACHINE_PAGE)
 Build Up: runner, PRI_LEFF3, LAMPS(ALL), page(MACHINE_PAGE)
 
 [fonts]
-pcsenior:
 misctype:
-lithograph:
 supercar9:
+renew8:
 
 [timers]
 Kickback Made:
