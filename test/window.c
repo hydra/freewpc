@@ -2949,7 +2949,7 @@ void sound_test_set_draw (void)
 	font_render_string_center (&font_mono5, 64, 9, s);
 }
 
-void sound_test_set_change (void)
+void sound_test_set_next (void)
 {
 	sound_test_set++;
 #if (MACHINE_DCS == 0)
@@ -2961,6 +2961,20 @@ void sound_test_set_change (void)
 	win_top->w_class.menu.selected = 0;
 }
 
+void sound_test_set_previous (void)
+{
+	if (sound_test_set == 0) {
+#if (MACHINE_DCS == 0)
+		sound_test_set = 1;
+#else
+		sound_test_set = 8;
+#endif
+	} else {
+		sound_test_set--;
+	}
+	win_top->w_class.menu.selected = 0;
+}
+
 void sound_test_play (U8 sel)
 {
 	sound_code_t snd = ((U16)sound_test_set << 8) + sel;
@@ -2969,6 +2983,7 @@ void sound_test_play (U8 sel)
 
 void sound_test_repeat (void)
 {
+	// FIXME this text overlaps "SOUND ON / SOUND OFF" text
 	browser_print_operation ("PLAYING...");
 	sound_test_play (menu_selection);
 	task_sleep (TIME_100MS * 2);
@@ -3019,8 +3034,8 @@ struct window_ops sound_test_window = {
 	.exit = sound_reset,
 	.enter = sound_test_enter,
 	.draw = sound_test_draw,
-	.left = sound_test_set_change,
-	.right = sound_test_set_change,
+	.left = sound_test_set_previous,
+	.right = sound_test_set_next,
 	.start = sound_test_repeat,
 };
 
