@@ -276,7 +276,7 @@ static void fontargs_render_string (void)
 #endif
 
 		/* advance by 1 char ... args->font->width */
-		args->coord.x += font_width + 1;
+		args->coord.x += font_width + args->font->spacing;
 
 		/* If the height was adjusted just for this character, restore
 		back to the original starting row */
@@ -378,7 +378,7 @@ static void font_get_string_area (const char *s)
 		(void)font_lookup (font_args.font, c);
 
 		/* Update the total width */
-		font_string_width += font_width + 1;
+		font_string_width += font_width + font_args.font->spacing;
 
 		/* Update the total height */
 		if (font_height > font_string_height)
