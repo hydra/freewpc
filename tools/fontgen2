@@ -22,11 +22,11 @@ for char in ${charlist}; do
 	charstripped="${charstripped//\)/rpar}"
 	charstripped="${charstripped//\#/hash}"
 	
-	prefix="glyph_${font}_${charstripped}"
+	prefix="glyph_${font}${pointsize}_${charstripped}"
 	convert -pointsize ${pointsize} -trim +repage -font ${font}.ttf label:$char xbm:- | sed -e "s/-/${prefix}/" | sed -e "s/{/{ ${prefix}_width, ${prefix}_height,/"
 done
 
-echo "static char *${font}_glyphs[] = {"
+echo "static char *${font}${pointsize}_glyphs[] = {"
 for char in ${charlist}; do
 	charstripped="${char//\./period}"
 	charstripped="${charstripped//\$/dollar}"
@@ -43,12 +43,12 @@ for char in ${charlist}; do
 	charstripped="${charstripped//\)/rpar}"
 	charstripped="${charstripped//\#/hash}"
 	
-	prefix="glyph_${font}_${charstripped}"
+	prefix="glyph_${font}${pointsize}_${charstripped}"
 	echo "	['${char}'] = ${prefix}_bits,"
 done
 echo "};"
 
-echo "const font_t font_${font} = {"
+echo "const font_t font_${font}${pointsize} = {"
 echo "	.height = ${pointsize},"
-echo "	.glyphs = ${font}_glyphs,"
+echo "	.glyphs = ${font}${pointsize}_glyphs,"
 echo "};"
