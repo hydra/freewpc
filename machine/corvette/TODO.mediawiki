@@ -1,7 +1,7 @@
 = Todo list for Corvette =
 
-* Make engine shake for 2 seconds when it captures the first 2 balls.
 * Improve the engine shake
+* Calculate real-world ball-speed of left orbit, store high-speeds and player names, award credit for highest speed
 
 
 = Game Ideas =
