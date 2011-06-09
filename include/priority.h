@@ -31,7 +31,7 @@
 #ifndef _PRIORITY_H
 #define _PRIORITY_H
 
-//TODO do we need PRI_INGAME_MENU and/or maybe PRI_VIDEO_MODE priorities, they need to be quite high
+//TODO do we need PRI_INGAME_MENU it would need to be quite high
 typedef enum _priority {
 	PRI_NULL=0,
 	PRI_VOLUME_CHANGE_MUSIC,
@@ -85,6 +85,7 @@ typedef enum _priority {
 	PRI_VOLUME_CHANGE_DISPLAY,
 	PRI_TILT_WARNING,
 	PRI_STATUS,
+	PRI_VIDEO_MODE, //holding flippers for status should not interrupt the video mode
 	PRI_BONUS,
 	PRI_SHOOT_AGAIN,
 	PRI_TILT,
