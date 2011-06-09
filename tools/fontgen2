@@ -4,6 +4,9 @@
 # other useful values for args are:
 # "+trim" - only useful for fonts where every single character is the same HEIGHT
 # see "man convert" for more possible arguments
+#
+# TODO store the args used as a comment in the generated file
+
  
 font="$1"
 pointsize="$2"
