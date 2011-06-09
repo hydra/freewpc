@@ -277,6 +277,7 @@ Racetrack Errors:
 10M:
 20M:
 25M:
+50M:
 
 [highscores]
 
@@ -295,9 +296,11 @@ Diverter Opened:
 Skillshot Menu Enabled:
 Skillshot Rollover Enabled:
 Skillshot Skidpad Enabled:
+Skillshot Dragrace Enabled:
 ZR1 Working:
 ZR1 Solenoids Powered:
 Racetrack Working:
+Dragrace In Progress:
 
 [deffs]
 ZR1 Ball Locked: page(MACHINE_PAGE), PRI_GAME_QUICK4, D_PAUSE
@@ -311,6 +314,8 @@ Kickback Relit: page(MACHINE_PAGE), PRI_GAME_QUICK2
 Jet: page(MACHINE_PAGE), PRI_GAME_QUICK1, D_SCORE+D_RESTARTABLE
 Sling: page(MACHINE_PAGE), PRI_GAME_QUICK1, D_SCORE+D_RESTARTABLE
 Skill Menu: page(MACHINE_PAGE), PRI_BALL_LAUNCH_MENU, D_RESTARTABLE
+
+Dragrace: page(MACHINE_PAGE), PRI_VIDEO_MODE
 
 [leffs]
 Amode: runner, PRI_LEFF1, LAMPS(ALL), GI(ALL), page(MACHINE_PAGE)

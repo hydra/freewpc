@@ -21,6 +21,10 @@
 /* ballsave.c */
 __common__ void ballsave_disable(void);
 
+/* search.c */
+extern __far__(C_STRING(COMMON_PAGE)) void ball_search_monitor_start (void);
+extern __far__(C_STRING(COMMON_PAGE)) void ball_search_monitor_stop (void);
+
 /* deffs.c */
 __machine__ void flash_and_exit_deff(U8 flash_count, task_ticks_t flash_delay);
 __machine__ void printf_millions(U8 n);
