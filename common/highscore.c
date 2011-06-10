@@ -156,7 +156,7 @@ void high_score_draw_12 (void)
 #endif
 	high_score_draw_single (1, 8);
 	high_score_draw_single (2, 20);
-	dmd_sched_transition (&trans_vstripe_left2right);
+	dmd_sched_transition (&trans_scroll_up);
 	dmd_show_low ();
 }
 
@@ -168,7 +168,7 @@ void high_score_draw_34 (void)
 #endif
 	high_score_draw_single (3, 8);
 	high_score_draw_single (4, 20);
-	dmd_sched_transition (&trans_vstripe_left2right);
+	dmd_sched_transition (&trans_scroll_up);
 	dmd_show_low ();
 }
 
