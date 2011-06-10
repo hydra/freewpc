@@ -36,3 +36,8 @@
 #	images/midcircle4.xbm
 #	images/midcircle5.xbm
 #IMG_MIDCIRCLE_END:
+
+
+IMG_CORVETTE_1979: machine/corvette/images/Corvette-1979-C3.pgm
+IMG_CORVETTE_1986: machine/corvette/images/Corvette-1986-C4.pgm
+
