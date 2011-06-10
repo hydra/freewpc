@@ -62,6 +62,8 @@ PINMAME_OTHER_ROMS = corvsnd*
 
 GAME_OBJS = zr1.o racetrack.o
 
+GAME2_OBJS = corvette_amode.o
+
 GAME_TEST_OBJS = zr1_test.o racetrack_test.o
 
 GAME_INCLUDES =
