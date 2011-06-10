@@ -41,3 +41,99 @@ At game start choose between rollover, skidpad, dragrace, and pink-slips.
 * skidpad - use the upper left flipper to quickly hit the skidpad ramp to get more points
 * dragrace - quickly shoot the right ramp to start a dragrace that uses the racetrack, bash flippers to advance car, if you win you get a 2-ball multiball
 * pink-slips - only enabled once player has collected at least one car.  Shoot the right ramp within 10 seconds (maybe less) to lock the ball, animation for pink-slips starts, racetrack cars indicate who is in the lead, all shots advance blue car.  red car is computer car.  If the player's blue car wins the race, light one of the car lamps and release the locked ball.  If the player's blue car looses, disable the flippers and drain the ball and drain the captured ball and if they have a car lit it is un-lit.
+
+== Build Cars ==
+
+Build a car by collecting all the parts.
+Use flash playfield lights to indicate which parts/shots to collect/make.
+Other events could also award parts.
+Building cars enables ZR1 tuner multiball.
+
+== V8 Tuner Multiball ==
+
+When lit shoot ball into zr1 engine to lock it (in the engine itself, not the zr1 popper)
+Launch 2nd ball from trough while first ball is locked in the engine shaker (and still shaking)
+Launch second ball into engine to start 2 ball multiball
+Tune the engine by shooting it.
+Award big points for tuning it.
+
+Maybe enable this after collecting parts for a car. - gotta tune it before you can use it right? :D 
+
+=== Implementation Detail ===
+
+Flash ZR1 arrows
+Close ZR1 top gate
+Detect ball in engine
+* start task when zr1 bottom opto hit.
+* timeout after any other PF switch (except zr1 top opto) or 2 seconds.
+* if zr1 top opto hit then extend timer by 2 seconds
+* close bottom zr1 gate
+* shake engine fast to keep ball in engine.
+* if zr1 bottom opto hit or zr1 popper ented cancel engine shake.
+* if zr1 popper entered eject ball from it, allow player to retry (extend mode timer by 5 seconds or so)
+
+Launch another ball into the trough
+(engine still shaking!)
+
+Player must shoot another ball into the zr1 engine while it's shaking
+Dectect second ball in engine
+
+Shake engine a bit more
+Open bottom gate, wait till both balls enter the zr1 popper (or other pf switch hit)
+Ensure 2 balls are live (maybe need to eject 1 or 2 balls from ZR1 engine)
+
+Light ZR1 arrows
+Start a 'tuned' bar that filles when engine is shot.
+A pass-though shot (zr1 exit switch) tunes engine lots
+A fall-in shot (zr1 popper enter) tunes the engine a little.
+Award score for each engine shot accordingly
+If engine is tuned award large score.
+
+== Collect cars ==
+
+Collect cars by:
+
+* Win Pink-Slip Races
+* Collect parts
+* Random car awards
+
+== Random pit-in award ==
+
+Use the pitstop popper to award the player with things (when pit-in lit).
+
+Light pit-in via slingshot or jet bumper goals.
+
+Possible awards:
+* Start Dragrace
+* 10M
+* 50M
+* +2x Bonus
+* Collect Car
+* Collect Part
+* Le-Mans 24h Multiball
+* V8 Tuner Multiball
+
+
+== Le Mans 24h Multiball ==
+
+Time displayed on screen, progress bar underneath time (24hrs)
+Orbits advance time, progress bar updates
+Inner orbit also counters.
+Quick consecutive combos advance time faster
+
+Every 6 hours player must shoot pit-in within 15 seconds.
+As time advances GI goes from light to dark to light.
+
+Advancing time should strobe left and right standup flashers.
+If player completes progress bar then they must shoot pit-in.
+Ball held in pin-in while another is launched into trough.
+
+2 ball multiball starts.
+Shooting any orbits awards big points while in multiball mode.
+While in multiball enable pin-in after a few orbits, award big points when pit-in shot when lit
+
+Dragrace
+* Allow foul due to red-lighting - http://en.wikipedia.org/wiki/Drag_racing#Basics_of_drag_racing
+* If player stops pressing buttons then spin their car out or otherwise show they crashed (engine died)
+* If player goes too mad to quickly then wheelspin their car (to much power!)
+
