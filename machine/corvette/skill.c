@@ -77,6 +77,7 @@ void dragrace_start_anim (void) {
 	// TODO show graphic of racetrack starting grid or something suitable
 
 	// ready
+	lamp_tristate_on(LM_TREE_TOP_YELLOW);
 	dmd_alloc_low_clean ();
 	font_render_string_center (&font_supercar9, 64, 16, "READY");
 	dmd_show_low ();
@@ -84,6 +85,7 @@ void dragrace_start_anim (void) {
 	task_sleep_sec(1);
 
 	// set
+	lamp_tristate_on(LM_TREE_BOTTOM_YELLOW);
 	dmd_alloc_low_clean ();
 	font_render_string_center (&font_supercar9, 64, 16, "SET");
 	dmd_show_low ();
@@ -91,6 +93,8 @@ void dragrace_start_anim (void) {
 	task_sleep_sec(1);
 
 	// go
+	lamp_tristate_flash(LM_LEFT_TREE_GREEN);
+	lamp_tristate_flash(LM_RIGHT_TREE_GREEN);
 	dmd_alloc_low_clean ();
 	font_render_string_center (&font_supercar9, 64, 16, "GO");
 	dmd_show_low ();
@@ -104,6 +108,11 @@ void dragrace_loser_anim(void) {
 
 	// TODO sound
 	// TODO animation/graphics
+	lamp_tristate_off(LM_LEFT_TREE_GREEN);
+	lamp_tristate_on(LM_RIGHT_TREE_GREEN);
+	lamp_tristate_on(LM_LEFT_TREE_RED);
+	lamp_tristate_off(LM_RIGHT_TREE_RED);
+
 	dmd_alloc_low_clean ();
 	font_render_string_center (&font_supercar9, 64, 16, "LOOSER");
 	dmd_show_low ();
@@ -119,6 +128,11 @@ void dragrace_winner_anim(void) {
 
 	// TODO sound
 	// TODO animation/graphics
+	lamp_tristate_on(LM_LEFT_TREE_GREEN);
+	lamp_tristate_off(LM_RIGHT_TREE_GREEN);
+	lamp_tristate_off(LM_LEFT_TREE_RED);
+	lamp_tristate_on(LM_RIGHT_TREE_RED);
+
 	dmd_alloc_low_clean ();
 	font_render_string_center (&font_supercar9, 64, 16, "WINNER");
 	dmd_show_low ();
@@ -191,6 +205,9 @@ void dragrace_deff (void) {
 		task_sleep(TIME_100MS); // if changed adjust DRAGRACE_TICKS_PER_SECOND
 	}
 
+	lamp_tristate_off(LM_TREE_TOP_YELLOW);
+	lamp_tristate_off(LM_TREE_BOTTOM_YELLOW);
+
 	if (player_car_position == 100 && computer_car_position < 100) {
 		dragraces_won++;
 		dragrace_winner_anim();
@@ -199,6 +216,13 @@ void dragrace_deff (void) {
 	} else {
 		dragrace_loser_anim();
 	}
+
+	lamp_tristate_off(LM_LEFT_TREE_GREEN);
+	lamp_tristate_off(LM_RIGHT_TREE_GREEN);
+	lamp_tristate_off(LM_LEFT_TREE_RED);
+	lamp_tristate_off(LM_RIGHT_TREE_RED);
+
+
 	dbprintf ("dragraces won (after): %d\n", dragraces_won);
 
 	dbprintf ("dragrace_deff: exit\n");
