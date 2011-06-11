@@ -79,8 +79,6 @@ void @self_start (void);
 void @self_stop (void);
 
 #if (@SELF_MODE > 0)
-
-extern U8 fliptronic_powered_coil_outputs;
 #define diverter_sol_bitmask(id) (1 << ((id & (CHAR_BIT - 1))))
 
 #define diverter_sol_contribute(id, bits, enable) \
@@ -96,6 +94,7 @@ extern U8 fliptronic_powered_coil_outputs;
 extern inline void @self_service (void)
 {
 #if (@SELF_MODE > 0)
+	extern U8 fliptronic_powered_coil_outputs;
 	register U8 out __areg__ = fliptronic_powered_coil_outputs;
 #endif
 	
@@ -189,6 +188,7 @@ void @self_stop (void) {
 CALLSET_ENTRY (@self, init)
 {
 	@self_timer = 0;
+#ifdef DEBUGGER	
 	dbprintf("Diverter power: '@power_sol' (%d)\n", @power_sol);
 	dbprintf("Diverter hold: '@hold_sol' (%d)\n", @hold_sol);
 #if (@SELF_MODE > 0)
@@ -196,6 +196,7 @@ CALLSET_ENTRY (@self, init)
 #else
 	dbprintf("Diverter mode: NORMAL\n");
 #endif	
+#endif
 }
 
 CALLSET_ENTRY (@self, tilt, stop_game)
@@ -294,21 +295,19 @@ void @self_test_draw (void)
 	}
 	font_render_string_center (&font_var5, 64, LINE_1_Y + 2, sprintf_buffer);
 
-	sprintf ("TIMER:%d\n", @self_timer);
+	sprintf ("TIMER:%d", @self_timer);
 	font_render_string_center (&font_var5, 64, LINE_2_Y + 2, sprintf_buffer);
 
-	// XXX for debugging
+#ifdef DEBUGGER
 #if (@SELF_MODE > 0)		
-	sprintf ("FPCO:%d\n", fliptronic_powered_coil_outputs);
+	sprintf ("FPCO:%d", fliptronic_powered_coil_outputs);
 	font_render_string_center (&font_var5, 64, LINE_3_Y + 2, sprintf_buffer);
 #endif
-
+#endif
 	dmd_draw_horiz_line ((U16 *)dmd_low_buffer, 25);
 
 	sprintf(@self_test_short_names[@self_test_command]);
 	font_render_string_left (&font_mono5, 0, 27, sprintf_buffer);
-
-
 
 	dmd_show_low ();
 }
@@ -318,9 +317,7 @@ void @self_test_thread (void)
 {
 	for (;;)
 	{
-
 		task_sleep (TIME_100MS);
-
 		@self_test_draw ();
 	}
 }
@@ -353,12 +350,10 @@ void @self_test_enter (void)
   	switch (@self_test_command)
   	{
   		case START:
-			dbprintf ("@self_test_enter: starting 'open'\n");
 			@self_start();
 			@self_test_command = STOP;
   		break;
   		case STOP:
-			dbprintf ("@self_test_enter: starting 'close'\n");
 			@self_stop();
 			@self_test_command = START;
   		break;
