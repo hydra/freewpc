@@ -22,7 +22,8 @@
 
 # note, the zr1 rtt code is hard coded to use a frequency value of 16, the value below must match
 # see ZR1_SCHEDULE define
-corvette_zr1_engine_rtt   16    40c
+corvette_zr1_engine_rtt   		16		20c
+corvette_zr1_engine_enabler_rtt 8		8c
 
 # see RACETRACK_SCHEDULE define
 corvette_racetrack_encoder_rtt   2    20c
