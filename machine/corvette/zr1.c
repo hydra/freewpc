@@ -21,12 +21,19 @@
 /**
  * Controls the ZR1 engine ball shaker
  *
+ * I found that, with a 16ms schedule the and with solenoids being enabled every 16ms and the engine set to center
+ * position, the engine would momentarily loose power.
+ * I suspect some other RTT process is taking too long, so in order to work around this we use a 8ms scheduled inline
+ * task that simply enables the solenoids if they're supposed to be enabled and then use a less frequently scheduled
+ * task that updates the state and position.
+ *
  * TODO hook the shake into the system timer so that the new position value is calculated based on the speed and how long is was since the speed was set.
  * DC: what I find is that when the cpu gets busy the shake is interrupted
  *
- * The goal is to fine 5 speeds that don't require much cpu usage to implement and that ideally donesn't require a table of values.
+ * The goal is to find 5 speeds that don't require much cpu usage to implement and that ideally donesn't require a table of values.
  *
  * With a schedule of 8 or 32ms, with a range divider of 5 or 10 i couldn't find a good set of speeds
+ *
  *
  * Working values at 16ms schedule:
  * range: 2
@@ -38,6 +45,8 @@
  * The test menu can be used to try different values for range and speed.
  *
  */
+#define ZR1_ENABLED
+#ifdef ZR1_ENABLED
 #include <freewpc.h>
 #include <diag.h>
 #include <corvette/zr1.h>
@@ -52,8 +61,7 @@
 #define ZR1_CENTER_TICKS (128 / ZR1_SCHEDULE)
 
 // Specifies how long to wait before adjusting the position in ball search mode
-#define ZR1_BALL_SEARCH_TICKS (2560 / ZR1_SCHEDULE)
-
+#define ZR1_BALL_SEARCH_TICKS (2040 / ZR1_SCHEDULE) // ensure this doesn't overflow a U8
 
 //
 // Calibration
@@ -90,7 +98,6 @@ char *mech_zr1_diag_messages[] = {
 
 enum mech_zr1_calibration_codes zr1_last_calibration_result_code;
 
-U8 zr1_previously_enabled;
 U8 zr1_calibrated;
 U8 zr1_calibration_attempted;
 
@@ -117,7 +124,7 @@ enum mech_zr1_calibrate_state {
 	ZR1_CALIBRATE_RECENTER
 };
 
-__fastram__ enum mech_zr1_calibrate_state zr1_calibrate_state;
+enum mech_zr1_calibrate_state zr1_calibrate_state;
 
 
 /*
@@ -156,23 +163,13 @@ void zr1_reset_limits(void) {
  */
 
 // should not be used outside of this file
-void zr1_set_position_to_center(void) {
-	if (!feature_config.enable_zr1_engine) {
-		return; // disabled
-	}
-
+static inline void zr1_set_position_to_center(void) {
 	zr1_last_position = zr1_pos_center;
-	writeb (ZR1_ENGINE_POS, zr1_last_position);
 }
 
 // should not be used outside of this file
-void zr1_set_position(U8 position) {
-	if (!feature_config.enable_zr1_engine) {
-		return; // disabled
-	}
-
+static inline void zr1_set_position(U8 position) {
 	zr1_last_position = position;
-	writeb (ZR1_ENGINE_POS, zr1_last_position);
 }
 
 
@@ -182,21 +179,11 @@ void zr1_set_position(U8 position) {
  * Should not be used outside of this file
  *
  * This can be called regardless of calibration state.
- * If the solenoids have not previously been enabled the engine will move to it's center position
- * when the solenoid power is enabled, otherwise the engine will move to it's last-set position.
+ * call zr1_set_position() first
  *
  * @See zr1_init()
  */
-void zr1_enable_solenoids(void) {
-	if (!feature_config.enable_zr1_engine) {
-		return; // disabled
-	}
-
-	if (!zr1_previously_enabled) {
-		zr1_previously_enabled = TRUE;
-		zr1_set_position_to_center();
-	}
-	writeb (ZR1_ENGINE_CONTROL, 1); // disable the DISABLE_A/DISABLE_B lines
+static inline void zr1_enable_solenoids(void) {
 	if (!global_flag_test(GLOBAL_FLAG_ZR1_SOLENOIDS_POWERED)) {
 		global_flag_on(GLOBAL_FLAG_ZR1_SOLENOIDS_POWERED);
 	}
@@ -207,12 +194,7 @@ void zr1_enable_solenoids(void) {
  *
  * Should not be used outside of this file
  */
-void zr1_disable_solenoids(void) {
-	if (!feature_config.enable_zr1_engine) {
-		return; // disabled
-	}
-
-	writeb (ZR1_ENGINE_CONTROL, 0); // enable the DISABLE_A/DISABLE_B lines
+static inline void zr1_disable_solenoids(void) {
 	if (global_flag_test(GLOBAL_FLAG_ZR1_SOLENOIDS_POWERED)) {
 		global_flag_off(GLOBAL_FLAG_ZR1_SOLENOIDS_POWERED);
 	}
@@ -222,13 +204,13 @@ void zr1_calculate_center_pos(void) {
 	zr1_pos_center = ((U16)zr1_pos_full_right_opto_off + zr1_pos_full_left_opto_off) / 2;
 }
 
-void zr1_state_center_enter(void) {
+static inline void zr1_state_center_enter(void) {
 	zr1_set_position_to_center();
 	zr1_enable_solenoids();
 	zr1_center_ticks_remaining = ZR1_CENTER_TICKS;
 }
 
-void zr1_state_center_run(void) {
+static inline void zr1_state_center_run(void) {
 	if (zr1_center_ticks_remaining > 0) {
 		zr1_center_ticks_remaining--;
 	}
@@ -375,12 +357,12 @@ void zr1_state_calibrate_run(void) {
 	}
 }
 
-void zr1_state_float_enter(void) {
+static inline void zr1_state_float_enter(void) {
 	zr1_set_position_to_center();
 	zr1_center_ticks_remaining = ZR1_CENTER_TICKS;
 }
 
-void zr1_state_float_run(void) {
+static inline void zr1_state_float_run(void) {
 	if (zr1_center_ticks_remaining > 0) {
 		zr1_center_ticks_remaining--;
 		return;
@@ -389,14 +371,14 @@ void zr1_state_float_run(void) {
 	zr1_disable_solenoids();
 }
 
-void zr1_state_shake_enter(void) {
+static inline void zr1_state_shake_enter(void) {
 	// always begin by moving left, but start from the center
 	zr1_shake_direction = ZR1_SHAKE_DIRECTION_LEFT;
 	zr1_set_position(zr1_pos_center);
 	zr1_enable_solenoids();
 }
 
-void zr1_state_shake_run(void) {
+static inline void zr1_state_shake_run(void) {
 	zr1_enable_solenoids();
 
 	switch (zr1_shake_direction) {
@@ -417,13 +399,13 @@ void zr1_state_shake_run(void) {
 	}
 }
 
-void zr1_state_ball_search_enter(void) {
+static inline void zr1_state_ball_search_enter(void) {
 	zr1_search_ticks_remaining = 0; // move now
 	zr1_set_position(zr1_pos_center);
 	zr1_enable_solenoids();
 }
 
-void zr1_state_ball_search_run(void) {
+static inline void zr1_state_ball_search_run(void) {
 	zr1_enable_solenoids();
 
 	if (zr1_search_ticks_remaining > 0) {
@@ -443,23 +425,32 @@ void zr1_state_ball_search_run(void) {
 	}
 }
 
+inline void corvette_zr1_engine_enabler_rtt (void) {
+	if (global_flag_test(GLOBAL_FLAG_ZR1_SOLENOIDS_POWERED)) {
+		writeb (ZR1_ENGINE_CONTROL, 1); // disable the DISABLE_A/DISABLE_B lines
+	} else {
+		writeb (ZR1_ENGINE_CONTROL, 0); // enable the DISABLE_A/DISABLE_B lines
+	}
+	writeb (ZR1_ENGINE_POS, zr1_last_position);
+}
 
 void corvette_zr1_engine_rtt (void) {
 
 	switch (zr1_state) {
+		// ordered by most-commonly used.
+		case ZR1_SHAKE:
+			if (zr1_previous_state != zr1_state) {
+				zr1_state_shake_enter();
+			} else {
+				zr1_state_shake_run();
+			}
+		break;
+
 		case ZR1_CENTER:
 			if (zr1_previous_state != zr1_state) {
 				zr1_state_center_enter();
 			} else {
 				zr1_state_center_run();
-			}
-		break;
-
-		case ZR1_CALIBRATE:
-			if (zr1_previous_state != zr1_state) {
-				zr1_state_calibrate_enter();
-			} else {
-				zr1_state_calibrate_run();
 			}
 		break;
 
@@ -471,19 +462,19 @@ void corvette_zr1_engine_rtt (void) {
 			}
 		break;
 
-		case ZR1_SHAKE:
-			if (zr1_previous_state != zr1_state) {
-				zr1_state_shake_enter();
-			} else {
-				zr1_state_shake_run();
-			}
-		break;
-
 		case ZR1_BALL_SEARCH:
 			if (zr1_previous_state != zr1_state) {
 				zr1_state_ball_search_enter();
 			} else {
 				zr1_state_ball_search_run();
+			}
+		break;
+
+		case ZR1_CALIBRATE:
+			if (zr1_previous_state != zr1_state) {
+				zr1_state_calibrate_enter();
+			} else {
+				zr1_state_calibrate_run();
 			}
 		break;
 
@@ -502,7 +493,6 @@ void corvette_zr1_engine_rtt (void) {
 
 void zr1_reset(void) {
 	disable_interrupts();
-	zr1_previously_enabled = FALSE;
 	zr1_calibrated = FALSE;
 	zr1_calibration_attempted = FALSE;
 	zr1_last_calibration_result_code = CC_NOT_CALIBRATED;
@@ -524,12 +514,19 @@ void zr1_reset(void) {
 void zr1_enter_state(enum mech_zr1_state new_state) {
 	U8 allow_state_change = FALSE;
 	switch (new_state) {
+		case ZR1_INITIALIZE:
+			allow_state_change = TRUE;
+		break;
+
 		case ZR1_SHAKE:
 			allow_state_change = zr1_calibrated;
-			break;
+		break;
+
 		default:
-			allow_state_change = TRUE;
+			// don't allow state change if engine is disabled.
+			allow_state_change = feature_config.enable_zr1_engine;
 	}
+
 	if (!allow_state_change) {
 		dbprintf("current state: %d, disallowing new state: %d\n", zr1_state, new_state);
 	} else {
@@ -697,3 +694,5 @@ CALLSET_ENTRY (zr1, start_game) {
 CALLSET_ENTRY (zr1, end_game) {
 	zr1_float();
 }
+
+#endif
