@@ -23,7 +23,9 @@
  * - Calibrate the left right and center positions.
  * - Shake engine.
  */
+#define ZR1_TEST_ENABLED
 #ifdef ZR1_TEST_ENABLED
+
 #include <freewpc.h>
 #include <window.h>
 #include <test.h>
