@@ -132,10 +132,10 @@ define MACHINE_HAS_UPPER_LEFT_FLIPPER
 46: Left Standup 3, ingame # Light
 47: Left Standup 2, ingame # Turbo
 48: Left Standup 1, ingame # Boost
-51: Left Race Start, noscore, opto
-52: Right Race Start, noscore, opto
-55: Left Race Encoder, noscore, opto
-56: Right Race Encoder, noscore, opto
+51: Left Race Start, noscore, opto, noevent
+52: Right Race Start, noscore, opto, noevent
+55: Left Race Encoder, noscore, opto, noevent
+56: Right Race Encoder, noscore, opto, noevent
 57: Route 66 Kickout, ingame
 58: Skid Route 66 Exit, ingame
 61: Left Slingshot, ingame, noplay

@@ -110,6 +110,7 @@ my %BinaryProperties = (
 		"virtual" => 1,
 		"standup" => 1,
 		"noscore" => 1,
+		"noevent" => 1,
 		"outhole" => $GLOBAL_OBJECT,
 		"shooter" => $GLOBAL_OBJECT,
 		"tilt" => $GLOBAL_OBJECT,
@@ -979,7 +980,7 @@ sub machine_write_switch_decls {
 		$fn = $sw->{'fn'};
 		next if (!defined $fn);
 		$swname = $sw->{'c_decl'};
-		if (!($swname =~ /unused/)) {
+		if (!($swname =~ /unused/ || defined $sw->{'noevent'})) {
 			print "extern void $fn (void); /* callset_invoke ($swname) */\n";
 		}
 	}
@@ -1011,7 +1012,8 @@ sub machine_write_switch_decls {
 		for $field ("fn", "flags", "lamp", "sound",
 			"debounce", "devno") {
 			$val = $sw->{$field};
-			if (($c_decl =~ /unused/) && ($field eq "fn")) {
+			
+			if (($field eq "fn") && (($c_decl =~ /unused/) || defined $sw->{'noevent'})) {
 				$val = "null_function";
 			}
 			print "      .$field = $val,\n" if defined $val;

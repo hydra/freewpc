@@ -1284,6 +1284,10 @@ flags, which alter the way that the switching code will manage
 it.  The capitalized name is used in the C code; the lowercase
 name is the spelling used in the machine config file.
 
+Event handlers are called for all switches unless the switch name contains
+'unused' or is marked as 'noevent' in the machine definition file. Using
+'noevent' is an indication that the switch is only used by realtime tasks.
+
 @itemize @code
 
 @item SW_OPTICAL (opto)
