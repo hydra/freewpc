@@ -31,6 +31,7 @@
 #ifndef _PRIORITY_H
 #define _PRIORITY_H
 
+//TODO do we need PRI_INGAME_MENU it would need to be quite high
 typedef enum _priority {
 	PRI_NULL=0,
 	PRI_VOLUME_CHANGE_MUSIC,
@@ -66,6 +67,7 @@ typedef enum _priority {
 	PRI_GAME_QUICK6,
 	PRI_GAME_QUICK7,
 	PRI_GAME_QUICK8,
+	PRI_GAME_VMODE,
 	PRI_BALLSAVE,
 	PRI_EB,
 	PRI_MULTIBALL,
@@ -75,13 +77,16 @@ typedef enum _priority {
 	PRI_LEFF5, PRI_LEFF6, PRI_LEFF7, PRI_LEFF8,
 	PRI_SCORE_GOAL,
 	PRI_SCORES_IMPORTANT,
+	PRI_BALL_LAUNCH_MENU,
 	PRI_REPLAY,
 	PRI_SPECIAL,
 	PRI_BALL_SEARCH,
 	PRI_VOLUME_CHANGE_DISPLAY,
 	PRI_TILT_WARNING,
 	PRI_STATUS,
+	PRI_VIDEO_MODE, //holding flippers for status should not interrupt the video mode
 	PRI_BONUS,
+	PRI_SHOOT_AGAIN,
 	PRI_TILT,
 	PRI_GAME_OVER,
 	PRI_EB_BUYIN,	

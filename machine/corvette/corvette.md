@@ -14,7 +14,7 @@ Pinmame-ROM: corv_2_1.bin
 Lamp-Matrix-Width: 51
 Lamp-Matrix-Height: 18
 
-define MACHINE_NUMBER 570
+define MACHINE_NUMBER 536
 define MACHINE_GRAND_CHAMPION_INITIALS { 'D', 'P', 'C' }
 define MACHINE_GRAND_CHAMPION_SCORE { 0x00, 0x20, 0x00, 0x00, 0x00 }
 define MACHINE_HIGH_SCORE_INITIALS { 'F', 'R', 'E' }, { 'W', 'P', 'C' }, { 'F', 'R', 'E' }, { 'W', 'P', 'C' }
@@ -45,7 +45,7 @@ define MACHINE_HAS_UPPER_LEFT_FLIPPER
 17: Route 66 Arrow, amber, x(29), y(11)
 18: Race Today, amber, x(31), y(11)
 21: Inner Loop Arrow, amber, x(19), y(12)
-22: Fuelie, blue, x(20), y(11)
+22: Fuelie, green, x(20), y(11)
 23: Nitrous, blue, x(21), y(10)
 24: Inner Loop Jackpot, red, x(22), y(9) # horsepower jackpot
 25: Right Outer Loop Arrow, amber, x(24), y(16)
@@ -56,10 +56,10 @@ define MACHINE_HAS_UPPER_LEFT_FLIPPER
 32: Lite Lock, amber, x(28), y(5)
 33: Qualify, amber, x(29), y(6)
 34: Big Block, blue, x(30), y(7)
-35: ZR-1 Ramp Lock, green, x(28), y(7)
+35: ZR1 Ramp Lock, green, x(28), y(7)
 36: 6 Speed Trans, blue, x(27), y(7)
 37: Hi Lift Cams, blue, x(26), y(7)
-38: ZR-1 Ramp Arrow, amber, x(25), y(7)
+38: ZR1 Ramp Arrow, amber, x(25), y(7)
 41: Corvette 6, yellow, x(35), y(13)
 42: Corvette 3, yellow, x(36), y(11)
 43: Corvette 1, yellow, x(37), y(9)
@@ -108,8 +108,7 @@ define MACHINE_HAS_UPPER_LEFT_FLIPPER
 12: Right Out Lane, ingame
 13: Start Button, start-button, cabinet, intest
 14: Tilt, cabinet, tilt, ingame, noplay
-# not called 'Shooter', see: trivial.c/CALLSET_ENTRY (trivial, sw_plunger)
-15: Plunger, shooter, edge, noplay, debounce(TIME_200MS)
+15: Shooter, edge, noscore, shooter, debounce(TIME_200MS)
 16: Left Return Lane, ingame
 17: Right Return Lane, ingame
 18: Spinner, ingame
@@ -117,16 +116,16 @@ define MACHINE_HAS_UPPER_LEFT_FLIPPER
 22: Coin Door Closed, noscore, noplay
 23: Buyin Button, buyin-button, cabinet
 #24: Always Closed
-31: Trough 1, noscore, opto
-32: Trough 2, noscore, opto
-33: Trough 3, noscore, opto
-34: Trough 4, noscore, opto
+31: Trough 1, noscore, noplay, opto
+32: Trough 2, noscore, noplay, opto
+33: Trough 3, noscore, noplay, opto
+34: Trough 4, noscore, noplay, opto
 35: Route 66 Entry, ingame, opto
 36: Pit Stop Popper, ingame, opto
-37: Trough Eject, ingame, opto # stuck off = ball jam
+37: Trough Eject, noscore, noplay, opto # stuck off = ball jam
 38: Inner Loop Entry, ingame
-41: ZR-1 Bottom Entry, ingame, opto
-42: ZR-1 Top Entry, ingame, opto
+41: ZR1 Bottom Entry, ingame, opto
+42: ZR1 Top Entry, ingame, opto
 43: Skid Pad Entry, ingame, opto
 44: Skid Pad Exit, ingame
 45: Route 66 Exit, ingame
@@ -147,12 +146,12 @@ define MACHINE_HAS_UPPER_LEFT_FLIPPER
 66: Left Rollover, ingame
 67: Middle Rollover, ingame
 68: Right Rollover, ingame
-71: ZR-1 Full Left, opto, noplay, noscore
-72: ZR-1 Full Right, opto, noplay, noscore
-75: ZR-1 Exit, ingame
-76: ZR-1 Lock Ball 1, ingame
-77: ZR-1 Lock Ball 2, ingame
-78: ZR-1 Lock Ball 3, ingame
+71: ZR1 Full Left, opto, noplay, noscore
+72: ZR1 Full Right, opto, noplay, noscore
+75: ZR1 Exit, ingame
+76: ZR1 Lock Ball 1, ingame
+77: ZR1 Lock Ball 2, ingame
+78: ZR1 Lock Ball 3, ingame
 81: Million Standup, standup
 82: Skid Pad Standup, standup
 83: Right Standup, standup # lite kickback
@@ -163,12 +162,12 @@ define MACHINE_HAS_UPPER_LEFT_FLIPPER
 
 [drives]
 H1: Trough Release, ballserve, duty(SOL_DUTY_100), time(TIME_66MS)
-H2: ZR-1 Low Rev Gate, duty(SOL_DUTY_50), time(TIME_66MS)
+H2: ZR1 Low Rev Gate, duty(SOL_DUTY_50), time(TIME_66MS)
 H3: Kickback, duty(SOL_DUTY_75), time(TIME_66MS)
 H4: Pit Stop Popper, duty(SOL_DUTY_75), time(TIME_66MS)
-H5: ZR-1 Up Rev Gate, duty(SOL_DUTY_50), time(TIME_66MS)
-H6: Not Used 1,nosearch
-H7: Knocker, knocker, duty(SOL_DUTY_75), time(TIME_33MS)
+H5: ZR1 Up Rev Gate, duty(SOL_DUTY_50), time(TIME_66MS)
+H6: Not Used 1, nosearch
+H7: Knocker, knocker, duty(SOL_DUTY_75), time(TIME_50MS)
 H8: Route 66 Kickout, duty(SOL_DUTY_75), time(TIME_66MS)
 
 L1: Left Sling, duty(SOL_DUTY_100), time(TIME_33MS)
@@ -176,15 +175,15 @@ L2: Right Sling, duty(SOL_DUTY_100), time(TIME_33MS)
 L3: Left Jet, duty(SOL_DUTY_75), time(TIME_33MS)
 L4: Lower Jet, duty(SOL_DUTY_75), time(TIME_33MS)
 L5: Upper Jet, duty(SOL_DUTY_75), time(TIME_33MS) # actually the RIGHT jet
-L6: Not Used 2,nosearch
-L7: ZR-1 Lockup, duty(SOL_DUTY_100), time(TIME_100MS)
+L6: Not Used 2, nosearch
+L7: ZR1 Lockup, duty(SOL_DUTY_100), time(TIME_100MS)
 L8: Loop Gate, duty(SOL_DUTY_50), time(TIME_66MS)
 
 # G = J126 on Power Driver Board
-G1: Race Direction
+G1: Race Direction, nosearch
 G2: Left Race Enable, motor
 G3: Right Race Enable, motor
-G4: Future Car, flash, duty(SOL_DUTY_75), time(TIME_16MS)
+G4: Future Car, flash, duty(SOL_DUTY_100), time(TIME_33MS)
 # playfield flashers
 G5: Jets, flash, duty(SOL_DUTY_100), time(TIME_33MS)
 G6: Right Ramps, flash, duty(SOL_DUTY_75), time(TIME_16MS)
@@ -193,14 +192,14 @@ G8: Catch Me, flash, duty(SOL_DUTY_75), time(TIME_16MS)
 
 
 # A = J122
-A1: ZR-1 Ramp, flash, duty(SOL_DUTY_75), time(TIME_16MS)
-A2: ZR-1 Underside, flash, duty(SOL_DUTY_75), time(TIME_16MS)
+A1: ZR1 Ramp, flash, duty(SOL_DUTY_75), time(TIME_16MS)
+A2: ZR1 Underside, flash, duty(SOL_DUTY_75), time(TIME_16MS)
 A3: Right Rear Panel, flash, duty(SOL_DUTY_75), time(TIME_16MS)
 A4: Right Standup, flash, duty(SOL_DUTY_75), time(TIME_16MS)
 
 # F = J902 on Fliptronic II
-F5: Ramp Diverter, duty(SOL_DUTY_100), time(TIME_50MS)
-F6: Ramp Divertor Hold, duty(SOL_DUTY_100), time(TIME_100MS)
+F5: Ramp Diverter, duty(SOL_DUTY_100), time(TIME_100MS)
+F6: Ramp Diverter Hold, duty(SOL_DUTY_100), time(TIME_100MS)
 F7: U.L. Flip Power, duty(SOL_DUTY_100), time(TIME_50MS)
 F8: U.L. Flip Hold, duty(SOL_DUTY_100), time(TIME_100MS)
 
@@ -211,11 +210,13 @@ F8: U.L. Flip Hold, duty(SOL_DUTY_100), time(TIME_100MS)
 3: Playfield L.R.
 4: Backbox Title
 
-[tests]
-#corvette_zr1:
-#corvette_racetrack:
-
 #############################################################
+
+[tests]
+#Templates that use include test must still be listed here otherwise it won't be listed in the test menu
+#corvette_zr1:
+#diverter: #autogenerated-test, see 'Diverter' defintion in [templates] section.
+#corvette_racetrack:
 
 [lamplists]
 Top Rollovers: Left Rollover, Middle Rollover, Right Rollover
@@ -230,20 +231,23 @@ Build Up: PF:lamp_sort_bottom_to_top
 
 [containers]
 Trough: trough, Trough Release, Trough 4, Trough 3, Trough 2, Trough 1, init_max_count(4)
-ZR1 Popper: ZR-1 Lockup, ZR-1 Lock Ball 3, ZR-1 Lock Ball 2, ZR-1 Lock Ball 1
+ZR1 Popper: ZR1 Lockup, ZR1 Lock Ball 3, ZR1 Lock Ball 2, ZR1 Lock Ball 1, settle_delay(TIME_1500MS)
 Pitstop Popper: Pit Stop Popper, Pit Stop Popper
 Route 66 Popper: Route 66 Kickout, Route 66 Kickout
 
 #############################################################
 
 [adjustments]
-Ball Saver: yes_no, YES
+#TODO allow and enable the ball saver when it doesn't save balls during multi-ball on a machine with no autofire
+#FIXME this doesn't want to default to NO!
+Ball Saver: yes_no, NO
 
-# todo change the default to YES, this is just for testing...
-Enable ZR1_Engine: yes_no, NO
+Enable ZR1_Engine: yes_no, YES
+Enable Racetrack: yes_no, YES
 
 [audits]
 ZR1 Errors:
+Racetrack Errors:
 
 [system_sounds]
 
@@ -274,46 +278,55 @@ ZR1 Errors:
 10M:
 20M:
 25M:
+50M:
 
 [highscores]
 
 [flags]
-ZR-1 Multiball Running:
-ZR-1 Multiball Lite Lock Lit:
-ZR-1 Multiball Lock Lit:
+ZR1 Multiball Running:
+ZR1 Multiball Lite Lock Lit:
+ZR1 Multiball Lock Lit:
 Torque Jackpot Lit:
 Horsepower Jackpot Lit:
 Loop Gate Opened:
-ZR-1 Up Rev Gate Opened:
-ZR-1 Low Rev Gate Opened:
+ZR1 Up Rev Gate Opened:
+ZR1 Low Rev Gate Opened:
+Diverter Opened:
 
 [globalflags]
-Skillshot Enabled:
+Skillshot Menu Enabled:
+Skillshot Rollover Enabled:
+Skillshot Skidpad Enabled:
+Skillshot Dragrace Enabled:
 ZR1 Working:
 ZR1 Solenoids Powered:
+Racetrack Working:
+Dragrace In Progress:
 
 [deffs]
+#ZR1 Ball Locked: page(MACHINE_PAGE), PRI_GAME_QUICK4, D_PAUSE
+#ZR1 MB Lit: page(MACHINE_PAGE), PRI_GAME_QUICK5
+#ZR1 MB Start: page(MACHINE_PAGE), PRI_GAME_QUICK6, D_PAUSE
+#ZR1 MB Running: runner, page(MACHINE_PAGE), PRI_GAME_MODE5
+#ZR1 MB HP JP: page(MACHINE_PAGE), PRI_GAME_QUICK7, D_SCORE
+#ZR1 MB TRQ JP: page(MACHINE_PAGE), PRI_GAME_QUICK7, D_SCORE 
 
-#ZR-1 Ball Locked: page(MACHINE_PAGE), PRI_GAME_QUICK4
-#ZR-1 MB Lit: page(MACHINE_PAGE), PRI_GAME_QUICK5
-#ZR-1 MB Start: page(MACHINE_PAGE), PRI_GAME_QUICK6, D_PAUSE
-#ZR-1 MB Running: runner, page(MACHINE_PAGE), PRI_GAME_MODE5
-#ZR-1 MB HP JP: page(MACHINE_PAGE), PRI_GAME_QUICK7, D_SCORE
-#ZR-1 MB TRQ JP: page(MACHINE_PAGE), PRI_GAME_QUICK7, D_SCORE 
+#Kickback Relit: page(MACHINE_PAGE), PRI_GAME_QUICK2
+#Jet: page(MACHINE_PAGE), PRI_GAME_QUICK1, D_SCORE+D_RESTARTABLE
+#Sling: page(MACHINE_PAGE), PRI_GAME_QUICK1, D_SCORE+D_RESTARTABLE
+#Skill Menu: page(MACHINE_PAGE), PRI_BALL_LAUNCH_MENU, D_RESTARTABLE
 
-Kickback Relit: page(MACHINE_PAGE), PRI_GAME_QUICK2
-Jet: page(MACHINE_PAGE), PRI_GAME_QUICK1, D_SCORE+D_RESTARTABLE
-Sling: page(MACHINE_PAGE), PRI_GAME_QUICK1, D_SCORE+D_RESTARTABLE
+#Dragrace: page(MACHINE_PAGE), PRI_VIDEO_MODE
 
 [leffs]
-Amode: runner, PRI_LEFF1, LAMPS(ALL), GI(ALL), page(MACHINE_PAGE)
-Color Cycle: runner, PRI_LEFF3, LAMPS(ALL), page(MACHINE_PAGE)
-Build Up: runner, PRI_LEFF3, LAMPS(ALL), page(MACHINE_PAGE)
+#Amode: runner, PRI_LEFF1, LAMPS(ALL), GI(ALL), page(MACHINE_PAGE)
+#Color Cycle: runner, PRI_LEFF3, LAMPS(ALL), page(MACHINE_PAGE)
+#Build Up: runner, PRI_LEFF3, LAMPS(ALL), page(MACHINE_PAGE)
 
 [fonts]
-pcsenior:
 misctype:
-lithograph:
+supercar9:
+renew8:
 
 [timers]
 Kickback Made:
@@ -335,14 +348,22 @@ Loop Gate: driver(duty),
 	sol=SOL_LOOP_GATE,
 	ontime=TIME_300MS, duty_ontime=TIME_33MS, duty_offtime=TIME_16MS, timeout=60
 
-ZR-1 Low Rev Gate: driver(duty),
-	sol=SOL_ZR_1_LOW_REV_GATE,
+Diverter: driver(divhold),
+	power_sol=SOL_RAMP_DIVERTER,
+	hold_sol=SOL_RAMP_DIVERTER_HOLD,
+	mode=1,
+	power_pulse_ms=96,
+	schedule_ms=32,
+	includetest(yes)
+
+ZR1 Low Rev Gate: driver(duty),
+	sol=SOL_ZR1_LOW_REV_GATE,
 	ontime=TIME_300MS, duty_ontime=TIME_33MS, duty_offtime=TIME_16MS, timeout=60
 
-ZR-1 Up Rev Gate: driver(duty),
-	sol=SOL_ZR_1_UP_REV_GATE,
+ZR1 Up Rev Gate: driver(duty),
+	sol=SOL_ZR1_UP_REV_GATE,
 	ontime=TIME_300MS, duty_ontime=TIME_33MS, duty_offtime=TIME_16MS, timeout=60
 
 Kickback Driver: driver(spsol),
 	sw=SW_KICKBACK, sol=SOL_KICKBACK,
-	ontime=12, offtime=18
+	ontime=12, offtime=18, auto=1

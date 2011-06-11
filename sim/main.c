@@ -112,7 +112,7 @@ void simlog (enum sim_log_class class, const char *format, ...)
 	{
 		if (class != SLC_DEBUG_PORT)
 			fprintf (ofp, "[SIM] ");
-		fprintf (ofp, buf);
+		fprintf (ofp, "%s", buf);
 		fputc ('\n', ofp);
 		fflush (ofp);
 	}
@@ -325,10 +325,14 @@ int main (int argc, char *argv[])
 	sim_switch_init ();
 
 	/* Force always closed */
+#ifdef SW_ALWAYS_CLOSED
 	sim_switch_toggle (SW_ALWAYS_CLOSED);
+#endif
 
 	/* Close the coin door */
+#ifdef SW_COIN_DOOR_CLOSED
 	sim_switch_toggle (SW_COIN_DOOR_CLOSED);
+#endif
 
 	/* Load the protected memory area */
 	protected_memory_load ();

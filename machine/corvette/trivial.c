@@ -72,14 +72,13 @@ CALLSET_ENTRY (trivial, sw_right_out_lane)
 	common_outlane ();
 }
 
-CALLSET_ENTRY (trivial, sw_plunger)
+CALLSET_ENTRY (trivial, sw_shooter)
 {
-	if (!switch_poll_logical (SW_PLUNGER))
+	if (in_live_game && !switch_poll_logical (SW_SHOOTER))
 	{
 		sample_start (SND_BURNOUT_01, SL_2S);
-		// @TODO leff_start (LEFF_SHOOTER);
+		// TODO ? leff_start (LEFF_SHOOTER);
 	}
-	callset_invoke (sw_shooter);
 }
 
 CALLSET_ENTRY (trivial, end_ball, start_ball)
