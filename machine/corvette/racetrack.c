@@ -688,7 +688,7 @@ static inline void racetrack_state_race_run(void) {
 }
 
 // This RTT needs to be FAST as it's scheduled frequently
-void corvette_racetrack_encoder_rtt (void) {
+inline void corvette_racetrack_encoder_rtt (void) {
 
 	racetrack_encoder_previous_mask = racetrack_encoder_mask;
 	// check the optos and update the bitmask
@@ -700,7 +700,7 @@ void corvette_racetrack_encoder_rtt (void) {
 		racetrack_encoder_mask &= ~RT_EM_PREVIOUS_STATE_LEFT;
 	}
 
-	if ((racetrack_encoder_mask & RT_EM_PREVIOUS_STATE_LEFT) != (racetrack_encoder_previous_mask & RT_EM_PREVIOUS_STATE_LEFT)) {
+	if (unlikely((racetrack_encoder_mask & RT_EM_PREVIOUS_STATE_LEFT) != (racetrack_encoder_previous_mask & RT_EM_PREVIOUS_STATE_LEFT))) {
 		// encoder state changed
 		racetrack_lanes[LANE_LEFT].encoder_count++;
 		racetrack_encoder_mask |= (RT_EM_SEEN_LEFT);
@@ -714,7 +714,7 @@ void corvette_racetrack_encoder_rtt (void) {
 		racetrack_encoder_mask &= ~RT_EM_PREVIOUS_STATE_RIGHT;
 	}
 
-	if ((racetrack_encoder_mask & RT_EM_PREVIOUS_STATE_RIGHT) != (racetrack_encoder_previous_mask & RT_EM_PREVIOUS_STATE_RIGHT)) {
+	if (unlikely((racetrack_encoder_mask & RT_EM_PREVIOUS_STATE_RIGHT) != (racetrack_encoder_previous_mask & RT_EM_PREVIOUS_STATE_RIGHT))) {
 		// encoder state changed
 		racetrack_lanes[LANE_RIGHT].encoder_count++;
 		racetrack_encoder_mask |= (RT_EM_SEEN_RIGHT);
