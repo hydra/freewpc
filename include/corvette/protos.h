@@ -58,3 +58,10 @@ void racetrack_car_return(void);
 void racetrack_car_test(void);
 U8 racetrack_get_actual_car_position(U8 lane_number);
 void racetrack_set_desired_car_position(U8 lane, U8 position_percentage);
+
+/* vmode_dragrace.c */
+void dragrace_start(U8 starter_gid);
+
+/* goal_collect_cars.c */
+void award_car(void);
+
