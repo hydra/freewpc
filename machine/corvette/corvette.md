@@ -292,6 +292,7 @@ Horsepower Jackpot Lit:
 Loop Gate Opened:
 ZR1 Up Rev Gate Opened:
 ZR1 Low Rev Gate Opened:
+# FIXME move to globalflags
 Diverter Opened:
 
 [globalflags]
@@ -318,6 +319,8 @@ Sling: page(MACHINE_PAGE), PRI_GAME_QUICK1, D_SCORE+D_RESTARTABLE
 Skill Menu: page(MACHINE_PAGE), PRI_BALL_LAUNCH_MENU, D_RESTARTABLE
 
 Dragrace: page(MACHINE_PAGE), PRI_VIDEO_MODE
+
+Goal Car Awarded: page(MACHINE_PAGE), PRI_GAME_QUICK4, D_PAUSE
 
 [leffs]
 Amode: runner, PRI_LEFF1, LAMPS(ALL), GI(ALL), page(MACHINE_PAGE)
