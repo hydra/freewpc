@@ -64,4 +64,4 @@ void dragrace_start(U8 starter_gid);
 
 /* goal_collect_cars.c */
 void award_car(void);
-
+bool have_collected_all_cars(void);
