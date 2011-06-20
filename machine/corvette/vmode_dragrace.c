@@ -80,7 +80,7 @@ void dragrace_start_anim (void) {
 	dmd_alloc_low_clean ();
 	font_render_string_center (&font_supercar9, 64, 16, "READY");
 	dmd_show_low ();
-	sample_start (SND_RACE_STARTER_01, SL_1S);
+	sample_start (SND_RACE_STARTER_01, SL_500MS);
 	task_sleep_sec(1);
 
 	// set
@@ -88,7 +88,7 @@ void dragrace_start_anim (void) {
 	dmd_alloc_low_clean ();
 	font_render_string_center (&font_supercar9, 64, 16, "SET");
 	dmd_show_low ();
-	sample_start (SND_RACE_STARTER_01, SL_1S);
+	sample_start (SND_RACE_STARTER_01, SL_500MS);
 	task_sleep_sec(1);
 
 	// go
@@ -97,7 +97,7 @@ void dragrace_start_anim (void) {
 	dmd_alloc_low_clean ();
 	font_render_string_center (&font_supercar9, 64, 16, "GO");
 	dmd_show_low ();
-	sample_start (SND_RACE_STARTER_02, SL_1S);
+	sample_start (SND_RACE_STARTER_02, SL_2S);
 }
 
 void dragrace_loser_anim(void) {
