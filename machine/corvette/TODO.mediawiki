@@ -1,10 +1,12 @@
 = Todo list for Corvette =
 
-* Improve the engine shake
-* Calculate real-world ball-speed of left orbit, store high-speeds and player names, award credit for highest speed
-
+* flash pit in/ challenge for pit in ball eject
+* flash route 66 flasher for ball eject
+* enable drive again light when player has e.b.
 
 = Game Ideas =
+
+* Calculate real-world ball-speed of left orbit, store high-speeds and player names, award credit for highest speed
 
 == Competition Timed mode 1 ==
 
@@ -101,17 +103,21 @@ Collect cars by:
 
 Use the pitstop popper to award the player with things (when pit-in lit).
 
-Light pit-in via slingshot or jet bumper goals.
+Light pit-in via slingshot, orbit or jet bumper goals.
 
 Possible awards:
-* Start Dragrace
-* 10M
-* 50M
+* Light Dragrace
+* 5M (done)
+* 50M (done)
 * +2x Bonus
-* Collect Car
+* Collect Car (done)
 * Collect Part
 * Le-Mans 24h Multiball
 * V8 Tuner Multiball
+* Extra Ball
+* Quadra Jets
+
+
 
 
 == Le Mans 24h Multiball ==
