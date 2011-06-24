@@ -84,59 +84,29 @@ void award_car(void) {
 	if (have_collected_all_cars()) {
 		return;
 	}
-#ifdef DEBUGGER
-	dbprintf("collected cars (before): %d\n", cars_collected);
-#endif
 	speech_start(car_award_sound_map[cars_collected], SL_4S);
 	cars_collected++;
-#ifdef DEBUGGER
-	dbprintf("collected cars  (after): %d\n", cars_collected);
-#endif
 	callset_invoke(lamp_update);
 	deff_start(DEFF_GOAL_CAR_AWARDED);
 }
 
 CALLSET_ENTRY (goal_collect_cars, start_player) {
-#ifdef DEBUGGER
-	dbprintf("goal_collect_cars/start_player\n");
-	dbprintf("collected cars: %d\n", cars_collected);
-#endif
 	cars_collected = 0;
 }
 
 CALLSET_ENTRY (goal_collect_cars, lamp_update) {
-#ifdef DEBUGGER
-	dbprintf("goal_collect_cars/lamp_update - start\n");
-	dbprintf("collected cars: %d\n", cars_collected);
-	const char *car_lamp_message;
-#endif
 
 
 
 	U8 car_lamp_index;
 	for (car_lamp_index = CARS_MIN; car_lamp_index <= CARS_MAX; car_lamp_index++) {
 		if (cars_collected >= car_lamp_index + 1) {
-#ifdef DEBUGGER
-			car_lamp_message = "IS COLLECTED";
-#endif
 			lamp_on(car_lamp_map[car_lamp_index]);
 		} else {
-#ifdef DEBUGGER
-			car_lamp_message = "NOT COLLECTED";
-#endif
 			lamp_off(car_lamp_map[car_lamp_index]);
 		}
-#ifdef DEBUGGER
-		dbprintf("Car %d %s\n", car_lamp_index, car_lamp_message);
-#endif
-	}
-#ifdef DEBUGGER
-	dbprintf("goal_collect_cars/lamp_update - exit\n");
-#endif
-}
 
-// XXX debugging
-CALLSET_ENTRY (goal_collect_cars, sw_skid_pad_standup, sw_million_standup) {
-	award_car();
+	}
+
 }
 
