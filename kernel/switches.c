@@ -230,12 +230,6 @@ combo_definition_t *last_matched_combo;
 #define MATCHED_SWITCH (1 << 0)
 #define MATCHED_TIME   (1 << 1)
 
-/**
- * FIXME
- * it's possible to repeatedly trigger a combo by hitting the last switch as long as the
- * rest of the switches are in the recent_switches list and the time between switch hits is
- * still within the allowed time when IGNORE_SWITCHES_UNTIL is used in the combo definition
- */
 void process_combo(combo_definition_t *combo) {
 #ifdef CONFIG_DEBUG_COMBOS
 	dbprintf("processing combo: %s\n", combo->name);
@@ -261,6 +255,7 @@ void process_combo(combo_definition_t *combo) {
 	U8 matched;
 	recent_switch_t *recent_switch;
 	combo_switch_entry_t *combo_switch;
+	U8 last_checked_switch_id = 0;
 	U16 previous_recent_time = 0;
 
 	while (combo_index > 0) {
@@ -290,10 +285,49 @@ void process_combo(combo_definition_t *combo) {
 
 			if (recent_switch->switch_id == 0) {
 #ifdef CONFIG_DEBUG_COMBOS
-				dbprintf("ran out of recent switches\n");
+				dbprintf("ran out of recent switches, bailing\n");
 #endif
 				break;
 			}
+/*
+
+recent:
+R L L L R    should match
+R L L R      should match
+R L L R R    should not match
+combo:
+R L* L R
+
+recent:
+1 2 3 3      should not match
+1 2 3 2 3    should not match
+1 2 3 1 3    should not match
+1 2 3        should match
+1 1 2 2 3    should match
+1 1 2 2 3 3  should not match
+
+combo:
+1* 2* 3
+
+
+ */
+			// FIXME this fix breaks the use of two switches in a row in the combo spec though.
+			if (last_checked_switch_id == recent_switch->switch_id && last_checked_switch_id && (combo->switch_list[combo_index+1].flags & IGNORE_SWITCHES_UNTIL)) {
+				// Avoid matching multiple-switch presses of the same switch.
+				// when the previous combo switch wasn't using IGNORE_SWITCHES_UNTIL
+				// Without this check it's possible to repeatedly trigger a combo by hitting the last switch as long as the
+				// rest of the switches are in the recent_switches list and the time between switch hits is
+			    // still within the allowed time when IGNORE_SWITCHES_UNTIL is used in the combo definition
+				// on the second-to-last switch.
+
+#ifdef CONFIG_DEBUG_COMBOS
+				dbprintf("same as last checked switch, bailing\n");
+#endif
+
+				break;
+			}
+			last_checked_switch_id = recent_switch->switch_id;
+
 			if (recent_switch->switch_id == combo_switch->switch_id) {
 				matched |= MATCHED_SWITCH;
 				// don't check time on the first switch as there's no other time to compare it with
