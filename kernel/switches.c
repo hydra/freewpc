@@ -398,6 +398,18 @@ void switch_lamp_pulse (void)
 }
 
 
+#ifdef DEBUGGER
+void dump_switch_details(U8 sw) {
+	dbprintf ("SW: ");
+	sprintf_far_string (names_of_switches + sw);
+	dbprintf1 ();
+#ifdef DEBUG_SWITCH_NUMBER
+	dbprintf (" (%d) ", sw);
+#endif
+	dbprintf ("\n");
+}
+#endif
+
 /*
  * The entry point for processing a switch transition.  It performs
  * some of the common switch handling logic before calling all
@@ -445,13 +457,7 @@ void switch_sched_task (void)
 #ifdef DEBUGGER
 	if (swinfo->fn != null_function && sw < 72)
 	{
-		dbprintf ("SW: ");
-		sprintf_far_string (names_of_switches + sw);
-		dbprintf1 ();
-#ifdef DEBUG_SWITCH_NUMBER
-		dbprintf (" (%d) ", sw);
-#endif
-		dbprintf ("\n");
+		dump_switch_details(sw);
 	}
 #endif
 
