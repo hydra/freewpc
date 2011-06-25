@@ -219,6 +219,7 @@ void sim_init (void)
  * This function substitutes for the reset vector being thrown on actual
  * hardware.
  */
+#ifndef CONFIG_UNITTEST
 int main (int argc, char *argv[])
 {
 	int argn = 1;
@@ -376,4 +377,5 @@ int main (int argc, char *argv[])
 	freewpc_init ();
 	return 0;
 }
+#endif
 
