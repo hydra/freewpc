@@ -302,9 +302,11 @@ recent:
 1 2 3 3      should not match
 1 2 3 2 3    should not match
 1 2 3 1 3    should not match
-1 2 3        should match
-1 1 2 2 3    should match
-1 1 2 2 3 3  should not match
+<1 2 3>        should match
+1 <1 2 2 3>    should match
+1 <1 2 2 3 3>  should not match
+
+1 2 3 2 3
 
 combo:
 1* 2* 3
