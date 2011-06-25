@@ -5,7 +5,7 @@
 
 DDD := unittests
 
-UNITTEST_OBJS := $(DDD)/seatest.o $(DDD)/testrunner.o
+UNITTEST_OBJS := $(DDD)/seatest.o $(DDD)/testrunner.o $(DDD)/switches_tests.o
 #UNITTEST_OBJS += 
 
 # Additional defines
