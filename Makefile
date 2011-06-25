@@ -120,6 +120,7 @@ COMMON_BASIC_OBJS :=
 # Makefile too.
 ifeq ($(CONFIG_SIM), y)
 include sim/Makefile
+include unittests/Makefile
 else
 PMAKEFILE := platform/$(PLATFORM)/Makefile
 -include $(PMAKEFILE)
@@ -325,6 +326,7 @@ GAME_ROM = freewpc.rom
 endif
 MAP_FILE = $(GAME_ROM:.rom=.map)
 NATIVE_PROG = $(BLDDIR)/freewpc_$(MACHINE)
+UNITTESTS_PROG = $(BLDDIR)/freewpc_unittests
 
 ifndef MACHINE_FILE
 MACHINE_FILE = $(MACHINE).md
@@ -681,8 +683,18 @@ $(BINFILES:.bin=.s19) : %.s19 : %.lnk $(OBJS) $(AS_OBJS) $(PAGE_HEADER_OBJS)
 endif
 
 ifeq ($(CPU),native)
+.PHONY : unittests
+unittests : unittest_prereq $(UNITTESTS_PROG)
+	$(Q)echo "Running tests $@ ..." && $(UNITTESTS_PROG)
+
+.PHONY : unittest_prereq
+unittest_prereq: clean_err check_prereqs $(OBJS) $(NATIVE_OBJS)
+	
+$(UNITTESTS_PROG) : $(UNITTEST_OBJS)
+	$(Q)echo "Linking $@ ..." && $(HOSTCC) $(HOST_LFLAGS) -o $(UNITTESTS_PROG) $(UNITTEST_OBJS) $(OBJS) $(NATIVE_OBJS) $(HOST_LIBS) >> $(ERR) 2>&1
+
 native : $(NATIVE_PROG)
-$(NATIVE_PROG) : $(IMAGE_ROM) $(OBJS) $(NATIVE_OBJS)
+$(NATIVE_PROG) : $(IMAGE_ROM) $(OBJS)
 	$(Q)echo "Linking $@ ..." && $(HOSTCC) $(HOST_LFLAGS) `pth-config --ldflags` -o $(NATIVE_PROG) $(OBJS) $(NATIVE_OBJS) $(HOST_LIBS) >> $(ERR) 2>&1
 endif
 
@@ -823,6 +835,8 @@ $(filter-out $(BASIC_OBJS),$(C_OBJS)) : $(C_DEPS) $(GENDEFINES) $(REQUIRED)
 $(C_OBJS) $(FON_OBJS) : $(IMAGE_HEADER)
 
 $(NATIVE_OBJS) : $(GENDEFINES) $(REQUIRED)
+
+$(UNITTEST_OBJS) : $(GENDEFINES) $(REQUIRED)
 
 $(BASIC_OBJS) $(FON_OBJS) : $(MAKE_DEPS) $(GENDEFINES) $(REQUIRED)
 
@@ -1061,7 +1075,7 @@ callset.in :
 #
 .PHONY : clean
 clean: clean_derived clean_build clean_gendefines clean_tools
-	$(Q)for dir in `echo . kernel common effect fonts images test $(MACHINE_DIR) $(PLATFORM_DIR) sim cpu/$(CPU)`;\
+	$(Q)for dir in `echo . kernel common effect fonts images test $(MACHINE_DIR) $(PLATFORM_DIR) sim unittests cpu/$(CPU)`;\
 		do echo "Cleaning in '$$dir' ..." && \
 		pushd $$dir >/dev/null && rm -f $(TMPFILES) && \
 		popd >/dev/null ; done
