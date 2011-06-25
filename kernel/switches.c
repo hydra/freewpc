@@ -433,13 +433,14 @@ void switch_short_detect (void)
 		sw_raw[4] & sw_raw[5] & sw_raw[6] & sw_raw[7];
 	if (n != 0)
 	{
+		// one or more rows are shorted
 		dbprintf ("Row short\n", n);
 		sw_short_timer = 3;
 	}
 
 	for (n = 0; n < 8; n++)
 	{
-		if (sw_raw[n] == ~mach_opto_mask[n])
+		if (sw_raw[n] == (U8)~mach_opto_mask[n])
 		{
 			/* The nth column is shorted. */
 			dbprintf ("Column short\n");

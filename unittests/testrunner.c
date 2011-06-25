@@ -1,9 +1,11 @@
 #include <freewpc.h>
 #include "seatest.h"
+
+#include "unittests.h"
 //
 // create a test...
 //
-void test_hello_world()
+void test_hello_world( void )
 {
         char *s = "hello world!";
         assert_string_equal("hello world!", s);
@@ -29,12 +31,23 @@ void test_fixture_hello( void )
 void all_tests( void )
 {
         test_fixture_hello();
+        test_fixture_switches();
 }
 
+
+//
+// freewpc unit test helpers
+//
+
+void db_puts_unittest (const char *s) {
+	puts(s);
+}
 //
 // run the suite!
 //
 int main( int argc, char** argv )
 {
+	db_puts = db_puts_unittest;
+
         return run_tests(all_tests);
 }
