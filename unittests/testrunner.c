@@ -32,6 +32,7 @@ void all_tests( void )
 {
         test_fixture_hello();
         test_fixture_switches();
+        test_fixture_combos();
 }
 
 
@@ -40,7 +41,7 @@ void all_tests( void )
 //
 
 void db_puts_unittest (const char *s) {
-	puts(s);
+	printf(s);
 }
 //
 // run the suite!
@@ -48,6 +49,7 @@ void db_puts_unittest (const char *s) {
 int main( int argc, char** argv )
 {
 	db_puts = db_puts_unittest;
+	io_init();
 
         return run_tests(all_tests);
 }
