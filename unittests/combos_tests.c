@@ -30,6 +30,17 @@ typedef struct combo_def_s {
 } combo_def_t;
 
 
+static combo_step_t cstp_any_coin = {
+	.flags = CSTP_NO_FLAGS,
+	.switches = 4,
+	.switch_list = {
+		{ SW_LEFT_COIN, 0},
+		{ SW_CENTER_COIN, 0},
+		{ SW_RIGHT_COIN, 0},
+		{ SW_FOURTH_COIN, 0}
+	}
+};
+
 static combo_step_t cstp_left_outer_loop_entry = {
 	.flags = CSTP_NO_FLAGS,
 	.switches = 1,
@@ -148,8 +159,6 @@ static combo_def_t rr_ll_combo = {
 	}
 };
 
-
-
 static void dump_combo_step(const combo_step_t *combo_step) {
 	dbprintf("switches: %d\n", combo_step->switches);
 
@@ -196,9 +205,16 @@ static combo_def_t *machine_combos[COMBO_COUNT] = {
 #define RL_LR_COMBO_ID 1
 #define RL_RL_COMBO_ID 2
 #define LR_LR_COMBO_ID 3
-#define LL_LL_COMBO_ID 4
-#define RR_RR_COMBO_ID 5
+#define LL_RR_COMBO_ID 4
+#define RR_LL_COMBO_ID 5
 
+//
+// from combos.h
+//
+
+#ifdef CONFIG_UNITTEST
+#define UNITTEST_COMBO_ID 0xFF
+#endif
 //
 // from combos.c
 //
@@ -226,10 +242,14 @@ const combo_switch_t *combo_match_switch_to_steps(const U8 switch_id, const comb
 	return 0;
 }
 
+#ifdef CONFIG_UNITTEST
+U8 unittest_step_marker;
+#endif
+
 /**
  * expects sw_last_scheduled to be set appropriately
  */
-static void combo_process_switch_for_combo(U8 combo_id, combo_def_t *combo) {
+static void combo_process_switch_for_combo(const U8 combo_id, const combo_def_t *combo) {
 #ifdef DEBUGGER
 	dbprintf("processing combo: %d\n", combo_id);
 	dump_switch_details(sw_last_scheduled);
@@ -241,6 +261,11 @@ static void combo_process_switch_for_combo(U8 combo_id, combo_def_t *combo) {
 	U16 time_allowed = 0;
 	const combo_switch_t *matched_switch = 0;
 	U8 *current_step_marker_ptr = &current_step_markers[combo_id];
+#ifdef CONFIG_UNITTEST
+	if (combo_id == UNITTEST_COMBO_ID) {
+		current_step_marker_ptr = &unittest_step_marker;
+	}
+#endif
 	dbprintf("current step (before): %d\n", *current_step_marker_ptr);
 
 	do {
@@ -260,7 +285,7 @@ static void combo_process_switch_for_combo(U8 combo_id, combo_def_t *combo) {
 		const combo_step_t *next_step = combo->step_list[(*current_step_marker_ptr)];
 
 		if (current_step) {
-			dbprintf("last step\n");
+			dbprintf("current step\n");
 			dump_combo_step(current_step);
 		} else {
 			dbprintf("at first step\n");
@@ -282,8 +307,18 @@ static void combo_process_switch_for_combo(U8 combo_id, combo_def_t *combo) {
 				time_allowed = matched_switch->time_allowed;
 			}
 		} else {
-			dbprintf("switch matches wildcard step!\n");
+			dbprintf("switch matches wildcard step\n");
 			advance = TRUE;
+
+
+			if ((*current_step_marker_ptr) + 1 < combo->steps) {
+				// who defines a combo that ends with a wildcard step anyway? ...
+				dbprintf("checking next step too\n");
+				retry = TRUE; // see if the switch matches the next step too
+			} else {
+				dbprintf("no more steps, not retrying\n");
+			}
+			// TODO don't retry if the next step is the last one
 			time_allowed = next_step->time_allowed;
 		}
 
@@ -292,17 +327,21 @@ static void combo_process_switch_for_combo(U8 combo_id, combo_def_t *combo) {
 		} else {
 			dbprintf("unmatched\n");
 			if (current_step) {
-				if (*current_step_marker_ptr > 1 && combo->step_list[(*current_step_marker_ptr) - 2]->switches == 0) {
-					dbprintf("preceding switch IS wildcard\n");
-					dbprintf("resetting market to preceding\n");
-					*current_step_marker_ptr = (*current_step_marker_ptr) - 1; // start again at the previous step.
+				if (current_step->switches  == 0) {
+					dbprintf("...but current switch is wildcard\n");
 				} else {
-					dbprintf("preceding switch is NOT wildcard\n");
-					dbprintf("resetting marker to start\n");
-					*current_step_marker_ptr = 0; // start again at the first step.
+					if (*current_step_marker_ptr > 1 && combo->step_list[(*current_step_marker_ptr) - 2]->switches == 0) {
+						dbprintf("preceding switch IS wildcard\n");
+						dbprintf("resetting marker to preceding\n");
+						*current_step_marker_ptr = (*current_step_marker_ptr) - 1; // start again at the previous step.
+					} else {
+						dbprintf("preceding switch is NOT wildcard\n");
+						dbprintf("resetting marker to start\n");
+						*current_step_marker_ptr = 0; // start again at the first step.
+					}
+					retry = TRUE;
+					dbprintf("retrying\n");
 				}
-				retry = TRUE;
-				dbprintf("retrying\n");
 
 			}
 		}
@@ -339,7 +378,7 @@ typedef struct combo_test_data_item_s {
 	U8 expected_step_marker;
 } combo_test_data_item_t;
 
-void test_combo(const U8 combo_id_to_test, const combo_test_data_item_t test_data_items[], const U8 expected_step_markers[], U8 test_data_steps) {
+void test_combo(const U8 combo_id_to_test, const combo_def_t *combo_to_test, const combo_test_data_item_t test_data_items[], const U8 expected_step_markers[], U8 test_data_steps) {
 
 	U8 test_data_step;
 	for (test_data_step = 0; test_data_step < test_data_steps; test_data_step++) {
@@ -351,9 +390,13 @@ void test_combo(const U8 combo_id_to_test, const combo_test_data_item_t test_dat
 		sw_last_scheduled = test_data_item->switch_to_trigger;
 		sw_last_scheduled_time = test_data_item->time_index_to_use;
 
-		combo_process_switch_for_combo(combo_id_to_test, machine_combos[combo_id_to_test]);
+		combo_process_switch_for_combo(combo_id_to_test, combo_to_test);
 
-		assert_int_equal(expected_step_markers[test_data_step], current_step_markers[combo_id_to_test]);
+		if (combo_id_to_test == UNITTEST_COMBO_ID) {
+			assert_int_equal(expected_step_markers[test_data_step], unittest_step_marker);
+		} else {
+			assert_int_equal(expected_step_markers[test_data_step], current_step_markers[combo_id_to_test]);
+		}
 	}
 }
 
@@ -377,7 +420,7 @@ void test_lr_rl_combo_for_scenario_1( void )
 	combo_reset_current_step_markers();
 	combo_matches = 0;
 	static U8 expected_step_markers_for_scenario_1_and_lr_rl_combo[] = {1,1,2,3,4,4,4,0,0,1,2};
-	test_combo(LR_RL_COMBO_ID, scenario_1_test_data_items, expected_step_markers_for_scenario_1_and_lr_rl_combo, sizeof(scenario_1_test_data_items) / sizeof(combo_test_data_item_t));
+	test_combo(LR_RL_COMBO_ID, &lr_rl_combo, scenario_1_test_data_items, expected_step_markers_for_scenario_1_and_lr_rl_combo, sizeof(scenario_1_test_data_items) / sizeof(combo_test_data_item_t));
 	assert_int_equal(1, combo_matches);
 }
 
@@ -387,7 +430,7 @@ void test_rl_lr_combo_for_scenario_1( void )
 	combo_reset_current_step_markers();
 	combo_matches = 0;
 	static U8 expected_step_markers_for_scenario_1_and_rl_lr_combo[] = {0,0,1,0,1,1,1,2,3,4,0};
-	test_combo(RL_LR_COMBO_ID, scenario_1_test_data_items, expected_step_markers_for_scenario_1_and_rl_lr_combo, sizeof(scenario_1_test_data_items) / sizeof(combo_test_data_item_t));
+	test_combo(RL_LR_COMBO_ID, &rl_lr_combo, scenario_1_test_data_items, expected_step_markers_for_scenario_1_and_rl_lr_combo, sizeof(scenario_1_test_data_items) / sizeof(combo_test_data_item_t));
 	assert_int_equal(1, combo_matches);
 }
 
@@ -397,16 +440,177 @@ void test_rl_rl_combo_for_scenario_1( void )
 	combo_reset_current_step_markers();
 	combo_matches = 0;
 	static U8 expected_step_markers_for_scenario_1_and_rl_rl_combo[] = {0,0,1,0,1,1,1,2,3,3,4};
-	test_combo(RL_RL_COMBO_ID, scenario_1_test_data_items, expected_step_markers_for_scenario_1_and_rl_rl_combo, sizeof(scenario_1_test_data_items) / sizeof(combo_test_data_item_t));
+	test_combo(RL_RL_COMBO_ID, &rl_rl_combo, scenario_1_test_data_items, expected_step_markers_for_scenario_1_and_rl_rl_combo, sizeof(scenario_1_test_data_items) / sizeof(combo_test_data_item_t));
 	assert_int_equal(0, combo_matches);
 }
 
+void test_lr_lr_combo_for_scenario_1( void )
+{
+	dump_combo(&lr_lr_combo); // XXX
+	combo_reset_current_step_markers();
+	combo_matches = 0;
+	static U8 expected_step_markers_for_scenario_1_and_lr_lr_combo[] = {1,1,2,3,3,3,3,4,3,4,0};
+	test_combo(LR_LR_COMBO_ID, &lr_lr_combo, scenario_1_test_data_items, expected_step_markers_for_scenario_1_and_lr_lr_combo, sizeof(scenario_1_test_data_items) / sizeof(combo_test_data_item_t));
+	assert_int_equal(1, combo_matches);
+}
+
+void test_ll_rr_combo_for_scenario_1( void )
+{
+	dump_combo(&ll_rr_combo); // XXX
+	combo_reset_current_step_markers();
+	combo_matches = 0;
+	static U8 expected_step_markers_for_scenario_1_and_ll_rr_combo[] = {1,2,4,3,4,0,0,1,0,1,0};
+	test_combo(LL_RR_COMBO_ID, &ll_rr_combo, scenario_1_test_data_items, expected_step_markers_for_scenario_1_and_ll_rr_combo, sizeof(scenario_1_test_data_items) / sizeof(combo_test_data_item_t));
+	assert_int_equal(1, combo_matches);
+}
+
+void test_rr_ll_combo_for_scenario_1( void )
+{
+	dump_combo(&rr_ll_combo); // XXX
+	combo_reset_current_step_markers();
+	combo_matches = 0;
+	static U8 expected_step_markers_for_scenario_1_and_rr_ll_combo[] = {0,0,1,0,1,2,3,4,3,4,3};
+	test_combo(RR_LL_COMBO_ID, &rr_ll_combo, scenario_1_test_data_items, expected_step_markers_for_scenario_1_and_rr_ll_combo, sizeof(scenario_1_test_data_items) / sizeof(combo_test_data_item_t));
+	assert_int_equal(0, combo_matches);
+}
+
+/**
+ * This sequence of switches should count 4 Left->Right->Right->Left orbits which uses each of the 3 rollovers and the opposite orbit at least once.
+ */
+static combo_test_data_item_t scenario_2_test_data_items[] = {
+	// LARCLBRBLCRALRRL (where L/R = left/right orbits and A/B/C = left/middle/right rollovers
+	{ SW_LEFT_OUTER_LOOP, 0},
+	{ SW_LEFT_ROLLOVER, 0},
+	{ SW_RIGHT_OUTER_LOOP, 0},
+	{ SW_RIGHT_ROLLOVER, 0},
+	{ SW_LEFT_OUTER_LOOP, 0},
+	{ SW_MIDDLE_ROLLOVER, 0},
+	{ SW_RIGHT_OUTER_LOOP, 0},
+	{ SW_MIDDLE_ROLLOVER, 0},
+	{ SW_LEFT_OUTER_LOOP, 0},
+	{ SW_RIGHT_ROLLOVER, 0},
+	{ SW_RIGHT_OUTER_LOOP, 0},
+	{ SW_LEFT_ROLLOVER, 0},
+	{ SW_LEFT_OUTER_LOOP, 0},
+	{ SW_RIGHT_OUTER_LOOP, 0},
+	{ SW_RIGHT_OUTER_LOOP, 0},
+	{ SW_LEFT_OUTER_LOOP, 0}
+};
+
+
+
+void test_lr_rl_combo_for_scenario_2( void )
+{
+	dump_combo(&lr_rl_combo); // XXX
+	combo_reset_current_step_markers();
+	combo_matches = 0;
+	static U8 expected_step_markers_for_scenario_2_and_lr_rl_combo[] = {1,2,4,0,1,2,4,0,1,2,4,0,1,2,4,0};
+	test_combo(LR_RL_COMBO_ID, &lr_rl_combo, scenario_2_test_data_items, expected_step_markers_for_scenario_2_and_lr_rl_combo, sizeof(scenario_2_test_data_items) / sizeof(combo_test_data_item_t));
+	assert_int_equal(4, combo_matches);
+}
+
+void test_ll_rr_combo_for_scenario_2( void )
+{
+	dump_combo(&ll_rr_combo); // XXX
+	combo_reset_current_step_markers();
+	combo_matches = 0;
+	static U8 expected_step_markers_for_scenario_2_and_ll_rr_combo[] = {1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,1};
+	test_combo(LL_RR_COMBO_ID, &ll_rr_combo, scenario_2_test_data_items, expected_step_markers_for_scenario_2_and_ll_rr_combo, sizeof(scenario_2_test_data_items) / sizeof(combo_test_data_item_t));
+	assert_int_equal(0, combo_matches);
+}
+
+void test_rr_ll_combo_for_scenario_2( void )
+{
+	dump_combo(&rr_ll_combo); // XXX
+	combo_reset_current_step_markers();
+	combo_matches = 0;
+	static U8 expected_step_markers_for_scenario_2_and_rr_ll_combo[] = {0,0,1,0,0,0,1,0,0,0,1,0,0,1,2,4};
+	test_combo(RR_LL_COMBO_ID, &rr_ll_combo, scenario_2_test_data_items, expected_step_markers_for_scenario_2_and_rr_ll_combo, sizeof(scenario_2_test_data_items) / sizeof(combo_test_data_item_t));
+	assert_int_equal(0, combo_matches);
+}
+
+static combo_def_t bad1_combo = {
+	.name = "BAD1",
+	.steps = 1,
+	.step_list = {
+		&cstp_wildcard_5sec // don't use just a wildcard!
+	}
+};
+
+static combo_def_t bad2_combo = {
+	.name = "BAD2",
+	.steps = 2,
+	.step_list = {
+		&cstp_any_coin,
+		&cstp_wildcard_5sec // don't end with a wildcard!
+	}
+};
+
+static combo_def_t bad3_combo = {
+	.name = "BAD3",
+	.steps = 2,
+	.step_list = {
+		&cstp_wildcard_5sec, // don't start with a wildcard!
+		&cstp_any_coin
+	}
+};
+
+static combo_test_data_item_t scenario_3_test_data_items[] = {
+	{ SW_LEFT_COIN, 0},
+	{ SW_CENTER_COIN, 0},
+	{ SW_RIGHT_COIN, 0},
+	{ SW_FOURTH_COIN, 0}
+};
+
+extern U8 test_marker;
+
+void test_bad1_combo_is_handled_ok( void )
+{
+	dump_combo(&bad1_combo); // XXX
+	unittest_step_marker = 0;
+	combo_matches = 0;
+	static U8 expected_step_markers_for_scenario_3_and_bad1_combo[] = {0,0,0,0};
+	test_combo(UNITTEST_COMBO_ID, &bad1_combo, scenario_3_test_data_items, expected_step_markers_for_scenario_3_and_bad1_combo, sizeof(scenario_3_test_data_items) / sizeof(combo_test_data_item_t));
+	assert_int_equal(4, combo_matches);
+}
+
+void test_bad2_combo_is_handled_ok( void )
+{
+	dump_combo(&bad2_combo); // XXX
+	unittest_step_marker = 0;
+	combo_matches = 0;
+	static U8 expected_step_markers_for_scenario_3_and_bad2_combo[] = {1,0,1,0};
+	test_combo(UNITTEST_COMBO_ID, &bad2_combo, scenario_3_test_data_items, expected_step_markers_for_scenario_3_and_bad2_combo, sizeof(scenario_3_test_data_items) / sizeof(combo_test_data_item_t));
+	assert_int_equal(2, combo_matches);
+}
+
+void test_bad3_combo_is_handled_ok( void )
+{
+	dump_combo(&bad3_combo); // XXX
+	unittest_step_marker = 0;
+	combo_matches = 0;
+	static U8 expected_step_markers_for_scenario_3_and_bad3_combo[] = {0,0,0,0};
+	test_combo(UNITTEST_COMBO_ID, &bad3_combo, scenario_3_test_data_items, expected_step_markers_for_scenario_3_and_bad3_combo, sizeof(scenario_3_test_data_items) / sizeof(combo_test_data_item_t));
+	assert_int_equal(4, combo_matches);
+}
 
 void test_fixture_combos( void )
 {
 	test_fixture_start();
+
+	run_test(test_bad1_combo_is_handled_ok);
+	run_test(test_bad2_combo_is_handled_ok);
+	run_test(test_bad3_combo_is_handled_ok);
+
 	run_test(test_lr_rl_combo_for_scenario_1);
 	run_test(test_rl_lr_combo_for_scenario_1);
 	run_test(test_rl_rl_combo_for_scenario_1);
+	run_test(test_lr_lr_combo_for_scenario_1);
+	run_test(test_ll_rr_combo_for_scenario_1);
+	run_test(test_rr_ll_combo_for_scenario_1);
+
+	run_test(test_lr_rl_combo_for_scenario_2);
+	run_test(test_ll_rr_combo_for_scenario_2);
+	run_test(test_rr_ll_combo_for_scenario_2);
 	test_fixture_end();
 }
