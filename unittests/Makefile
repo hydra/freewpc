@@ -1,7 +1,5 @@
 
 DDD := unittests
-$(UNITTEST_OBJS) : CFLAGS += -DNATIVE_SYSTEM
-
 # the test runner and library
 UNITTEST_OBJS := $(DDD)/seatest.o $(DDD)/testrunner.o 
 
@@ -13,6 +11,4 @@ CFLAGS += -I$(DDD)
 
 # force sim/main.c's main() method to be ignored.
 $(NATIVE_OBJS) : CFLAGS += -DCONFIG_UNITTEST
-
-
-
+$(UNITTEST_OBJS) : CFLAGS += -DCONFIG_UNITTEST
