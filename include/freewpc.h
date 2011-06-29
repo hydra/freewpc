@@ -190,6 +190,7 @@ __noreturn__ void freewpc_init (void);
 #include <system/lamp.h>
 #include <system/sound.h>
 #include <system/switch.h>
+#include <system/combos.h>
 #include <system/flip.h>
 #include <system/display.h>
 #ifdef CONFIG_GI

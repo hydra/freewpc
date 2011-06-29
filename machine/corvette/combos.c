@@ -20,6 +20,8 @@
 
 #include <freewpc.h>
 
+#ifdef CONFIG_COMBOS
+
 extern combo_definition_t *last_matched_combo;
 
 void combo_name_deff (void)
@@ -27,33 +29,6 @@ void combo_name_deff (void)
 	sprintf("%s", last_matched_combo->name);
 	flash_and_exit_deff (20, TIME_100MS);
 }
-
-//extern U8 sw_last_scheduled;
-
-/*
-//CALLSET__ENTRY (combo_handler, any_pf_switch)
-{
-	U16 now = get_sys_time();
-#ifdef CONFIG_DEBUG_COMBOS
-	dbprintf("now: %ld, sw: %d\n", now, sw_last_scheduled);
-#endif
-	recent_switch_t *switch_hit = &recent_switches[next_recent_switch];
-	switch_hit->hit_time = now;
-	switch_hit->switch_id = sw_last_scheduled;
-
-	next_recent_switch++;
-	if (unlikely( next_recent_switch >= MAX_RECENT_SWITCHES)) {
-		next_recent_switch = 0;
-	}
-
-#ifdef CONFIG_DEBUG_COMBOS
-	dump_recent_switches();
-#endif
-	process_combos();
-}
-*/
-
-
 
 CALLSET_ENTRY (combo, left_orbit_combo_shot)
 {
@@ -90,3 +65,9 @@ CALLSET_ENTRY (combo, ordered_bank_1_combo_shot)
 	sound_start (ST_SAMPLE, SND_EXPLOSION_01, SL_2S, PRI_GAME_QUICK2); // XXX
 	score (SC_5M); // XXX
 }
+#else
+__far__(C_STRING(MACHINE_PAGE)) void combo_ordered_bank_1_combo_shot (void) {}
+__far__(C_STRING(MACHINE_PAGE)) void combo_left_orbit_combo_shot (void) {};
+__far__(C_STRING(MACHINE_PAGE)) void combo_right_orbit_combo_shot (void) {};
+__far__(C_STRING(MACHINE_PAGE)) void combo_rl_orbit_rl_ramp_combo_shot (void) {};
+#endif

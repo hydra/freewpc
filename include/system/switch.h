@@ -68,6 +68,10 @@ typedef struct
 extern const U8 mach_opto_mask[];
 extern const U8 mach_edge_switches[];
 
+extern U8 sw_last_scheduled;
+extern U16 sw_last_scheduled_time;
+
+
 /** The maximum number of switches that can be queued at
  * a time.  Queueing is necessary only for switches that
  * require a long (more than 4ms) debounce interval.
@@ -233,29 +237,16 @@ extern bool pic_invalid;
 #define switch_scanning_ok() TRUE
 #endif
 
-#ifdef CONFIG_COMBOS
+#ifdef CONFIG_RECENT_SWITCHES
+#define MAX_RECENT_SWITCHES 32
 
-typedef void (*combo_handler_t) (void);
-
-typedef struct combo_switch_entry_s {
+typedef struct recent_switch_s {
 	U8 switch_id;
-	U16 max_time_difference;
-	U8 flags;
-} combo_switch_entry_t;
+	U16 hit_time;
+} recent_switch_t;
 
-typedef struct combo_definition_s {
-	char *name; // XXX
-	U8 flags;
-	/** A function to call when the switch pattern produces an event.
-	 * All functions are assumed to be callsets, and located in the
-	 * callset page of the ROM. */
-	combo_handler_t fn; // invoke with callset_pointer_invoke(fn);
-
-	U8 switch_count;
-	/** A list of switches and flags that define the sequence.
-	 */
-	combo_switch_entry_t switch_list[];
-} combo_definition_t;
+extern recent_switch_t recent_switches[MAX_RECENT_SWITCHES];
+extern U8 next_recent_switch;
 #endif
 
 #endif /* _SYS_SWITCH_H */
