@@ -107,13 +107,7 @@ U8 sw_short_timer;
 recent_switch_t recent_switches[MAX_RECENT_SWITCHES];
 U8 next_recent_switch; // a tail pointer which points to the next slot to be used which is also the oldest recent-switch.
 
-CALLSET_ENTRY (recent_switches, init_complete, start_ball)
-{
-	next_recent_switch = 0;
-	memset(recent_switches, 0, sizeof(recent_switches));
-}
-
-#ifdef CONFIG_RECENT_SWITCHES
+#ifdef CONFIG_DEBUG_RECENT_SWITCHES
 void dump_recent_switches( void ) {
 	U8 dump_count = 0;
 	U8 index = next_recent_switch;
@@ -131,8 +125,15 @@ void dump_recent_switches( void ) {
 	}
 }
 #endif
+
+CALLSET_ENTRY (recent_switches, init, init_complete, start_ball)
+{
+	next_recent_switch = 0;
+	memset(recent_switches, 0, sizeof(recent_switches));
+}
+
 #else
-void recent_switches_init_complete( void ) {}; // generate a fake callset entry to shut the linker up when CONFIG_RECENT_SWITCHES isn't used
+void recent_switches_init( void ) {}; // generate a fake callset entry to shut the linker up when CONFIG_RECENT_SWITCHES isn't used
 #endif
 
 
@@ -164,7 +165,9 @@ void switch_short_detect (void)
 	if (n != 0)
 	{
 		// one or more rows are shorted
+#ifdef DEBUGGER
 		dbprintf ("Row short\n", n);
+#endif
 		sw_short_timer = 3;
 	}
 
@@ -173,7 +176,9 @@ void switch_short_detect (void)
 		if (sw_raw[n] == (U8)~mach_opto_mask[n])
 		{
 			/* The nth column is shorted. */
+#ifdef DEBUGGER
 			dbprintf ("Column short\n");
+#endif
 			sw_short_timer = 3;
 		}
 	}

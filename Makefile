@@ -103,8 +103,6 @@ endif
 
 ifeq ($(CONFIG_COMBOS),y)
 EXTRA_CFLAGS += -DCONFIG_COMBOS
-# CONFIG_COMBOS currently requires CONFIG_RECENT_SWITCHES
-EXTRA_CFLAGS += -DCONFIG_RECENT_SWITCHES
 endif
 
 #######################################################################
