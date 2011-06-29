@@ -7,8 +7,7 @@ UNITTEST_OBJS := $(DDD)/seatest.o $(DDD)/testrunner.o
 UNITTEST_OBJS += $(DDD)/switches_tests.o $(DDD)/combos_tests.o
 
 # Additional defines
-CFLAGS += -I$(DDD)
-
-# force sim/main.c's main() method to be ignored.
-$(NATIVE_OBJS) : CFLAGS += -DCONFIG_UNITTEST
-$(UNITTEST_OBJS) : CFLAGS += -DCONFIG_UNITTEST
+ifeq ($(CONFIG_UNITTEST),y)
+# among other things this will force sim/main.c's main() method to be ignored and use the one in unittest/testrunner.c instead
+CFLAGS += -I$(DDD) -DCONFIG_UNITTEST
+endif
