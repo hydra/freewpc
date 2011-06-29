@@ -324,7 +324,7 @@ Pitstop Award: page(MACHINE_PAGE), PRI_VIDEO_MODE
 
 Goal Car Awarded: page(MACHINE_PAGE), PRI_GAME_QUICK4, D_PAUSE
 
-#Combo Name: page(MACHINE_PAGE), PRI_GAME_QUICK5
+Combo Name: page(MACHINE_PAGE), PRI_GAME_QUICK5
 
 [leffs]
 Amode: runner, PRI_LEFF1, LAMPS(ALL), GI(ALL), page(MACHINE_PAGE)

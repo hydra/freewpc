@@ -25,27 +25,51 @@
 
 typedef void (*combo_handler_t) (void);
 
-typedef struct combo_switch_entry_s {
-	U8 switch_id;
-	U16 max_time_difference;
-	U8 flags;
-} combo_switch_entry_t;
+#define CSTP_NO_FLAGS 0
+#define CSTP_WILDCARD (1<<0)
 
-typedef struct combo_definition_s {
-	char *name; // XXX
+typedef struct combo_switch_s {
+	U8 switch_id;
+	U16 time_allowed; // takes precedence over the value in combo_step_t that uses this combo_switch_t
+} combo_switch_t;
+
+typedef struct combo_step_s {
 	U8 flags;
+	U8 switches;
+	U16 time_allowed;
+	combo_switch_t switch_list[];
+} combo_step_t;
+
+typedef struct combo_def_s {
+	char *name;
 	/** A function to call when the switch pattern produces an event.
 	 * All functions are assumed to be callsets, and located in the
 	 * callset page of the ROM. */
-	combo_handler_t fn; // invoke with callset_pointer_invoke(fn);
+	combo_handler_t fn; // invoked with callset_pointer_invoke(fn);
 
-	U8 switch_count;
-	/** A list of switches and flags that define the sequence.
-	 */
-	combo_switch_entry_t switch_list[];
-} combo_definition_t;
+	U8 steps;
+	combo_step_t *step_list[];
+} combo_def_t;
 
-extern void process_combos(void);
+
+#ifdef CONFIG_UNITTEST
+#define UNITTEST_COMBO_ID 0xFF
+#endif
+
+#if defined(CONFIG_DEBUG_COMBOS) || defined(CONFIG_UNITTEST)
+void dump_combo_step(const combo_step_t *combo_step);
+void dump_combo(const combo_def_t *combo);
+#endif
+
+extern U8 current_step_markers[];
+extern U16 step_time_list[];
+extern U16 step_time_allowed_list[];
+extern U8 machine_combos_count;
+extern combo_def_t *machine_combos[];
+extern const combo_def_t *last_matched_combo;
+
+extern void combo_process_switch(void);
+
 #endif
 
 #endif /* _SYS_COMBOS_H */

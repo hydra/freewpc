@@ -511,7 +511,6 @@ void switch_sched_task (void)
 	{
 		callset_invoke (any_pf_switch);
 
-		// TODO maybe use CONFIG_COMBOS | CONFIG_RECENT_SWITCHES ?
 #ifdef CONFIG_RECENT_SWITCHES
 #ifdef CONFIG_DEBUG_RECENT_SWITCHES
 		dbprintf("Recent SW, now: %ld, sw: %d\n", sw_last_scheduled_time, sw_last_scheduled);
@@ -531,7 +530,7 @@ void switch_sched_task (void)
 #endif
 
 #ifdef CONFIG_COMBOS
-		process_combos();
+		combo_process_switch();
 #endif
 
 
