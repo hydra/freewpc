@@ -87,6 +87,21 @@ PLATFORM ?= wpc
 $(eval $(call require,PLATFORM))
 PLATFORM_DIR = platform/$(PLATFORM)
 
+# Replaced the NATIVE keyword with CONFIG_SIM.
+ifdef NATIVE
+$(eval $(call have,CONFIG_SIM))
+endif
+
+ifeq ($(CONFIG_RECENT_SWITCHES),y)
+EXTRA_CFLAGS += -DCONFIG_RECENT_SWITCHES
+endif
+
+ifeq ($(CONFIG_COMBOS),y)
+EXTRA_CFLAGS += -DCONFIG_COMBOS
+# CONFIG_COMBOS currently requires CONFIG_RECENT_SWITCHES
+EXTRA_CFLAGS += -DCONFIG_RECENT_SWITCHES
+endif
+
 #######################################################################
 ###	Set Default Target
 #######################################################################

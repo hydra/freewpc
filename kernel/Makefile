@@ -50,6 +50,7 @@ KERNEL_HW_OBJS += $(if $(CONFIG_ALPHA),kernel/segment.o)
 KERNEL_HW_OBJS += kernel/sol.o
 KERNEL_HW_OBJS += kernel/sound.o
 KERNEL_HW_OBJS += kernel/switches.o
+KERNEL_HW_OBJS += $(if $(CONFIG_COMBOS),kernel/combos.o)
 KERNEL_HW_OBJS += kernel/timer.o   # why not KERNEL_SW_OBJS?
 KERNEL_HW_OBJS += $(if $(CONFIG_GI), kernel/triac.o)
 
