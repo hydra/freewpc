@@ -102,6 +102,11 @@ ifdef NATIVE
 $(eval $(call have,CONFIG_SIM))
 endif
 
+ifdef UNITTEST
+$(eval $(call have,CONFIG_SIM))
+$(eval $(call have,CONFIG_UNITTEST))
+endif
+
 ifeq ($(CONFIG_RECENT_SWITCHES),y)
 EXTRA_CFLAGS += -DCONFIG_RECENT_SWITCHES
 endif
@@ -693,18 +698,14 @@ $(BINFILES:.bin=.s19) : %.s19 : %.lnk $(OBJS) $(AS_OBJS) $(PAGE_HEADER_OBJS)
 endif
 
 ifeq ($(CPU),native)
-.PHONY : unittests
-unittests : unittest_prereq $(UNITTESTS_PROG)
+unittest : $(UNITTESTS_PROG)
 	$(Q)echo "Running tests $@ ..." && $(UNITTESTS_PROG)
 
-.PHONY : unittest_prereq
-unittest_prereq: clean_err check_prereqs $(OBJS) $(NATIVE_OBJS)
-	
-$(UNITTESTS_PROG) : $(UNITTEST_OBJS)
+$(UNITTESTS_PROG) : clean_err check_prereqs $(OBJS) $(NATIVE_OBJS) $(UNITTEST_OBJS)
 	$(Q)echo "Linking $@ ..." && $(HOSTCC) $(HOST_LFLAGS) -o $(UNITTESTS_PROG) $(UNITTEST_OBJS) $(OBJS) $(NATIVE_OBJS) $(HOST_LIBS) >> $(ERR) 2>&1
 
 native : $(NATIVE_PROG)
-$(NATIVE_PROG) : $(IMAGE_ROM) $(OBJS)
+$(NATIVE_PROG) : $(IMAGE_ROM) $(OBJS) $(NATIVE_OBJS)
 	$(Q)echo "Linking $@ ..." && $(HOSTCC) $(HOST_LFLAGS) `pth-config --ldflags` -o $(NATIVE_PROG) $(OBJS) $(NATIVE_OBJS) $(HOST_LIBS) >> $(ERR) 2>&1
 endif
 
