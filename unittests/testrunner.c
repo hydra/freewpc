@@ -1,6 +1,8 @@
 #include <freewpc.h>
 #include "seatest.h"
 
+extern void io_init(void);
+
 #include "unittests.h"
 //
 // create a test...
@@ -43,6 +45,7 @@ void all_tests( void )
 void db_puts_unittest (const char *s) {
 	printf(s);
 }
+
 //
 // run the suite!
 //

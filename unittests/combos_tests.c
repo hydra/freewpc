@@ -27,6 +27,18 @@ static combo_step_t cstp_any_coin = {
 
 
 //
+// from mach-combos.c
+//
+extern void combo_reset_current_step_markers(void);
+extern combo_def_t lr_rl_combo;
+extern combo_def_t rl_lr_combo;
+extern combo_def_t rl_rl_combo;
+extern combo_def_t lr_lr_combo;
+extern combo_def_t ll_rr_combo;
+extern combo_def_t rr_ll_combo;
+extern combo_step_t cstp_wildcard_5sec;
+
+//
 // from switches.c
 //
 U16 sw_last_scheduled_time; // TODO
@@ -84,9 +96,10 @@ void test_lr_rl_combo_for_scenario_1( void )
 {
 	dump_combo(&lr_rl_combo); // XXX
 	combo_reset_current_step_markers();
+	unittest_current_step_marker = 0;
 	combo_matches = 0;
 	static U8 expected_step_markers_for_scenario_1_and_lr_rl_combo[] = {1,1,2,3,4,4,4,0,0,1,2};
-	test_combo(LR_RL_COMBO_ID, &lr_rl_combo, scenario_1_test_data_items, expected_step_markers_for_scenario_1_and_lr_rl_combo, sizeof(scenario_1_test_data_items) / sizeof(combo_test_data_item_t));
+	test_combo(UNITTEST_COMBO_ID, &lr_rl_combo, scenario_1_test_data_items, expected_step_markers_for_scenario_1_and_lr_rl_combo, sizeof(scenario_1_test_data_items) / sizeof(combo_test_data_item_t));
 	assert_int_equal(1, combo_matches);
 }
 
@@ -94,9 +107,10 @@ void test_rl_lr_combo_for_scenario_1( void )
 {
 	dump_combo(&rl_lr_combo); // XXX
 	combo_reset_current_step_markers();
+	unittest_current_step_marker = 0;
 	combo_matches = 0;
 	static U8 expected_step_markers_for_scenario_1_and_rl_lr_combo[] = {0,0,1,0,1,1,1,2,3,4,0};
-	test_combo(RL_LR_COMBO_ID, &rl_lr_combo, scenario_1_test_data_items, expected_step_markers_for_scenario_1_and_rl_lr_combo, sizeof(scenario_1_test_data_items) / sizeof(combo_test_data_item_t));
+	test_combo(UNITTEST_COMBO_ID, &rl_lr_combo, scenario_1_test_data_items, expected_step_markers_for_scenario_1_and_rl_lr_combo, sizeof(scenario_1_test_data_items) / sizeof(combo_test_data_item_t));
 	assert_int_equal(1, combo_matches);
 }
 
@@ -104,9 +118,10 @@ void test_rl_rl_combo_for_scenario_1( void )
 {
 	dump_combo(&rl_rl_combo); // XXX
 	combo_reset_current_step_markers();
+	unittest_current_step_marker = 0;
 	combo_matches = 0;
 	static U8 expected_step_markers_for_scenario_1_and_rl_rl_combo[] = {0,0,1,0,1,1,1,2,3,3,4};
-	test_combo(RL_RL_COMBO_ID, &rl_rl_combo, scenario_1_test_data_items, expected_step_markers_for_scenario_1_and_rl_rl_combo, sizeof(scenario_1_test_data_items) / sizeof(combo_test_data_item_t));
+	test_combo(UNITTEST_COMBO_ID, &rl_rl_combo, scenario_1_test_data_items, expected_step_markers_for_scenario_1_and_rl_rl_combo, sizeof(scenario_1_test_data_items) / sizeof(combo_test_data_item_t));
 	assert_int_equal(0, combo_matches);
 }
 
@@ -114,9 +129,10 @@ void test_lr_lr_combo_for_scenario_1( void )
 {
 	dump_combo(&lr_lr_combo); // XXX
 	combo_reset_current_step_markers();
+	unittest_current_step_marker = 0;
 	combo_matches = 0;
 	static U8 expected_step_markers_for_scenario_1_and_lr_lr_combo[] = {1,1,2,3,3,3,3,4,3,4,0};
-	test_combo(LR_LR_COMBO_ID, &lr_lr_combo, scenario_1_test_data_items, expected_step_markers_for_scenario_1_and_lr_lr_combo, sizeof(scenario_1_test_data_items) / sizeof(combo_test_data_item_t));
+	test_combo(UNITTEST_COMBO_ID, &lr_lr_combo, scenario_1_test_data_items, expected_step_markers_for_scenario_1_and_lr_lr_combo, sizeof(scenario_1_test_data_items) / sizeof(combo_test_data_item_t));
 	assert_int_equal(1, combo_matches);
 }
 
@@ -124,9 +140,10 @@ void test_ll_rr_combo_for_scenario_1( void )
 {
 	dump_combo(&ll_rr_combo); // XXX
 	combo_reset_current_step_markers();
+	unittest_current_step_marker = 0;
 	combo_matches = 0;
 	static U8 expected_step_markers_for_scenario_1_and_ll_rr_combo[] = {1,2,4,3,4,0,0,1,0,1,0};
-	test_combo(LL_RR_COMBO_ID, &ll_rr_combo, scenario_1_test_data_items, expected_step_markers_for_scenario_1_and_ll_rr_combo, sizeof(scenario_1_test_data_items) / sizeof(combo_test_data_item_t));
+	test_combo(UNITTEST_COMBO_ID, &ll_rr_combo, scenario_1_test_data_items, expected_step_markers_for_scenario_1_and_ll_rr_combo, sizeof(scenario_1_test_data_items) / sizeof(combo_test_data_item_t));
 	assert_int_equal(1, combo_matches);
 }
 
@@ -134,9 +151,10 @@ void test_rr_ll_combo_for_scenario_1( void )
 {
 	dump_combo(&rr_ll_combo); // XXX
 	combo_reset_current_step_markers();
+	unittest_current_step_marker = 0;
 	combo_matches = 0;
 	static U8 expected_step_markers_for_scenario_1_and_rr_ll_combo[] = {0,0,1,0,1,2,3,4,3,4,3};
-	test_combo(RR_LL_COMBO_ID, &rr_ll_combo, scenario_1_test_data_items, expected_step_markers_for_scenario_1_and_rr_ll_combo, sizeof(scenario_1_test_data_items) / sizeof(combo_test_data_item_t));
+	test_combo(UNITTEST_COMBO_ID, &rr_ll_combo, scenario_1_test_data_items, expected_step_markers_for_scenario_1_and_rr_ll_combo, sizeof(scenario_1_test_data_items) / sizeof(combo_test_data_item_t));
 	assert_int_equal(0, combo_matches);
 }
 
@@ -169,9 +187,10 @@ void test_lr_rl_combo_for_scenario_2( void )
 {
 	dump_combo(&lr_rl_combo); // XXX
 	combo_reset_current_step_markers();
+	unittest_current_step_marker = 0;
 	combo_matches = 0;
 	static U8 expected_step_markers_for_scenario_2_and_lr_rl_combo[] = {1,2,4,0,1,2,4,0,1,2,4,0,1,2,4,0};
-	test_combo(LR_RL_COMBO_ID, &lr_rl_combo, scenario_2_test_data_items, expected_step_markers_for_scenario_2_and_lr_rl_combo, sizeof(scenario_2_test_data_items) / sizeof(combo_test_data_item_t));
+	test_combo(UNITTEST_COMBO_ID, &lr_rl_combo, scenario_2_test_data_items, expected_step_markers_for_scenario_2_and_lr_rl_combo, sizeof(scenario_2_test_data_items) / sizeof(combo_test_data_item_t));
 	assert_int_equal(4, combo_matches);
 }
 
@@ -179,9 +198,10 @@ void test_ll_rr_combo_for_scenario_2( void )
 {
 	dump_combo(&ll_rr_combo); // XXX
 	combo_reset_current_step_markers();
+	unittest_current_step_marker = 0;
 	combo_matches = 0;
 	static U8 expected_step_markers_for_scenario_2_and_ll_rr_combo[] = {1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,1};
-	test_combo(LL_RR_COMBO_ID, &ll_rr_combo, scenario_2_test_data_items, expected_step_markers_for_scenario_2_and_ll_rr_combo, sizeof(scenario_2_test_data_items) / sizeof(combo_test_data_item_t));
+	test_combo(UNITTEST_COMBO_ID, &ll_rr_combo, scenario_2_test_data_items, expected_step_markers_for_scenario_2_and_ll_rr_combo, sizeof(scenario_2_test_data_items) / sizeof(combo_test_data_item_t));
 	assert_int_equal(0, combo_matches);
 }
 
@@ -189,9 +209,10 @@ void test_rr_ll_combo_for_scenario_2( void )
 {
 	dump_combo(&rr_ll_combo); // XXX
 	combo_reset_current_step_markers();
+	unittest_current_step_marker = 0;
 	combo_matches = 0;
 	static U8 expected_step_markers_for_scenario_2_and_rr_ll_combo[] = {0,0,1,0,0,0,1,0,0,0,1,0,0,1,2,4};
-	test_combo(RR_LL_COMBO_ID, &rr_ll_combo, scenario_2_test_data_items, expected_step_markers_for_scenario_2_and_rr_ll_combo, sizeof(scenario_2_test_data_items) / sizeof(combo_test_data_item_t));
+	test_combo(UNITTEST_COMBO_ID, &rr_ll_combo, scenario_2_test_data_items, expected_step_markers_for_scenario_2_and_rr_ll_combo, sizeof(scenario_2_test_data_items) / sizeof(combo_test_data_item_t));
 	assert_int_equal(0, combo_matches);
 }
 
