@@ -27,7 +27,7 @@
 // TODO needs to be in per-machine file, but in the same page as combos.c and switches.c (?)
 //
 
-static combo_step_t cstp_left_outer_loop_entry = {
+const combo_step_t cstp_left_outer_loop_entry = {
 	.flags = CSTP_NO_FLAGS,
 	.switches = 1,
 	.switch_list = {
@@ -35,7 +35,7 @@ static combo_step_t cstp_left_outer_loop_entry = {
 	}
 };
 
-static combo_step_t cstp_left_outer_loop_exit = {
+const combo_step_t cstp_left_outer_loop_exit = {
 	.flags = CSTP_NO_FLAGS,
 	.switches = 4,
 	.switch_list = {
@@ -47,7 +47,7 @@ static combo_step_t cstp_left_outer_loop_exit = {
 };
 
 
-static combo_step_t cstp_right_outer_loop_entry = {
+const combo_step_t cstp_right_outer_loop_entry = {
 	.flags = CSTP_NO_FLAGS,
 	.switches = 1,
 	.switch_list = {
@@ -55,7 +55,7 @@ static combo_step_t cstp_right_outer_loop_entry = {
 	}
 };
 
-static combo_step_t cstp_right_outer_loop_exit = {
+const combo_step_t cstp_right_outer_loop_exit = {
 	.flags = CSTP_NO_FLAGS,
 	.switches = 4,
 	.switch_list = {
@@ -66,14 +66,14 @@ static combo_step_t cstp_right_outer_loop_exit = {
 	}
 };
 
-static combo_step_t cstp_wildcard_5sec = {
+const combo_step_t cstp_wildcard_5sec = {
 	.flags = CSTP_WILDCARD,
 	.switches = 0,
 	.time_allowed = TIME_5S
 };
 
 extern void callset_lr_rl_combo_shot(void);
-static combo_def_t lr_rl_combo = {
+const combo_def_t lr_rl_combo = {
 	.fn = callset_lr_rl_combo_shot,
 	.name = "LR RL",
 	.steps = 5,
@@ -87,7 +87,7 @@ static combo_def_t lr_rl_combo = {
 };
 
 extern void callset_rl_lr_combo_shot(void);
-static combo_def_t rl_lr_combo = {
+const combo_def_t rl_lr_combo = {
 	.fn = callset_rl_lr_combo_shot,
 	.name = "RL LR",
 	.steps = 5,
@@ -100,7 +100,7 @@ static combo_def_t rl_lr_combo = {
 	}
 };
 
-static combo_def_t rl_rl_combo = {
+const combo_def_t rl_rl_combo = {
 	.fn = null_function,
 	.name = "RL RL",
 	.steps = 5,
@@ -113,7 +113,7 @@ static combo_def_t rl_rl_combo = {
 	}
 };
 
-static combo_def_t lr_lr_combo = {
+const combo_def_t lr_lr_combo = {
 	.fn = null_function,
 	.name = "LR LR",
 	.steps = 5,
@@ -126,7 +126,7 @@ static combo_def_t lr_lr_combo = {
 	}
 };
 
-static combo_def_t ll_rr_combo = {
+const combo_def_t ll_rr_combo = {
 	.fn = null_function,
 	.name = "LL RR",
 	.steps = 5,
@@ -139,7 +139,7 @@ static combo_def_t ll_rr_combo = {
 	}
 };
 
-static combo_def_t rr_ll_combo = {
+const combo_def_t rr_ll_combo = {
 	.fn = null_function,
 	.name = "RR LL",
 	.steps = 5,
