@@ -247,6 +247,9 @@ void combo_process_switch_for_combo(const U8 combo_id, const combo_def_t *combo)
 					combodbprintf("no more steps, not retrying\n");
 				}
 				time_allowed = next_step->time_allowed;
+
+				// TODO based on combo step flags, call the combo's callset - the handler can then check the marker and react accordingly (for sounds, lights, etc);
+
 			} else {
 				combodbprintf("... but not hit in time (B)\n");
 				reset_markers_for_current_combo();
