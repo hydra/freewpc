@@ -31,7 +31,7 @@ void combo_name_deff (void)
 #if defined(CONFIG_DEBUG_COMBOS)
 	sprintf("%s", last_matched_combo->name);
 #else
-	sprintf("Combo: %ld", last_matched_combo - machine_combos[0]);
+	sprintf("Combo: %ld", last_matched_combo);
 #endif
 	flash_and_exit_deff (20, TIME_100MS);
 }

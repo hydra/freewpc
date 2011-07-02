@@ -60,7 +60,9 @@ void all_tests( void )
 {
         test_fixture_hello();
         test_fixture_switches();
+#ifdef CONFIG_COMBOS
         test_fixture_combos();
+#endif
 }
 
 

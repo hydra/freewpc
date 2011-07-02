@@ -34,7 +34,7 @@ const combo_step_t cstp_left_outer_loop_entry = {
 	.flags = CSTP_NO_FLAGS,
 	.switches = 1,
 	.switch_list = {
-		{ SW_LEFT_OUTER_LOOP, 0 }
+		{ SW_LEFT_OUTER_LOOP,  TIME_2S }
 	}
 };
 
@@ -54,7 +54,7 @@ const combo_step_t cstp_right_outer_loop_entry = {
 	.flags = CSTP_NO_FLAGS,
 	.switches = 1,
 	.switch_list = {
-		{ SW_RIGHT_OUTER_LOOP, 0 }
+		{ SW_RIGHT_OUTER_LOOP, TIME_2S }
 	}
 };
 
@@ -189,5 +189,5 @@ CALLSET_ENTRY(machine_combos, init, start_ball) {
 }
 #else
 //FIXME genmachine expects these to be defined because it doesn't know about #ifdef CONFIG_COMBOS
-__far__(C_STRING(MACHINE_PAGE)) void machine_combos_init_complete(void) {}
+__far__(C_STRING(MACHINE_PAGE)) void machine_combos_init(void) {}
 #endif
