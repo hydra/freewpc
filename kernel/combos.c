@@ -227,9 +227,8 @@ void combo_process_switch_for_combo(const U8 combo_id, const combo_def_t *combo)
 					combodbprintf("%ld < %ld (%ld + %ld) (M)\n", sw_last_scheduled_time, *step_time_ptr + matched_switch->time_allowed, *step_time_ptr, matched_switch->time_allowed);
 				} else {
 					combodbprintf("... but not hit in time (A)\n");
-					advance = FALSE;
 					reset_markers_for_current_combo();
-					break;
+					break; // bail!
 				}
 			}
 		} else {
@@ -272,7 +271,7 @@ void combo_process_switch_for_combo(const U8 combo_id, const combo_def_t *combo)
 					combodbprintf("...but current switch is wildcard\n");
 				} else {
 
-					// was there a wildcard in the combo before this switch?look for the previous wildcard
+					// was there a wildcard in the combo before this switch? look for the previous wildcard
 
 					wildcard_marker = combo->steps;
 					do {
@@ -285,7 +284,7 @@ void combo_process_switch_for_combo(const U8 combo_id, const combo_def_t *combo)
 					if (*current_step_marker_ptr > 1 && wildcard_marker > 1) {
 						combodbprintf("there was a preceding wildcard\n");
 						combodbprintf("resetting marker to wildcard\n");
-						*current_step_marker_ptr = wildcard_marker; // start again at the previous wildcard.
+						*current_step_marker_ptr = wildcard_marker;
 						*step_time_allowed_ptr = combo->step_list[wildcard_marker - 1]->time_allowed;
 						*step_time_ptr = *wildcard_time_ptr;
 					} else {
