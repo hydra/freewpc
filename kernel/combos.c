@@ -116,7 +116,7 @@ U8 machine_combos_count;
  * step_time_ptr;
  * step_time_allowed_ptr;
  */
-const combo_switch_t *combo_match_switch_to_steps(const combo_step_t *combo_step) {
+const combo_switch_t *combo_match_switch_to_step(const combo_step_t *combo_step) {
 	U8 switch_index;
 	for (switch_index = 0; switch_index < combo_step->switches; switch_index ++) {
 		const combo_switch_t *combo_switch = &combo_step->switch_list[switch_index];
@@ -127,6 +127,12 @@ const combo_switch_t *combo_match_switch_to_steps(const combo_step_t *combo_step
 		}
 	}
 	return 0;
+}
+
+void reset_markers_for_current_combo(void) {
+	*current_step_marker_ptr = 0; // start again at the first step.
+	*step_time_ptr = 0;
+	*step_time_allowed_ptr = 0;
 }
 
 void combo_process_switch_for_combo(const U8 combo_id, const combo_def_t *combo) {
@@ -204,15 +210,26 @@ void combo_process_switch_for_combo(const U8 combo_id, const combo_def_t *combo)
 
 		retry = FALSE;
 		advance = FALSE;
+		time_allowed = 0;
 
 		if (next_step->switches) {
-			matched_switch = combo_match_switch_to_steps(next_step);
+			matched_switch = combo_match_switch_to_step(next_step);
 			if (matched_switch) {
-				if (*step_time_allowed_ptr == 0 || sw_last_scheduled_time < *step_time_ptr + *step_time_allowed_ptr) {
-					advance = TRUE;
-					time_allowed = matched_switch->time_allowed;
+				combodbprintf("switch matched\n");
+				advance = TRUE;
+				if (*current_step_marker_ptr == 0) {
+					combodbprintf("at first step, ignoring time\n");
+				} else if (*step_time_allowed_ptr == 0 && matched_switch->time_allowed == 0) {
+					combodbprintf("step time and switch time are both 0\n");
+				} else if (*step_time_allowed_ptr > 0 && sw_last_scheduled_time < *step_time_ptr + *step_time_allowed_ptr) {
+					combodbprintf("%ld < %ld (%ld + %ld) (S)\n", sw_last_scheduled_time, *step_time_ptr + *step_time_allowed_ptr, *step_time_ptr, *step_time_allowed_ptr);
+				} else if (matched_switch->time_allowed > 0 && sw_last_scheduled_time < *step_time_ptr + matched_switch->time_allowed) {
+					combodbprintf("%ld < %ld (%ld + %ld) (M)\n", sw_last_scheduled_time, *step_time_ptr + matched_switch->time_allowed, *step_time_ptr, matched_switch->time_allowed);
 				} else {
 					combodbprintf("... but not hit in time (A)\n");
+					advance = FALSE;
+					reset_markers_for_current_combo();
+					break;
 				}
 			}
 		} else {
@@ -220,24 +237,20 @@ void combo_process_switch_for_combo(const U8 combo_id, const combo_def_t *combo)
 			*wildcard_time_ptr = sw_last_scheduled_time;
 			//if (sw_last_scheduled_time < *step_time_ptr + next_step->time_allowed) {
 			combodbprintf("timer must be < %ld\n", *step_time_ptr + *step_time_allowed_ptr);
-			if (*step_time_allowed_ptr == 0 || sw_last_scheduled_time < (*step_time_ptr) + (*step_time_allowed_ptr)) {
+			if (*step_time_allowed_ptr == 0 || sw_last_scheduled_time < *step_time_ptr + *step_time_allowed_ptr) {
 				advance = TRUE;
 
 
-				if ((*current_step_marker_ptr) + 1 < combo->steps) {
-					// who defines a combo that ends with a wildcard step anyway? ...
+				if ((*current_step_marker_ptr) + 1 < combo->steps) { // who defines a combo that ends with a wildcard step anyway? ...
 					combodbprintf("checking next step too\n");
 					retry = TRUE; // see if the switch matches the next step too
 				} else {
 					combodbprintf("no more steps, not retrying\n");
 				}
-				// TODO don't retry if the next step is the last one
 				time_allowed = next_step->time_allowed;
 			} else {
 				combodbprintf("... but not hit in time (B)\n");
-				*current_step_marker_ptr = 0; // start again at the first step.
-				*step_time_ptr = 0;
-				*step_time_allowed_ptr = 0;
+				reset_markers_for_current_combo();
 			}
 		}
 
@@ -253,18 +266,10 @@ void combo_process_switch_for_combo(const U8 combo_id, const combo_def_t *combo)
 				*step_time_allowed_ptr = time_allowed;
 			}
 		} else {
-			combodbprintf("unmatched\n");
+			combodbprintf("step not unmatched\n");
 			if (current_step) {
 				if (current_step->switches == 0) {
 					combodbprintf("...but current switch is wildcard\n");
-					if (*step_time_allowed_ptr == 0 || sw_last_scheduled_time < *step_time_ptr + *step_time_allowed_ptr) {
-						combodbprintf("... and allowed time is not elapsed\n");
-					} else {
-						combodbprintf("... however allowed time has elapsed\n");
-						*current_step_marker_ptr = 0; // start again at the first step.
-						*step_time_ptr = 0;
-						*step_time_allowed_ptr = 0;
-					}
 				} else {
 
 					// was there a wildcard in the combo before this switch?look for the previous wildcard
@@ -286,9 +291,7 @@ void combo_process_switch_for_combo(const U8 combo_id, const combo_def_t *combo)
 					} else {
 						combodbprintf("preceding switch is NOT wildcard\n");
 						combodbprintf("resetting marker to start\n");
-						*current_step_marker_ptr = 0; // start again at the first step.
-						*step_time_ptr = 0;
-						*step_time_allowed_ptr = 0;
+						reset_markers_for_current_combo();
 					}
 					retry = TRUE;
 					combodbprintf("retrying\n");
@@ -300,9 +303,7 @@ void combo_process_switch_for_combo(const U8 combo_id, const combo_def_t *combo)
 
 
 	if (*current_step_marker_ptr == combo->steps) {
-		*current_step_marker_ptr = 0;
-		*step_time_ptr = 0;
-		*step_time_allowed_ptr = 0;
+		reset_markers_for_current_combo();
 		combodbprintf("### combo matched! ###\n");
 
 		last_matched_combo = combo;

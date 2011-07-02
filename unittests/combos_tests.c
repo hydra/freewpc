@@ -367,6 +367,7 @@ void test_ordered_standup_combo_1_combo_is_not_matched_for_scenario6( void )
 }
 
 const combo_test_data_item_t scenario_7_test_data_items[] = {
+	// 1*2*3
 	{ SW_LEFT_STANDUP_1, 0},
 	{ SW_LEFT_STANDUP_2, TIME_1S},
 	{ SW_LEFT_STANDUP_2, TIME_1S},
@@ -552,6 +553,93 @@ void test_test1_combo_is_not_matched_for_scenario12( void )
 	assert_int_equal(0, combo_matches);
 }
 
+const combo_test_data_item_t scenario_13_test_data_items[] = {
+	{ SW_LEFT_OUTER_LOOP, 0},
+	{ SW_LEFT_ROLLOVER, TIME_3S - 1}, // use a switch that has a long time allowed, hit it within 1 cycle
+	{ SW_RIGHT_OUTER_LOOP, TIME_5S - 1}, // hit a switch within 1 cycle of the wildcard time allowed
+	{ SW_RIGHT_ROLLOVER, TIME_3S - 1}, // use another switch that has a long time allowed, hit it within 1 cycle
+};
+
+void test_lr_rl_combo_for_scenario_13( void )
+{
+	dump_combo(&lr_rl_combo); // XXX
+	combo_reset_current_step_markers();
+	unittest_current_step_marker = 0;
+	combo_matches = 0;
+	const U8 expected_step_markers_for_scenario_13_and_lr_rl_combo[] = {1,2,4,0};
+	test_combo(UNITTEST_COMBO_ID, &lr_rl_combo, scenario_13_test_data_items, expected_step_markers_for_scenario_13_and_lr_rl_combo, sizeof(scenario_13_test_data_items) / sizeof(combo_test_data_item_t));
+	assert_int_equal(1, combo_matches);
+}
+
+const combo_test_data_item_t scenario_14_test_data_items[] = {
+	{ SW_LEFT_OUTER_LOOP, 0},
+	{ SW_LEFT_ROLLOVER, TIME_3S} // 1 cycle too late
+};
+
+void test_lr_rl_combo_for_scenario_14( void )
+{
+	dump_combo(&lr_rl_combo); // XXX
+	combo_reset_current_step_markers();
+	unittest_current_step_marker = 0;
+	combo_matches = 0;
+	const U8 expected_step_markers_for_scenario_14_and_lr_rl_combo[] = {1,0};
+	test_combo(UNITTEST_COMBO_ID, &lr_rl_combo, scenario_14_test_data_items, expected_step_markers_for_scenario_14_and_lr_rl_combo, sizeof(scenario_14_test_data_items) / sizeof(combo_test_data_item_t));
+	assert_int_equal(0, combo_matches);
+}
+
+const combo_test_data_item_t scenario_15_test_data_items[] = {
+	{ SW_LEFT_OUTER_LOOP, 0},
+	{ SW_LEFT_ROLLOVER, TIME_3S - 1}, // use a switch that has a long time allowed, hit it within 1 cycle
+	{ SW_RIGHT_OUTER_LOOP, TIME_5S} // 1 cycle too late
+};
+
+void test_lr_rl_combo_for_scenario_15( void )
+{
+	dump_combo(&lr_rl_combo); // XXX
+	combo_reset_current_step_markers();
+	unittest_current_step_marker = 0;
+	combo_matches = 0;
+	const U8 expected_step_markers_for_scenario_15_and_lr_rl_combo[] = {1,2,0};
+	test_combo(UNITTEST_COMBO_ID, &lr_rl_combo, scenario_15_test_data_items, expected_step_markers_for_scenario_15_and_lr_rl_combo, sizeof(scenario_15_test_data_items) / sizeof(combo_test_data_item_t));
+	assert_int_equal(0, combo_matches);
+}
+
+const combo_test_data_item_t scenario_16_test_data_items[] = {
+	{ SW_LEFT_OUTER_LOOP, 0},
+	{ SW_LEFT_ROLLOVER, TIME_3S - 1}, // use a switch that has a long time allowed, hit it within 1 cycle
+	{ SW_RIGHT_OUTER_LOOP, TIME_5S - 1}, // hit a switch within 1 cycle of the wildcard time allowed
+	{ SW_RIGHT_ROLLOVER, TIME_3S} // 1 cycle too late
+};
+
+void test_lr_rl_combo_for_scenario_16( void )
+{
+	dump_combo(&lr_rl_combo); // XXX
+	combo_reset_current_step_markers();
+	unittest_current_step_marker = 0;
+	combo_matches = 0;
+	const U8 expected_step_markers_for_scenario_16_and_lr_rl_combo[] = {1,2,4,0};
+	test_combo(UNITTEST_COMBO_ID, &lr_rl_combo, scenario_16_test_data_items, expected_step_markers_for_scenario_16_and_lr_rl_combo, sizeof(scenario_16_test_data_items) / sizeof(combo_test_data_item_t));
+	assert_int_equal(0, combo_matches);
+}
+
+
+const combo_test_data_item_t scenario_17_test_data_items[] = {
+	{ SW_LEFT_OUTER_LOOP, 0},
+	{ SW_LEFT_ROLLOVER, TIME_3S - 1}, // use a switch that has a long time allowed, hit it within 1 cycle
+	{ SW_LEFT_ROLLOVER, TIME_3S}, // wrong switch, but within 5s
+	{ SW_RIGHT_OUTER_LOOP, TIME_5S}, // hit a switch within 1 cycle of the wildcard time allowed
+};
+
+void test_lr_rl_combo_for_scenario_17( void )
+{
+	dump_combo(&lr_rl_combo); // XXX
+	combo_reset_current_step_markers();
+	unittest_current_step_marker = 0;
+	combo_matches = 0;
+	const U8 expected_step_markers_for_scenario_17_and_lr_rl_combo[] = {1,2,3,0};
+	test_combo(UNITTEST_COMBO_ID, &lr_rl_combo, scenario_17_test_data_items, expected_step_markers_for_scenario_17_and_lr_rl_combo, sizeof(scenario_17_test_data_items) / sizeof(combo_test_data_item_t));
+	assert_int_equal(0, combo_matches);
+}
 
 void test_fixture_combos( void )
 {
@@ -582,5 +670,10 @@ void test_fixture_combos( void )
 	run_test(test_test1_combo_is_matched_for_scenario11);
 	run_test(test_test1_combo_is_not_matched_for_scenario12);
 
+	run_test(test_lr_rl_combo_for_scenario_13);
+	run_test(test_lr_rl_combo_for_scenario_14);
+	run_test(test_lr_rl_combo_for_scenario_15);
+	run_test(test_lr_rl_combo_for_scenario_16);
+	run_test(test_lr_rl_combo_for_scenario_17);
 	test_fixture_end();
 }
