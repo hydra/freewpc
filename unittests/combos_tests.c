@@ -568,11 +568,27 @@ const combo_step_t cstp_ut_test_c = {
 	}
 };
 
+const combo_step_t cstp_ut_test_d = {
+	.flags = CSTP_NO_FLAGS,
+	.switches = 1,
+	.switch_list = {
+		{ SW_UNITTEST_D, TIME_2S}
+	}
+};
+
 const combo_step_t cstp_ut_test_l = {
 	.flags = CSTP_NO_FLAGS,
 	.switches = 1,
 	.switch_list = {
 		{ SW_UNITTEST_L, TIME_2S}
+	}
+};
+
+const combo_step_t cstp_ut_test_r = {
+	.flags = CSTP_NO_FLAGS,
+	.switches = 1,
+	.switch_list = {
+		{ SW_UNITTEST_R, TIME_2S}
 	}
 };
 
@@ -696,6 +712,53 @@ void test_lr_rl_combo_for_scenario_17( void )
 	assert_int_equal(0, combo_matches);
 }
 
+
+const combo_def_t unittest_test2_combo = {
+	.name = "TEST2",
+	.steps = 11,
+	.step_list = {
+		&cstp_ut_test_l,
+		&cstp_ut_test_r,
+		&cstp_ut_wildcard_5sec,
+		&cstp_ut_test_a,
+		&cstp_ut_test_b,
+		&cstp_ut_wildcard_5sec,
+		&cstp_ut_test_l,
+		&cstp_ut_test_r,
+		&cstp_ut_wildcard_5sec,
+		&cstp_ut_test_a,
+		&cstp_ut_test_d
+	}
+};
+
+const combo_test_data_item_t scenario_18_test_data_items[] = {
+	{ SW_UNITTEST_L, 0},
+	{ SW_UNITTEST_R, TIME_1S},
+	{ SW_UNITTEST_A, TIME_1S},
+	{ SW_UNITTEST_B, TIME_1S},
+
+	{ SW_UNITTEST_L, TIME_1S},
+	{ SW_UNITTEST_R, TIME_1S},
+	{ SW_UNITTEST_A, TIME_1S},
+	{ SW_UNITTEST_B, TIME_1S},
+
+	{ SW_UNITTEST_A, TIME_500MS},
+	{ SW_UNITTEST_B, TIME_500MS},
+
+	{ SW_UNITTEST_L, TIME_500MS},
+	{ SW_UNITTEST_R, TIME_500MS},
+	{ SW_UNITTEST_A, TIME_1S},
+	{ SW_UNITTEST_D, TIME_1S}
+};
+
+void test_test2_combo_is_matched_for_scenario18( void )
+{
+	prepare_for_combo_test(&unittest_test2_combo);
+	const U8 expected_step_markers_for_scenario_18_and_test2_combo[] = {1,2,4,5,7,8,10,9,10,9,9,9,10,0};
+	test_combo(UNITTEST_COMBO_ID, &unittest_test2_combo, scenario_18_test_data_items, expected_step_markers_for_scenario_18_and_test2_combo, sizeof(scenario_18_test_data_items) / sizeof(combo_test_data_item_t));
+	assert_int_equal(1, combo_matches);
+}
+
 void test_fixture_combos( void )
 {
 	test_fixture_start();
@@ -730,6 +793,8 @@ void test_fixture_combos( void )
 	run_test(test_lr_rl_combo_for_scenario_15);
 	run_test(test_lr_rl_combo_for_scenario_16);
 	run_test(test_lr_rl_combo_for_scenario_17);
+
+	run_test(test_test2_combo_is_matched_for_scenario18);
 
 	test_fixture_end();
 }
