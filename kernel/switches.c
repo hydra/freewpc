@@ -444,7 +444,7 @@ void dump_switch_details(U8 sw) {
 	dbprintf ("SW: ");
 	sprintf_far_string (names_of_switches + sw);
 	dbprintf1 ();
-#ifdef DEBUG_SWITCH_NUMBER
+#if defined(DEBUG_SWITCH_NUMBER) || defined(CONFIG_UNITTEST)
 	dbprintf (" (%d) ", sw);
 #endif
 	dbprintf ("\n");
