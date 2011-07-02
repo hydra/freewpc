@@ -4,7 +4,9 @@ DDD := unittests
 UNITTEST_OBJS := $(DDD)/seatest.o $(DDD)/testrunner.o 
 
 # the unit tests
-UNITTEST_OBJS += $(DDD)/switches_tests.o $(DDD)/combos_tests.o
+UNITTEST_OBJS += $(DDD)/switches_tests.o
+
+UNITTEST_OBJS += $(if $(CONFIG_COMBOS),$(DDD)/combos_tests.o)	
 
 # Additional defines
 ifeq ($(CONFIG_UNITTEST),y)

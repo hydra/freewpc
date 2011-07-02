@@ -341,6 +341,9 @@ void combo_reset_current_step_markers(void) {
 	memset(step_time_list, 0x00,sizeof(U16) * machine_combos_count);
 	memset(step_time_allowed_list, 0x00, sizeof(U16) * machine_combos_count);
 	memset(wildcard_time_list, 0x00, sizeof(U16) * machine_combos_count);
+#ifdef CONFIG_UNITTEST
+	unittest_current_step_marker = 0;
+#endif
 }
 
 
