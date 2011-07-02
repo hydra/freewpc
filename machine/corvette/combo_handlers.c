@@ -84,6 +84,14 @@ CALLSET_ENTRY (combo, ll_rr_combo_shot)
 	score (SC_50M); // XXX
 }
 
+CALLSET_ENTRY (combo, rl_il_combo_shot)
+{
+	// TODO sounds, deff, scoring
+	deff_start(DEFF_COMBO_NAME); // XXX
+	sound_start (ST_SAMPLE, SND_EXPLOSION_01, SL_2S, PRI_GAME_QUICK2); // XXX
+	score (SC_25M); // XXX
+}
+
 #else
 //FIXME genmachine expects these to be defined because it doesn't know about #ifdef CONFIG_COMBOS
 //__far__(C_STRING(MACHINE_PAGE)) void machine_combos_init_complete(void) {}
@@ -94,4 +102,5 @@ __far__(C_STRING(MACHINE_PAGE)) void combo_lr_lr_combo_shot(void) {}
 __far__(C_STRING(MACHINE_PAGE)) void combo_rl_rl_combo_shot(void) {}
 __far__(C_STRING(MACHINE_PAGE)) void combo_rr_ll_combo_shot(void) {}
 __far__(C_STRING(MACHINE_PAGE)) void combo_ll_rr_combo_shot(void) {}
+__far__(C_STRING(MACHINE_PAGE)) void combo_rl_il_combo_shot(void) {}
 #endif

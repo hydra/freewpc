@@ -49,7 +49,6 @@ const combo_step_t cstp_left_outer_loop_exit = {
 	}
 };
 
-
 const combo_step_t cstp_right_outer_loop_entry = {
 	.flags = CSTP_NO_FLAGS,
 	.switches = 1,
@@ -159,7 +158,42 @@ const combo_def_t rr_ll_combo = {
 	}
 };
 
-#define COMBO_COUNT 6
+const combo_step_t cstp_inner_loop_entry = {
+	.flags = CSTP_NO_FLAGS,
+	.switches = 1,
+	.switch_list = {
+		{ SW_INNER_LOOP_ENTRY,  TIME_2S }
+	}
+};
+
+const combo_step_t cstp_inner_loop_exit = {
+	.flags = CSTP_NO_FLAGS,
+	.switches = 4,
+	.switch_list = {
+		{ SW_LEFT_OUTER_LOOP, TIME_1S },
+		{ SW_LEFT_ROLLOVER,   TIME_3S },
+		{ SW_MIDDLE_ROLLOVER, TIME_3S },
+		{ SW_RIGHT_ROLLOVER,  TIME_3S }
+	}
+};
+
+extern void callset_rl_il_combo_shot(void);
+const combo_def_t rl_il_combo = {
+	COMBO_NAME("RL IL")
+	.fn = callset_rl_il_combo_shot,
+	.steps = 5,
+	.step_list = {
+		&cstp_right_outer_loop_entry,
+		&cstp_right_outer_loop_exit,
+		&cstp_wildcard_5sec,
+		&cstp_inner_loop_entry,
+		&cstp_inner_loop_exit
+	}
+};
+
+
+
+#define COMBO_COUNT 7
 
 /*
 #define LR_RL_COMBO_ID 0
@@ -175,7 +209,8 @@ const combo_def_t *machine_combos[COMBO_COUNT] = {
 	&rl_rl_combo,
 	&lr_lr_combo,
 	&ll_rr_combo,
-	&rr_ll_combo
+	&rr_ll_combo,
+	&rl_il_combo
 };
 
 U8 current_step_markers[COMBO_COUNT]; // 1-based index
