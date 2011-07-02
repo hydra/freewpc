@@ -20,177 +20,15 @@
 
 #include <freewpc.h>
 
+/*
+ * IMPORTANT
+ *
+ * There MUST be a call to combo_reset_current_step_markers() after machine_combos_count has been set via an 'init' callset handler.
+ * See 'machine/corvette/combo_definitions.c'
+ *
+ */
+
 #ifdef CONFIG_COMBOS
-
-
-//
-// TODO needs to be in per-machine file, but in the same page as combos.c and switches.c (?)
-//
-
-const combo_step_t cstp_left_outer_loop_entry = {
-	.flags = CSTP_NO_FLAGS,
-	.switches = 1,
-	.switch_list = {
-		{ SW_LEFT_OUTER_LOOP, 0 }
-	}
-};
-
-const combo_step_t cstp_left_outer_loop_exit = {
-	.flags = CSTP_NO_FLAGS,
-	.switches = 4,
-	.switch_list = {
-		{ SW_RIGHT_OUTER_LOOP, TIME_1S },
-		{ SW_LEFT_ROLLOVER,    TIME_3S },
-		{ SW_MIDDLE_ROLLOVER,  TIME_3S },
-		{ SW_RIGHT_ROLLOVER,   TIME_3S }
-	}
-};
-
-
-const combo_step_t cstp_right_outer_loop_entry = {
-	.flags = CSTP_NO_FLAGS,
-	.switches = 1,
-	.switch_list = {
-		{ SW_RIGHT_OUTER_LOOP, 0 }
-	}
-};
-
-const combo_step_t cstp_right_outer_loop_exit = {
-	.flags = CSTP_NO_FLAGS,
-	.switches = 4,
-	.switch_list = {
-		{ SW_LEFT_OUTER_LOOP, TIME_1S },
-		{ SW_LEFT_ROLLOVER,   TIME_3S },
-		{ SW_MIDDLE_ROLLOVER, TIME_3S },
-		{ SW_RIGHT_ROLLOVER,  TIME_3S }
-	}
-};
-
-const combo_step_t cstp_wildcard_5sec = {
-	.flags = CSTP_WILDCARD,
-	.switches = 0,
-	.time_allowed = TIME_5S
-};
-
-extern void callset_lr_rl_combo_shot(void);
-const combo_def_t lr_rl_combo = {
-	.fn = callset_lr_rl_combo_shot,
-	.name = "LR RL",
-	.steps = 5,
-	.step_list = {
-		&cstp_left_outer_loop_entry,
-		&cstp_left_outer_loop_exit,
-		&cstp_wildcard_5sec,
-		&cstp_right_outer_loop_entry,
-		&cstp_right_outer_loop_exit
-	}
-};
-
-extern void callset_rl_lr_combo_shot(void);
-const combo_def_t rl_lr_combo = {
-	.fn = callset_rl_lr_combo_shot,
-	.name = "RL LR",
-	.steps = 5,
-	.step_list = {
-		&cstp_right_outer_loop_entry,
-		&cstp_right_outer_loop_exit,
-		&cstp_wildcard_5sec,
-		&cstp_left_outer_loop_entry,
-		&cstp_left_outer_loop_exit
-	}
-};
-
-const combo_def_t rl_rl_combo = {
-	.fn = null_function,
-	.name = "RL RL",
-	.steps = 5,
-	.step_list = {
-		&cstp_right_outer_loop_entry,
-		&cstp_right_outer_loop_exit,
-		&cstp_wildcard_5sec,
-		&cstp_right_outer_loop_entry,
-		&cstp_right_outer_loop_exit
-	}
-};
-
-const combo_def_t lr_lr_combo = {
-	.fn = null_function,
-	.name = "LR LR",
-	.steps = 5,
-	.step_list = {
-		&cstp_left_outer_loop_entry,
-		&cstp_left_outer_loop_exit,
-		&cstp_wildcard_5sec,
-		&cstp_left_outer_loop_entry,
-		&cstp_left_outer_loop_exit
-	}
-};
-
-const combo_def_t ll_rr_combo = {
-	.fn = null_function,
-	.name = "LL RR",
-	.steps = 5,
-	.step_list = {
-		&cstp_left_outer_loop_entry,
-		&cstp_left_outer_loop_entry,
-		&cstp_wildcard_5sec,
-		&cstp_right_outer_loop_entry,
-		&cstp_right_outer_loop_entry
-	}
-};
-
-const combo_def_t rr_ll_combo = {
-	.fn = null_function,
-	.name = "RR LL",
-	.steps = 5,
-	.step_list = {
-		&cstp_right_outer_loop_entry,
-		&cstp_right_outer_loop_entry,
-		&cstp_wildcard_5sec,
-		&cstp_left_outer_loop_entry,
-		&cstp_left_outer_loop_entry
-	}
-};
-
-#define COMBO_COUNT 6
-
-#define LR_RL_COMBO_ID 0
-#define RL_LR_COMBO_ID 1
-#define RL_RL_COMBO_ID 2
-#define LR_LR_COMBO_ID 3
-#define LL_RR_COMBO_ID 4
-#define RR_LL_COMBO_ID 5
-
-combo_def_t *machine_combos[COMBO_COUNT] = {
-	&lr_rl_combo,
-	&rl_lr_combo,
-	&rl_rl_combo,
-	&lr_lr_combo,
-	&ll_rr_combo,
-	&rr_ll_combo
-};
-
-U8 machine_combos_count;
-U8 current_step_markers[COMBO_COUNT]; // 1-based index
-U16 step_time_list[COMBO_COUNT]; // the system timer at the time the last-match step that counted
-U16 step_time_allowed_list[COMBO_COUNT]; // the time that was allowed by the last-hit switch or step that counted
-
-void combo_reset_current_step_markers(void) {
-	last_matched_combo = 0;
-	memset(current_step_markers, 0x00, sizeof(current_step_markers));
-	memset(step_time_list, 0x00, sizeof(step_time_list));
-	memset(step_time_allowed_list, 0x00, sizeof(step_time_allowed_list));
-}
-
-CALLSET_ENTRY(machine_combos, init, start_ball) {
-	machine_combos_count = COMBO_COUNT;
-	combo_reset_current_step_markers();
-}
-
-//
-// TODO End of per machine file
-//
-
 
 extern void dump_switch_details(U8 sw);
 
@@ -202,6 +40,8 @@ extern void dump_switch_details(U8 sw);
 
 
 /*
+ * TODO use this bit of old code
+ *
 	if (!(
 			(combo->flags & CF_ALWAYS) ||
 			((combo->flags & CF_SINGLE_BALL_ONLY) && single_ball_play()) ||
@@ -214,9 +54,17 @@ extern void dump_switch_details(U8 sw);
 	}
 
 
-			callset_pointer_invoke(combo->fn);
-
  */
+
+/*
+ * To avoid filling the ROM with loads of strings and for more readable code, we use combodbprintf instead of dbprintf and a #ifdef/#endif pair
+ * The debug messages are only compiled in when in unit-test mode.
+ */
+#ifdef CONFIG_UNITTEST
+#define combodbprintf(format, ...) dbprintf(format, ##__VA_ARGS__)
+#else
+#define combodbprintf(format, ...)
+#endif
 
 #if defined(CONFIG_DEBUG_COMBOS) || defined(CONFIG_UNITTEST)
 void dump_combo_step(const combo_step_t *combo_step) {
@@ -249,12 +97,16 @@ U8 combo_matches; // a counter so combo matches can be tested
 U8 unittest_current_step_marker;
 U16 unittest_step_time;
 U16 unittest_step_time_allowed;
+U16 unittest_wildcard_time;
 #endif
 
 U8 *current_step_marker_ptr;
 U16 *step_time_ptr;
 U16 *step_time_allowed_ptr;
+U16 *wildcard_time_ptr;
 const combo_def_t *last_matched_combo;
+U8 machine_combos_count;
+
 
 /**
  * requires the following globals to be initialised correctly first
@@ -267,28 +119,15 @@ const combo_def_t *last_matched_combo;
 const combo_switch_t *combo_match_switch_to_steps(const combo_step_t *combo_step) {
 	U8 switch_index;
 	for (switch_index = 0; switch_index < combo_step->switches; switch_index ++) {
-		task_runs_long(); // XXX ?
 		const combo_switch_t *combo_switch = &combo_step->switch_list[switch_index];
-		dbprintf("checking switch: %d, time: %d\n", combo_switch->switch_id, combo_switch->time_allowed);
+		combodbprintf("checking switch: %d, time: %d\n", combo_switch->switch_id, combo_switch->time_allowed);
 
 		if (sw_last_scheduled == combo_switch->switch_id) {
-			if (combo_switch->time_allowed == 0) {
-				//dbprintf("no time specified on switch\n");
-				if (*step_time_allowed_ptr == 0 || sw_last_scheduled_time < *step_time_ptr + *step_time_allowed_ptr) {
-					dbprintf("time matched (A: %ld < %ld)\n", sw_last_scheduled_time, *step_time_ptr + *step_time_allowed_ptr);
-					return combo_switch;
-				}
-			} else {
-				if (sw_last_scheduled_time < *step_time_ptr + combo_switch->time_allowed) {
-					dbprintf("time matched (B: %ld < %ld)\n", sw_last_scheduled_time, *step_time_ptr + combo_switch->time_allowed);
-					return combo_switch;
-				}
-			}
+			return combo_switch;
 		}
 	}
 	return 0;
 }
-
 
 void combo_process_switch_for_combo(const U8 combo_id, const combo_def_t *combo) {
 
@@ -296,11 +135,16 @@ void combo_process_switch_for_combo(const U8 combo_id, const combo_def_t *combo)
 	bool advance;
 	U16 time_allowed = 0;
 	const combo_switch_t *matched_switch = 0;
+	U8 wildcard_marker;
 
 #ifdef CONFIG_DEBUG_COMBOS
-	dbprintf("processing combo: %d\n", combo_id);
+	combodbprintf("processing combo: %s (%d)\n", combo->name, combo_id);
+#ifdef CONFIG_UNITTEST
+	// when in unit test mode the switch strings for ID's used by unit-test combo are not valid.
+	combodbprintf("switch hit: %d\n", sw_last_scheduled);
+#else
 	dump_switch_details(sw_last_scheduled);
-	dbprintf("combo: %s\n", combo->name);
+#endif
 #endif
 
 
@@ -308,26 +152,29 @@ void combo_process_switch_for_combo(const U8 combo_id, const combo_def_t *combo)
 	current_step_marker_ptr = &current_step_markers[combo_id];
 	step_time_ptr = &step_time_list[combo_id];
 	step_time_allowed_ptr = &step_time_allowed_list[combo_id];
+	wildcard_time_ptr = &wildcard_time_list[combo_id];
 #ifdef CONFIG_UNITTEST
 	if (combo_id == UNITTEST_COMBO_ID) {
 		current_step_marker_ptr = &unittest_current_step_marker;
 		step_time_ptr = &unittest_step_time;
 		step_time_allowed_ptr = &unittest_step_time_allowed;
+		wildcard_time_ptr = &unittest_wildcard_time;
 	}
 #endif
 
 #ifdef CONFIG_DEBUG_COMBOS
-	dbprintf("current step (before): %d\n", *current_step_marker_ptr);
-	dbprintf("step time (before): %ld\n", *step_time_ptr);
-	dbprintf("step time allowed (before): %ld\n", *step_time_allowed_ptr);
+	combodbprintf("current step (before): %d\n", *current_step_marker_ptr);
+	combodbprintf("step time (before): %ld\n", *step_time_ptr);
+	combodbprintf("step time allowed (before): %ld\n", *step_time_allowed_ptr);
 #endif
 
 	do {
+		task_runs_long(); // XXX ?
 #ifdef CONFIG_DEBUG_COMBOS
 		if (retry) {
-			dbprintf("current step (retry): %d\n", *current_step_marker_ptr);
-			dbprintf("step time (retry): %ld\n", *step_time_ptr);
-			dbprintf("step time allowed (retry): %ld\n", *step_time_allowed_ptr);
+			combodbprintf("current step (retry): %d\n", *current_step_marker_ptr);
+			combodbprintf("step time (retry): %ld\n", *step_time_ptr);
+			combodbprintf("step time allowed (retry): %ld\n", *step_time_allowed_ptr);
 		}
 #endif
 		//
@@ -343,12 +190,12 @@ void combo_process_switch_for_combo(const U8 combo_id, const combo_def_t *combo)
 
 #ifdef CONFIG_DEBUG_COMBOS
 		if (current_step) {
-			//dbprintf("current step\n");
+			combodbprintf("current step\n");
 			dump_combo_step(current_step);
 		} else {
-			//dbprintf("at first step\n");
+			combodbprintf("at first step\n");
 		}
-		//dbprintf("next step\n");
+		combodbprintf("next step\n");
 		dump_combo_step(next_step);
 #endif
 		//
@@ -365,28 +212,29 @@ void combo_process_switch_for_combo(const U8 combo_id, const combo_def_t *combo)
 					advance = TRUE;
 					time_allowed = matched_switch->time_allowed;
 				} else {
-					dbprintf("... but not hit in time (A)\n");
+					combodbprintf("... but not hit in time (A)\n");
 				}
 			}
 		} else {
-			//dbprintf("switch matches wildcard step\n");
+			combodbprintf("switch matches wildcard step\n");
+			*wildcard_time_ptr = sw_last_scheduled_time;
 			//if (sw_last_scheduled_time < *step_time_ptr + next_step->time_allowed) {
-			//dbprintf("timer must be < %ld\n", *step_time_ptr + *step_time_allowed_ptr);
+			combodbprintf("timer must be < %ld\n", *step_time_ptr + *step_time_allowed_ptr);
 			if (*step_time_allowed_ptr == 0 || sw_last_scheduled_time < (*step_time_ptr) + (*step_time_allowed_ptr)) {
 				advance = TRUE;
 
 
 				if ((*current_step_marker_ptr) + 1 < combo->steps) {
 					// who defines a combo that ends with a wildcard step anyway? ...
-					//dbprintf("checking next step too\n");
+					combodbprintf("checking next step too\n");
 					retry = TRUE; // see if the switch matches the next step too
 				} else {
-					//dbprintf("no more steps, not retrying\n");
+					combodbprintf("no more steps, not retrying\n");
 				}
 				// TODO don't retry if the next step is the last one
 				time_allowed = next_step->time_allowed;
 			} else {
-				//dbprintf("... but not hit in time (B)\n");
+				combodbprintf("... but not hit in time (B)\n");
 				*current_step_marker_ptr = 0; // start again at the first step.
 				*step_time_ptr = 0;
 				*step_time_allowed_ptr = 0;
@@ -395,41 +243,55 @@ void combo_process_switch_for_combo(const U8 combo_id, const combo_def_t *combo)
 
 		if (advance) {
 			*current_step_marker_ptr = (*current_step_marker_ptr) + 1;
-			//dbprintf(">>> TA: %ld\n", time_allowed);
+			combodbprintf("advancing to step: %d\n", *current_step_marker_ptr);
+			combodbprintf("time_allowed: %ld\n", time_allowed);
 			*step_time_ptr = sw_last_scheduled_time;
 			if (*current_step_marker_ptr < combo->steps && combo->step_list[*current_step_marker_ptr]->switches == 0) {
-				//dbprintf("next step is wildcard\n");
+				combodbprintf("next step is wildcard\n");
 				*step_time_allowed_ptr = combo->step_list[*current_step_marker_ptr]->time_allowed;
 			} else {
 				*step_time_allowed_ptr = time_allowed;
 			}
 		} else {
-			//dbprintf("unmatched\n");
+			combodbprintf("unmatched\n");
 			if (current_step) {
 				if (current_step->switches == 0) {
-					//dbprintf("...but current switch is wildcard\n");
+					combodbprintf("...but current switch is wildcard\n");
 					if (*step_time_allowed_ptr == 0 || sw_last_scheduled_time < *step_time_ptr + *step_time_allowed_ptr) {
-						//dbprintf("... and allowed time is not elapsed\n");
+						combodbprintf("... and allowed time is not elapsed\n");
 					} else {
-						//dbprintf("... however allowed time has elapsed\n");
+						combodbprintf("... however allowed time has elapsed\n");
 						*current_step_marker_ptr = 0; // start again at the first step.
 						*step_time_ptr = 0;
 						*step_time_allowed_ptr = 0;
 					}
 				} else {
-					if (*current_step_marker_ptr > 1 && combo->step_list[(*current_step_marker_ptr) - 2]->switches == 0) {
-						//dbprintf("preceding switch IS wildcard\n");
-						//dbprintf("resetting marker to preceding\n");
-						*current_step_marker_ptr = (*current_step_marker_ptr) - 1; // start again at the previous step.
+
+					// was there a wildcard in the combo before this switch?look for the previous wildcard
+
+					wildcard_marker = combo->steps;
+					do {
+						if (combo->step_list[wildcard_marker - 1]->switches == 0) {
+							break;
+						}
+						wildcard_marker--;
+					} while (wildcard_marker != 0);
+
+					if (*current_step_marker_ptr > 1 && wildcard_marker > 1) {
+						combodbprintf("there was a preceding wildcard\n");
+						combodbprintf("resetting marker to wildcard\n");
+						*current_step_marker_ptr = wildcard_marker; // start again at the previous wildcard.
+						*step_time_allowed_ptr = combo->step_list[wildcard_marker - 1]->time_allowed;
+						*step_time_ptr = *wildcard_time_ptr;
 					} else {
-						//dbprintf("preceding switch is NOT wildcard\n");
-						//dbprintf("resetting marker to start\n");
+						combodbprintf("preceding switch is NOT wildcard\n");
+						combodbprintf("resetting marker to start\n");
 						*current_step_marker_ptr = 0; // start again at the first step.
 						*step_time_ptr = 0;
 						*step_time_allowed_ptr = 0;
 					}
 					retry = TRUE;
-					//dbprintf("retrying\n");
+					combodbprintf("retrying\n");
 				}
 
 			}
@@ -441,7 +303,7 @@ void combo_process_switch_for_combo(const U8 combo_id, const combo_def_t *combo)
 		*current_step_marker_ptr = 0;
 		*step_time_ptr = 0;
 		*step_time_allowed_ptr = 0;
-		//dbprintf("### combo matched! ###\n");
+		combodbprintf("### combo matched! ###\n");
 
 		last_matched_combo = combo;
 #ifdef CONFIG_UNITTEST
@@ -470,6 +332,14 @@ void combo_process_switch(void) {
 	for (combo_index = 0; combo_index < machine_combos_count; combo_index++) {
 		combo_process_switch_for_combo(combo_index, machine_combos[combo_index]);
 	}
+}
+
+void combo_reset_current_step_markers(void) {
+	last_matched_combo = 0;
+	memset(current_step_markers, 0x00, sizeof(U8) * machine_combos_count);
+	memset(step_time_list, 0x00,sizeof(U16) * machine_combos_count);
+	memset(step_time_allowed_list, 0x00, sizeof(U16) * machine_combos_count);
+	memset(wildcard_time_list, 0x00, sizeof(U16) * machine_combos_count);
 }
 
 

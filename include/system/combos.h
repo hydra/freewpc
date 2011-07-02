@@ -41,14 +41,16 @@ typedef struct combo_step_s {
 } combo_step_t;
 
 typedef struct combo_def_s {
-	char *name;
+#if defined(CONFIG_DEBUG_COMBOS) || defined(CONFIG_UNITTEST)
+	const char *name;
+#endif
 	/** A function to call when the switch pattern produces an event.
 	 * All functions are assumed to be callsets, and located in the
 	 * callset page of the ROM. */
-	combo_handler_t fn; // invoked with callset_pointer_invoke(fn);
+	const combo_handler_t fn; // invoked with callset_pointer_invoke(fn);
 
-	U8 steps;
-	combo_step_t *step_list[];
+	const U8 steps;
+	const combo_step_t *step_list[];
 } combo_def_t;
 
 
@@ -59,16 +61,21 @@ typedef struct combo_def_s {
 #if defined(CONFIG_DEBUG_COMBOS) || defined(CONFIG_UNITTEST)
 void dump_combo_step(const combo_step_t *combo_step);
 void dump_combo(const combo_def_t *combo);
+#define COMBO_NAME(str) .name = str,
+#else
+#define COMBO_NAME(str)
 #endif
 
 extern U8 current_step_markers[];
 extern U16 step_time_list[];
 extern U16 step_time_allowed_list[];
+extern U16 wildcard_time_list[];
 extern U8 machine_combos_count;
-extern combo_def_t *machine_combos[];
+extern const combo_def_t *machine_combos[];
 extern const combo_def_t *last_matched_combo;
 
 extern void combo_process_switch(void);
+extern void combo_reset_current_step_markers(void);
 
 #endif
 
