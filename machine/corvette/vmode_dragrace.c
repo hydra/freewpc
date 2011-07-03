@@ -113,7 +113,7 @@ void dragrace_loser_anim(void) {
 	lamp_tristate_off(LM_RIGHT_TREE_RED);
 
 	dmd_alloc_low_clean ();
-	font_render_string_center (&font_supercar9, 64, 16, "LOOSER");
+	font_render_string_center (&font_supercar9, 64, 16, "LOSER");
 	dmd_show_low ();
 
 	task_sleep_sec(3);
@@ -150,8 +150,8 @@ void dragrace_deff (void) {
 
 	racetrack_race();
 
-	// start with a 10 second race and shorten by one second for each dragrace won.
-	dragrace_counter_max = (DRAGRACE_TICKS_PER_SECOND * 10) - (dragraces_won * DRAGRACE_TICKS_PER_SECOND);
+	// start with an 8 second race and shorten by one second for each dragrace won.
+	dragrace_counter_max = (DRAGRACE_TICKS_PER_SECOND * 8) - (dragraces_won * DRAGRACE_TICKS_PER_SECOND);
 	if (dragrace_counter_max < DRAGRACE_TICKS_PER_SECOND * 5) {
 		// race must be at least 5 seconds long
 		dragrace_counter_max = DRAGRACE_TICKS_PER_SECOND * 5;
