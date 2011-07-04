@@ -72,7 +72,10 @@ GAME_PAGED_OBJS = simple.o driver.o kickback.o \
 	jets.o trivial.o sling.o zr1_multiball.o shots.o \
 	leffs.o deffs.o skill.o vmode_dragrace.o \
 	goal_collect_cars.o pitstop_award.o
-	
+
+
+GAME_PAGED_OBJS += $(if $(CONFIG_COMBOS),combo_handlers.o)	
+KERNEL_HW_OBJS += $(if $(CONFIG_COMBOS),machine/corvette/combo_definitions.o)
 
 #SCHED_HEADERS += build/kickback_driver.h
 

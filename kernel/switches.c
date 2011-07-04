@@ -94,10 +94,45 @@ U16 switch_last_service_time;
 /** The switch number of the last switch to be scheduled. */
 U8 sw_last_scheduled;
 
+/** The system time at the time of the last switch scheduled. */
+U16 sw_last_scheduled_time;
+
 /** Nonzero if a switch short was detected and switches need to be
  * ignored for some time.  The value indicates the number of
  * seconds to ignore switches. */
 U8 sw_short_timer;
+
+#ifdef CONFIG_RECENT_SWITCHES
+
+/** A cycling buffer that contains a list of recently hit switches */
+recent_switch_t recent_switches[MAX_RECENT_SWITCHES];
+/** A tail pointer which points to the oldest 'recent-switch' that will be updated with the detals of the next-hit pf swtich. */
+U8 next_recent_switch;
+
+#ifdef CONFIG_DEBUG_RECENT_SWITCHES
+void dump_recent_switches( void ) {
+	U8 dump_count = 0;
+	U8 index = next_recent_switch;
+	recent_switch_t *recent_switch;
+	while (dump_count < MAX_RECENT_SWITCHES) {
+		if (index == 0) {
+			index = MAX_RECENT_SWITCHES;
+		}
+		index--;
+		recent_switch = &recent_switches[index];
+		dbprintf("dc: %d, i: %d, s: %d, t: %ld\n", dump_count, index, recent_switch->switch_id, recent_switch->hit_time);
+		task_runs_long();
+
+		dump_count++;
+	}
+}
+#endif
+
+void reset_recent_switches() {
+	next_recent_switch = 0;
+	memset(recent_switches, UNKNOWN_SWITCH_ID, sizeof(recent_switches));
+}
+#endif
 
 
 /** Return the switch table entry for a switch */
@@ -127,16 +162,21 @@ void switch_short_detect (void)
 		sw_raw[4] & sw_raw[5] & sw_raw[6] & sw_raw[7];
 	if (n != 0)
 	{
+		// one or more rows are shorted
+#ifdef DEBUGGER
 		dbprintf ("Row short\n", n);
+#endif
 		sw_short_timer = 3;
 	}
 
 	for (n = 0; n < 8; n++)
 	{
-		if (sw_raw[n] == ~mach_opto_mask[n])
+		if (sw_raw[n] == (U8)~mach_opto_mask[n])
 		{
 			/* The nth column is shorted. */
+#ifdef DEBUGGER
 			dbprintf ("Column short\n");
+#endif
 			sw_short_timer = 3;
 		}
 	}
@@ -397,6 +437,21 @@ void switch_lamp_pulse (void)
 }
 
 
+#ifdef DEBUGGER
+void dump_switch_details(U8 sw) {
+	dbprintf ("SW: ");
+	sprintf_far_string (names_of_switches + sw);
+	dbprintf1 ();
+#if defined(DEBUG_SWITCH_NUMBER) || defined(CONFIG_UNITTEST)
+	dbprintf (" (%d) ", sw);
+#endif
+	dbprintf ("\n");
+}
+#endif
+
+#ifdef CONFIG_RECENT_SWITCHES
+recent_switch_t *sw_last_switch_details;
+#endif
 /*
  * The entry point for processing a switch transition.  It performs
  * some of the common switch handling logic before calling all
@@ -410,8 +465,28 @@ void switch_sched_task (void)
 	const switch_info_t * const swinfo = switch_lookup (sw);
 
 	/* For test mode : this lets it see what was the last switch
-	 * to be scheduled.  Used by the Switch Edges test. */
+	 * to be scheduled.  Used by the Switch Edges test. Also used by combos. */
 	sw_last_scheduled = sw;
+	sw_last_scheduled_time = get_sys_time();
+
+#ifdef CONFIG_RECENT_SWITCHES
+	if ((swinfo->flags & SW_PLAYFIELD) && (in_game || in_test == TEST_SWITCHES)) {
+#ifdef CONFIG_DEBUG_RECENT_SWITCHES
+		dbprintf("Recent SW, now: %ld, sw: %d\n", sw_last_scheduled_time, sw_last_scheduled);
+#endif
+		sw_last_switch_details = &recent_switches[next_recent_switch];
+		sw_last_switch_details->hit_time = sw_last_scheduled_time;
+		sw_last_switch_details->switch_id = sw_last_scheduled;
+
+		next_recent_switch++;
+		if (unlikely( next_recent_switch >= MAX_RECENT_SWITCHES)) {
+			next_recent_switch = 0;
+		}
+#ifdef CONFIG_DEBUG_RECENT_SWITCHES
+		dump_recent_switches();
+#endif
+	}
+#endif
 
 	log_event (SEV_INFO, MOD_SWITCH, EV_SW_SCHEDULE, sw);
 
@@ -444,13 +519,7 @@ void switch_sched_task (void)
 #ifdef DEBUGGER
 	if (swinfo->fn != null_function && sw < 72)
 	{
-		dbprintf ("SW: ");
-		sprintf_far_string (names_of_switches + sw);
-		dbprintf1 ();
-#ifdef DEBUG_SWITCH_NUMBER
-		dbprintf (" (%d) ", sw);
-#endif
-		dbprintf ("\n");
+		dump_switch_details(sw);
 	}
 #endif
 
@@ -466,6 +535,11 @@ void switch_sched_task (void)
 	if ((swinfo->flags & SW_PLAYFIELD) && in_game)
 	{
 		callset_invoke (any_pf_switch);
+
+#ifdef CONFIG_COMBOS
+		combo_process_switch();
+#endif
+
 
 		/* If valid playfield not asserted yet, then see if this
 		 * switch validates it.  Most switches do this right
@@ -785,6 +859,13 @@ CALLSET_ENTRY (switch, init_complete)
 	switch_last_service_time = get_sys_time ();
 }
 
+CALLSET_ENTRY (switch, start_ball, init)
+{
+#ifdef CONFIG_RECENT_SWITCHES
+	reset_recent_switches();
+#endif
+}
+
 
 /** Once per second, see if we had disabled switch scanning
  * due to a short, and it should be reenabled now.  This
@@ -816,4 +897,3 @@ void switch_init (void)
 	/* Initialize the switch queue */
 	switch_queue_init ();
 }
-

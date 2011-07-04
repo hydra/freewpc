@@ -20,7 +20,7 @@
 
 #include <string.h>
 #include <stdarg.h>
-#include <ncurses.h>
+#include <ncurses\ncurses.h>
 #include <freewpc.h>
 #include <simulation.h>
 

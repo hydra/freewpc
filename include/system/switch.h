@@ -68,6 +68,10 @@ typedef struct
 extern const U8 mach_opto_mask[];
 extern const U8 mach_edge_switches[];
 
+extern U8 sw_last_scheduled;
+extern U16 sw_last_scheduled_time;
+
+
 /** The maximum number of switches that can be queued at
  * a time.  Queueing is necessary only for switches that
  * require a long (more than 4ms) debounce interval.
@@ -233,5 +237,17 @@ extern bool pic_invalid;
 #define switch_scanning_ok() TRUE
 #endif
 
+#ifdef CONFIG_RECENT_SWITCHES
+#define MAX_RECENT_SWITCHES 32
+#define UNKNOWN_SWITCH_ID 0xFF
+
+typedef struct recent_switch_s {
+	U8 switch_id;
+	U16 hit_time;
+} recent_switch_t;
+
+extern recent_switch_t recent_switches[MAX_RECENT_SWITCHES];
+extern U8 next_recent_switch;
+#endif
 
 #endif /* _SYS_SWITCH_H */

@@ -36,6 +36,12 @@
 #CONFIG_BPT := y
 
 #
+# Experimental combo and recent switch settings
+#
+CONFIG_RECENT_SWITCHES := n
+CONFIG_COMBOS := n
+
+#
 # Set if you wish to override the major/minor version numbers
 # to be used.  SYSTEM refers to the core code, MACHINE to the
 # game rev.
@@ -58,6 +64,9 @@ GCC_VERSION := 4.3.4
 #EXTRA_CFLAGS += -DFREE_ONLY
 #EXTRA_CFLAGS += -DDEBUGGER
 #EXTRA_CLFAGS += -DIGNORE_RTC_DIAG_CHECK
+
+#EXTRA_CFLAGS += -DCONFIG_DEBUG_COMBOS
+#EXTRA_CFLAGS += -DCONFIG_DEBUG_RECENT_SWITCHES
 
 # For debugging the compiler itself.
 #DEBUG_COMPILER := y
