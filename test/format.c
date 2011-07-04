@@ -208,8 +208,8 @@ void pricing_mode_render (U8 val)
 		case PRICE_CUSTOM: sprintf ("CUSTOM"); break;
 		case PRICE_USA_25CENT: sprintf ("USA $0.25"); break;
 		case PRICE_USA_50CENT: sprintf ("USA $0.50"); break;
-		case PRICE_UK: sprintf ("U.K. 4/1{"); break;
-		case PRICE_EURO: sprintf ("EUROPE 2/e"); break;
+		case PRICE_UK: sprintf ("U.K. 4/1["); break;
+		case PRICE_EURO: sprintf ("EUROPE 2/<"); break;
 		default: sprintf ("MODE %d", val); break;
 	}
 }
@@ -307,9 +307,9 @@ const struct currency_info
 	[CUR_PESETA] = { "P", 25, 4, FALSE },
 	[CUR_YEN] = { "Y", 25, 4, FALSE },
 	[CUR_DM] = { "DM", 25, 4, FALSE },
-	[CUR_GBP] = { "{", 1, 100, TRUE },
+	[CUR_GBP] = { "[", 1, 100, TRUE },
 	[CUR_TOKEN] = { "TOK.", 1, 100, FALSE },
-	[CUR_EURO] = { "e", 1, 100, TRUE },
+	[CUR_EURO] = { "<", 1, 100, TRUE },
 };
 
 
@@ -408,12 +408,6 @@ void average_per_ball_audit (audit_t val)
 }
 
 
-void hex4_audit (audit_t val)
-{
-	sprintf ("0X%04lX", val);
-}
-
-
 void render_audit (audit_t val, audit_format_type_t type)
 {
 	switch (type)
@@ -438,9 +432,6 @@ void render_audit (audit_t val, audit_format_type_t type)
 			break;
 		case AUDIT_TYPE_AVG_PER_BALL:
 			average_per_ball_audit (val);
-			break;
-		case AUDIT_TYPE_HEX4:
-			hex4_audit (val);
 			break;
 		case AUDIT_TYPE_LONGINT:
 			/* TODO long_integer_audit (val); */
