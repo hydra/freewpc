@@ -124,7 +124,7 @@ Possible awards:
 
 Time displayed on screen, progress bar underneath time (24hrs)
 Orbits advance time, progress bar updates
-Inner orbit also counters.
+Inner orbit also advance counters.
 Quick consecutive combos advance time faster
 
 Every 6 hours player must shoot pit-in within 15 seconds.
@@ -132,7 +132,7 @@ As time advances GI goes from light to dark to light.
 
 Advancing time should strobe left and right standup flashers.
 If player completes progress bar then they must shoot pit-in.
-Ball held in pin-in while another is launched into trough.
+Ball held in pit-in while another is launched into trough.
 
 2 ball multiball starts.
 Shooting any orbits awards big points while in multiball mode.
