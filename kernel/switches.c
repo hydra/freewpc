@@ -104,8 +104,10 @@ U8 sw_short_timer;
 
 #ifdef CONFIG_RECENT_SWITCHES
 
+/** A cycling buffer that contains a list of recently hit switches */
 recent_switch_t recent_switches[MAX_RECENT_SWITCHES];
-U8 next_recent_switch; // a tail pointer which points to the next slot to be used which is also the oldest recent-switch.
+/** A tail pointer which points to the oldest 'recent-switch' that will be updated with the detals of the next-hit pf swtich. */
+U8 next_recent_switch;
 
 #ifdef CONFIG_DEBUG_RECENT_SWITCHES
 void dump_recent_switches( void ) {
@@ -126,14 +128,10 @@ void dump_recent_switches( void ) {
 }
 #endif
 
-CALLSET_ENTRY (recent_switches, init, init_complete, start_ball)
-{
+void reset_recent_switches() {
 	next_recent_switch = 0;
-	memset(recent_switches, 0, sizeof(recent_switches));
+	memset(recent_switches, UNKNOWN_SWITCH_ID, sizeof(recent_switches));
 }
-
-#else
-void recent_switches_init( void ) {}; // generate a fake callset entry to shut the linker up when CONFIG_RECENT_SWITCHES isn't used
 #endif
 
 
@@ -451,6 +449,9 @@ void dump_switch_details(U8 sw) {
 }
 #endif
 
+#ifdef CONFIG_RECENT_SWITCHES
+recent_switch_t *sw_last_switch_details;
+#endif
 /*
  * The entry point for processing a switch transition.  It performs
  * some of the common switch handling logic before calling all
@@ -467,6 +468,25 @@ void switch_sched_task (void)
 	 * to be scheduled.  Used by the Switch Edges test. Also used by combos. */
 	sw_last_scheduled = sw;
 	sw_last_scheduled_time = get_sys_time();
+
+#ifdef CONFIG_RECENT_SWITCHES
+	if ((swinfo->flags & SW_PLAYFIELD) && (in_game || in_test == TEST_SWITCHES)) {
+#ifdef CONFIG_DEBUG_RECENT_SWITCHES
+		dbprintf("Recent SW, now: %ld, sw: %d\n", sw_last_scheduled_time, sw_last_scheduled);
+#endif
+		sw_last_switch_details = &recent_switches[next_recent_switch];
+		sw_last_switch_details->hit_time = sw_last_scheduled_time;
+		sw_last_switch_details->switch_id = sw_last_scheduled;
+
+		next_recent_switch++;
+		if (unlikely( next_recent_switch >= MAX_RECENT_SWITCHES)) {
+			next_recent_switch = 0;
+		}
+#ifdef CONFIG_DEBUG_RECENT_SWITCHES
+		dump_recent_switches();
+#endif
+	}
+#endif
 
 	log_event (SEV_INFO, MOD_SWITCH, EV_SW_SCHEDULE, sw);
 
@@ -515,24 +535,6 @@ void switch_sched_task (void)
 	if ((swinfo->flags & SW_PLAYFIELD) && in_game)
 	{
 		callset_invoke (any_pf_switch);
-
-#ifdef CONFIG_RECENT_SWITCHES
-#ifdef CONFIG_DEBUG_RECENT_SWITCHES
-		dbprintf("Recent SW, now: %ld, sw: %d\n", sw_last_scheduled_time, sw_last_scheduled);
-#endif
-		recent_switch_t *switch_hit = &recent_switches[next_recent_switch];
-		switch_hit->hit_time = sw_last_scheduled_time;
-		switch_hit->switch_id = sw_last_scheduled;
-
-		next_recent_switch++;
-		if (unlikely( next_recent_switch >= MAX_RECENT_SWITCHES)) {
-			next_recent_switch = 0;
-		}
-
-#ifdef CONFIG_DEBUG_RECENT_SWITCHES
-		dump_recent_switches();
-#endif
-#endif
 
 #ifdef CONFIG_COMBOS
 		combo_process_switch();
@@ -855,6 +857,13 @@ CALLSET_ENTRY (switch, init_complete)
 	/* Initialize the service timer.  This needs to happen
 	 * just before interrupts are enabled */
 	switch_last_service_time = get_sys_time ();
+}
+
+CALLSET_ENTRY (switch, start_ball, init)
+{
+#ifdef CONFIG_RECENT_SWITCHES
+	reset_recent_switches();
+#endif
 }
 
 
