@@ -239,6 +239,7 @@ extern bool pic_invalid;
 
 #ifdef CONFIG_RECENT_SWITCHES
 #define MAX_RECENT_SWITCHES 32
+#define UNKNOWN_SWITCH_ID 0xFF
 
 typedef struct recent_switch_s {
 	U8 switch_id;

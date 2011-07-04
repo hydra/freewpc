@@ -1059,6 +1059,99 @@ struct menu dev_font_test_item = {
 #endif /* MACHINE_DMD == 1 */
 
 /**********************************************************/
+#ifdef CONFIG_RECENT_SWITCHES
+/*
+ * Draw a list of switches that were hit and the times at whih they were hit.
+ *
+ * Pressing up/down moves the view window of the list up/down, only a few can be shown
+ * at a time due to the size of the screen.
+ */
+
+#define MAX_RECENT_SWITCH_ROWS_TO_DRAW 6
+
+void recent_switch_draw (void)
+{
+	dmd_alloc_low_clean ();
+
+	U8 dump_count = 0;
+	U8 index = next_recent_switch;
+	U8 skip_count = menu_selection;
+	recent_switch_t *recent_switch;
+
+	while (dump_count < MAX_RECENT_SWITCH_ROWS_TO_DRAW) {
+		if (index == 0) {
+			index = MAX_RECENT_SWITCHES;
+		}
+		index--;
+
+		if (skip_count != 0 ) {
+			skip_count--;
+			continue;
+		}
+
+		recent_switch = &recent_switches[index];
+		if (recent_switch->switch_id == UNKNOWN_SWITCH_ID) {
+			sprintf("NA");
+		} else {
+			sprintf_far_string (names_of_switches + recent_switch->switch_id);
+		}
+		font_render_string_left (&font_var5, 30, 1 + (dump_count * 5), sprintf_buffer);
+		sprintf("%ld", recent_switch->hit_time);
+		font_render_string_left (&font_var5, 0, 1 + (dump_count * 5), sprintf_buffer);
+		dump_count++;
+	}
+	dmd_show_low ();
+}
+
+void recent_switch_enter(void)
+{
+#ifdef DEVNO_TROUGH
+	device_request_kick (device_entry (DEVNO_TROUGH));
+#endif
+}
+
+
+void recent_switch_init (void)
+{
+	set_test_mode (TEST_SWITCHES);
+	browser_init ();
+	menu_selection = browser_min = 0;
+	browser_max = MAX_RECENT_SWITCHES - MAX_RECENT_SWITCH_ROWS_TO_DRAW;
+	flipper_enable ();
+}
+
+void recent_switch_escape(void)
+{
+	flipper_disable ();
+	window_pop ();
+}
+
+void recent_switch_thread (void)
+{
+	for (;;)
+	{
+		recent_switch_draw ();
+		task_sleep (TIME_100MS);
+	}
+}
+
+struct window_ops recent_switches_window = {
+	INHERIT_FROM_BROWSER,
+	.init = recent_switch_init,
+	.draw = recent_switch_draw,
+	.thread = recent_switch_thread,
+	.enter = recent_switch_enter,
+	.escape = recent_switch_escape
+};
+
+struct menu dev_recent_switches_test_item = {
+	.name = "RECENT SWITCHES",
+	.flags = M_ITEM,
+	.var = { .subwindow = { &recent_switches_window, NULL } },
+};
+
+#endif
+/**********************************************************/
 
 struct deff_leff_ops {
 	void (*start) (U8 id);
@@ -2162,6 +2255,9 @@ struct menu memory_editor_item = {
 struct menu *dev_menu_items[] = {
 #if (MACHINE_DMD == 1)
 	&dev_font_test_item,
+#endif
+#ifdef CONFIG_RECENT_SWITCHES
+	&dev_recent_switches_test_item,
 #endif
 	&dev_deff_test_item,
 	&dev_leff_test_item,
