@@ -65,7 +65,6 @@ my %contextDefinitionRe = (
 	"gi" => "[0-9]+",
 	"lamplists" => "AUTO",
 	"containers" => "AUTO",
-	"drivers" => "AUTO",
 	"tests" => "AUTO",
 	"deffs" => "AUTO",
 	"leffs" => "AUTO",
@@ -237,7 +236,7 @@ my %ContextMaxima = (
 my %FixedMaxima = (
 	"switches" => "NUM_SWITCHES",
 	"lamps", "PINIO_NUM_LAMPS",
-	"drives" => "SOL_COUNT",
+	"drives" => "PINIO_NUM_SOLS",
 );
 
 # The contexts for which strings should be written out.
