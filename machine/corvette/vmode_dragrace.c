@@ -18,6 +18,9 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+/**
+ * TODO pause the system timer while a drag race is running
+ */
 #include <freewpc.h>
 #include <corvette/racetrack.h>
 #include <corvette/vmode_dragrace.h>
