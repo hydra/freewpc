@@ -302,6 +302,7 @@ Skillshot Menu Enabled:
 Skillshot Rollover Enabled:
 Skillshot Skidpad Enabled:
 Skillshot Dragrace Enabled:
+Dragrace Enabled:
 ZR1 Working:
 ZR1 Solenoids Powered:
 Racetrack Working:
