@@ -307,12 +307,12 @@ void dragrace_disable( void ) {
 	lamp_tristate_off(LM_ROUTE_66_ARROW);
 
 	global_flag_off(GLOBAL_FLAG_DRAGRACE_ENABLED);
-	flag_off(FLAG_DIVERTER_OPENED);
+	global_flag_off(GLOBAL_FLAG_DIVERTER_OPENED);
 }
 
 void dragrace_enable( void ) {
 	global_flag_on(GLOBAL_FLAG_DRAGRACE_ENABLED);
-	flag_on(FLAG_DIVERTER_OPENED);
+	global_flag_on(GLOBAL_FLAG_DIVERTER_OPENED);
 }
 
 CALLSET_ENTRY(dragrace, dev_route_66_popper_enter) {
