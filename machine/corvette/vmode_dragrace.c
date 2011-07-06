@@ -20,6 +20,7 @@
 
 #include <freewpc.h>
 #include <corvette/racetrack.h>
+#include <corvette/vmode_dragrace.h>
 
 //
 // DRAGRACE
@@ -248,6 +249,9 @@ void dragrace_task( void ) {
 }
 
 void dragrace_start( U8 starter_gid ) {
+	if (global_flag_test(GLOBAL_FLAG_DRAGRACE_IN_PROGRESS)) {
+		return;
+	}
 	dragrace_starter_gid = starter_gid;
 	global_flag_on(GLOBAL_FLAG_DRAGRACE_IN_PROGRESS);
 	flipper_disable();
@@ -285,7 +289,56 @@ CALLSET_ENTRY(dragrace, ball_start) {
 	dragrace_starter_gid = 0;
 }
 
+CALLSET_BOOL_ENTRY(dragrace, dev_route_66_popper_kick_request) {
+	if (!global_flag_test(GLOBAL_FLAG_DRAGRACE_IN_PROGRESS)) {
+		return TRUE;
+	}
+
+	// hold the kickout for a bit.
+	return FALSE;
+}
+
+void dragrace_disable( void ) {
+	if (!global_flag_test(GLOBAL_FLAG_DRAGRACE_ENABLED)) {
+		return;
+	}
+
+	lamp_tristate_off(LM_RACE_TODAY);
+	lamp_tristate_off(LM_ROUTE_66_ARROW);
+
+	global_flag_off(GLOBAL_FLAG_DRAGRACE_ENABLED);
+	flag_off(FLAG_DIVERTER_OPENED);
+}
+
+void dragrace_enable( void ) {
+	global_flag_on(GLOBAL_FLAG_DRAGRACE_ENABLED);
+	flag_on(FLAG_DIVERTER_OPENED);
+}
+
+CALLSET_ENTRY(dragrace, dev_route_66_popper_enter) {
+	if (!global_flag_test(GLOBAL_FLAG_DRAGRACE_ENABLED)) {
+		return;
+	}
+	// kill the shot/arrow lights
+	dragrace_disable();
+
+	dragrace_start(GID_DRAGRACE);
+}
+
+CALLSET_ENTRY (dragrace, lamp_update) {
+	if (!global_flag_test(GLOBAL_FLAG_DRAGRACE_ENABLED)) {
+		return;
+	}
+
+	lamp_tristate_flash(LM_RACE_TODAY);
+	lamp_tristate_flash(LM_ROUTE_66_ARROW);
+}
+
 CALLSET_ENTRY(dragrace, vmode_dragrace_won) {
+	if (!was_dragrace_started_by(GID_DRAGRACE)) {
+		return;
+	}
+	score(SC_25M); // TODO score based on how hard the race was?
 }
 
 CALLSET_ENTRY(dragrace, vmode_dragrace_lost) {

@@ -120,9 +120,17 @@ void zr1_mb_reset (void)
 	flag_off (FLAG_HORSEPOWER_JACKPOT_LIT);
 }
 
-void zr1_mb_award_lite_lock (void)
+bool zr1_mb_can_award_lite_lock(void)
 {
 	if (!flag_test (FLAG_ZR1_MULTIBALL_LITE_LOCK_LIT)) {
+		return FALSE;
+	}
+	return TRUE;
+}
+
+void zr1_mb_award_lite_lock (void)
+{
+	if (!zr1_mb_can_award_lite_lock()) {
 		return;
 	}
 
