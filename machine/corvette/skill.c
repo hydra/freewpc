@@ -147,7 +147,7 @@ void skillshot_rollover_disable( void ) {
 	lamp_tristate_off (LM_MIDDLE_ROLLOVER);
 	lamp_tristate_off (LM_RIGHT_ROLLOVER);
 
-	flag_on (FLAG_LOOP_GATE_OPENED);
+	global_flag_on (GLOBAL_FLAG_LOOP_GATE_OPENED);
 
 	task_kill_gid (GID_SKILLSHOT_ROLLOVER_TIMER);
 }
@@ -161,7 +161,7 @@ void skillshot_rollover_timer( void ) {
 void skillshot_rollover_enable( void ) {
 	current_rollover = SW_MIDDLE_ROLLOVER;
 	global_flag_on(GLOBAL_FLAG_SKILLSHOT_ROLLOVER_ENABLED);
-	flag_off (FLAG_LOOP_GATE_OPENED);
+	global_flag_off (GLOBAL_FLAG_LOOP_GATE_OPENED);
 
 	// kill any existing task, just to make sure
 	task_kill_gid (GID_SKILLSHOT_ROLLOVER_TIMER);

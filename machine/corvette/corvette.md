@@ -290,11 +290,6 @@ ZR1 Multiball Lite Lock Lit:
 ZR1 Multiball Lock Lit:
 Torque Jackpot Lit:
 Horsepower Jackpot Lit:
-Loop Gate Opened:
-ZR1 Up Rev Gate Opened:
-ZR1 Low Rev Gate Opened:
-# FIXME move to globalflags
-Diverter Opened:
 
 [globalflags]
 Skillshot Menu Enabled:
@@ -306,6 +301,10 @@ ZR1 Working:
 ZR1 Solenoids Powered:
 Racetrack Working:
 Dragrace In Progress:
+Loop Gate Opened:
+ZR1 Up Rev Gate Opened:
+ZR1 Low Rev Gate Opened:
+Diverter Opened:
 
 [deffs]
 ZR1 Ball Locked: page(MACHINE_PAGE), PRI_GAME_QUICK4, D_PAUSE
