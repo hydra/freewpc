@@ -318,8 +318,9 @@ Dragrace In Progress:
 #Skill Menu: page(MACHINE_PAGE), PRI_BALL_LAUNCH_MENU, D_RESTARTABLE
 
 #Dragrace: page(MACHINE_PAGE), PRI_VIDEO_MODE
+#Pitstop Award: page(MACHINE_PAGE), PRI_VIDEO_MODE
 
-Goal Car Awarded: page(MACHINE_PAGE), PRI_GAME_QUICK4, D_PAUSE
+#Goal Car Awarded: page(MACHINE_PAGE), PRI_GAME_QUICK4, D_PAUSE
 
 [leffs]
 #Amode: runner, PRI_LEFF1, LAMPS(ALL), GI(ALL), page(MACHINE_PAGE)

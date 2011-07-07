@@ -75,9 +75,13 @@ void goal_car_awarded_deff(void) {
 	deff_exit ();
 }
 
+bool have_collected_all_cars(void) {
+	return (cars_collected >= CAR_COUNT);
+}
+
 // TODO rename to award_next_car() ?
 void award_car(void) {
-	if (cars_collected >= CAR_COUNT) {
+	if (have_collected_all_cars()) {
 		return;
 	}
 #ifdef DEBUGGER
