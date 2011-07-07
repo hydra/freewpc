@@ -18,6 +18,9 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+/**
+ * FIXME if there are less than PITSTOP_AWARD_ITEMS items after disabling unavilable awards a crash occurs (due to infinite loop)
+ */
 #include <freewpc.h>
 #include <eb.h>
 
@@ -91,8 +94,16 @@ void determine_allowable_pitstop_awards(void) {
 		// TODO if bonus multiplier is already 8x disallow it
 		// TODO if lock is already lit, disallow it.
 
+		if (global_flag_test(GLOBAL_FLAG_DRAGRACE_ENABLED)) {
+			allowable_pitstop_awards[AWARD_DRAGRACE] = FALSE;
+		}
+
 		if (!can_award_extra_ball()) {
 			allowable_pitstop_awards[AWARD_EXTRA_BALL] = FALSE;
+		}
+
+		if (!zr1_mb_can_award_lite_lock()) {
+			allowable_pitstop_awards[AWARD_LITE_LOCK] = FALSE;
 		}
 
 		// TODO if we've still got more than PITSTOP_AWARD_ITEMS allowable then disable the last awarded thing
@@ -233,6 +244,11 @@ void pitstop_award_task(void) {
 		case AWARD_EXTRA_BALL:
 			increment_extra_balls();
 		break;
+		case AWARD_LITE_LOCK:
+			zr1_mb_award_lite_lock();
+		break;
+		case AWARD_DRAGRACE:
+			dragrace_enable();
 		default:
 		// TODO handle remaining awards
 		break;

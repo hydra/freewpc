@@ -121,9 +121,17 @@ void zr1_mb_reset (void)
 	flag_off (FLAG_HORSEPOWER_JACKPOT_LIT);
 }
 
-void zr1_mb_award_lite_lock (void)
+bool zr1_mb_can_award_lite_lock(void)
 {
 	if (!flag_test (FLAG_ZR1_MULTIBALL_LITE_LOCK_LIT)) {
+		return FALSE;
+	}
+	return TRUE;
+}
+
+void zr1_mb_award_lite_lock (void)
+{
+	if (!zr1_mb_can_award_lite_lock()) {
 		return;
 	}
 
@@ -146,7 +154,7 @@ void zr1_mb_light_torque_jackpot (void)
 void zr1_mb_start_task( void )
 {
 	flag_off (FLAG_ZR1_MULTIBALL_LOCK_LIT);
-	flag_off (FLAG_DIVERTER_OPENED); // FIXME what about other modes that may have set this?
+	global_flag_off (GLOBAL_FLAG_DIVERTER_OPENED); // FIXME what about other modes that may have set this?
 	callset_invoke(device_update);
 
 	zr1_set_shake_speed(ZR1_SHAKE_SPEED_MEDIUM);
@@ -348,9 +356,9 @@ CALLSET_ENTRY (zr1_multiball, device_update)
 
 	// close the ZR1 upper 'rev' gate when zr1 multiball lock is lit
 	if (flag_test (FLAG_ZR1_MULTIBALL_LOCK_LIT)) {
-		flag_off (FLAG_ZR1_UP_REV_GATE_OPENED);
+		global_flag_off (GLOBAL_FLAG_ZR1_UP_REV_GATE_OPENED);
 	} else {
-		flag_on (FLAG_ZR1_UP_REV_GATE_OPENED);
+		global_flag_on (GLOBAL_FLAG_ZR1_UP_REV_GATE_OPENED);
 	}
 }
 

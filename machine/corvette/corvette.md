@@ -14,11 +14,12 @@ Pinmame-ROM: corv_2_1.bin
 Lamp-Matrix-Width: 51
 Lamp-Matrix-Height: 18
 
+define MACHINE_CORVETTE
 define MACHINE_NUMBER 536
 define MACHINE_GRAND_CHAMPION_INITIALS { 'D', 'P', 'C' }
-define MACHINE_GRAND_CHAMPION_SCORE { 0x00, 0x20, 0x00, 0x00, 0x00 }
+define MACHINE_GRAND_CHAMPION_SCORE {0x20, 0x00, 0x00, 0x00, 0x00 }
 define MACHINE_HIGH_SCORE_INITIALS { 'F', 'R', 'E' }, { 'W', 'P', 'C' }, { 'F', 'R', 'E' }, { 'W', 'P', 'C' }
-define MACHINE_HIGH_SCORES { 0x00, 0x17, 0x50, 0x00, 0x00 }, { 0x00, 0x15, 0x00, 0x00, 0x00 }, { 0x00, 0x12, 0x50, 0x00, 0x00 }, { 0x00, 0x10, 0x00, 0x00, 0x00 }
+define MACHINE_HIGH_SCORES { 0x17, 0x50, 0x00, 0x00, 0x00 }, { 0x15, 0x00, 0x00, 0x00, 0x00 }, {0x12, 0x50, 0x00, 0x00, 0x00 }, {0x10, 0x00, 0x00, 0x00, 0x00 }
 define MACHINE_START_BALL_MUSIC   MUS_MAIN_PLUNGER
 define MACHINE_BALL_IN_PLAY_MUSIC MUS_MAIN
 #define MACHINE_END_GAME_MUSIC MUS_END_GAME
@@ -288,21 +289,21 @@ ZR1 Multiball Lite Lock Lit:
 ZR1 Multiball Lock Lit:
 Torque Jackpot Lit:
 Horsepower Jackpot Lit:
-Loop Gate Opened:
-ZR1 Up Rev Gate Opened:
-ZR1 Low Rev Gate Opened:
-# FIXME move to globalflags
-Diverter Opened:
 
 [globalflags]
 Skillshot Menu Enabled:
 Skillshot Rollover Enabled:
 Skillshot Skidpad Enabled:
 Skillshot Dragrace Enabled:
+Dragrace Enabled:
 ZR1 Working:
 ZR1 Solenoids Powered:
 Racetrack Working:
 Dragrace In Progress:
+Loop Gate Opened:
+ZR1 Up Rev Gate Opened:
+ZR1 Low Rev Gate Opened:
+Diverter Opened:
 
 [deffs]
 #ZR1 Ball Locked: page(MACHINE_PAGE), PRI_GAME_QUICK4, D_PAUSE
@@ -322,13 +323,14 @@ Dragrace In Progress:
 
 #Goal Car Awarded: page(MACHINE_PAGE), PRI_GAME_QUICK4, D_PAUSE
 
+Combo Name: page(MACHINE_PAGE), PRI_GAME_QUICK5, D_SCORE+D_RESTARTABLE
+
 [leffs]
 #Amode: runner, PRI_LEFF1, LAMPS(ALL), GI(ALL), page(MACHINE_PAGE)
 #Color Cycle: runner, PRI_LEFF3, LAMPS(ALL), page(MACHINE_PAGE)
 #Build Up: runner, PRI_LEFF3, LAMPS(ALL), page(MACHINE_PAGE)
 
 [fonts]
-misctype:
 supercar9:
 renew8:
 

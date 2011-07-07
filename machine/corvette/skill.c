@@ -38,7 +38,6 @@ CALLSET_ENTRY(skillshot_dragrace, vmode_dragrace_won) {
 		return;
 	}
 	score(SC_50M);
-	award_car();
 }
 
 void skillshot_dragrace_disable( void ) {
@@ -46,12 +45,9 @@ void skillshot_dragrace_disable( void ) {
 		return;
 	}
 
-	lamp_tristate_off(LM_RACE_TODAY);
-	lamp_tristate_off(LM_ROUTE_66_ARROW);
-
 	task_kill_gid(GID_SKILLSHOT_DRAGRACE_TIMER);
 	global_flag_off(GLOBAL_FLAG_SKILLSHOT_DRAGRACE_ENABLED);
-	flag_off(FLAG_DIVERTER_OPENED);
+	dragrace_disable();
 }
 
 void skillshot_dragrace_timer( void ) {
@@ -65,33 +61,17 @@ void skillshot_dragrace_enable( void ) {
 	task_kill_gid(GID_SKILLSHOT_DRAGRACE_TIMER);
 	task_create_gid1(GID_SKILLSHOT_DRAGRACE_TIMER, skillshot_dragrace_timer);
 	global_flag_on(GLOBAL_FLAG_SKILLSHOT_DRAGRACE_ENABLED);
-	flag_on(FLAG_DIVERTER_OPENED);
+	dragrace_enable();
 }
 
 CALLSET_ENTRY(skillshot_dragrace, dev_route_66_popper_enter) {
 	if (!global_flag_test(GLOBAL_FLAG_SKILLSHOT_DRAGRACE_ENABLED)) {
 		return;
 	}
-	// kill the skillshot timer and shot/arrow lights
+	// kill the skillshot timer
 	skillshot_dragrace_disable();
 
 	dragrace_start(GID_SKILLSHOT_DRAGRACE);
-}
-
-CALLSET_BOOL_ENTRY(skillshot_dragrace, dev_route_66_popper_kick_request) {
-	// XXX should work without this check
-	/*
-	if (!global_flag_test(GLOBAL_FLAG_SKILLSHOT_DRAGRACE_ENABLED)) {
-		return TRUE;
-	}
-	*/
-
-	if (!global_flag_test(GLOBAL_FLAG_DRAGRACE_IN_PROGRESS)) {
-		return TRUE;
-	}
-
-	 // hold the kickout for a bit.
-	return FALSE;
 }
 
 CALLSET_ENTRY (skillshot_dragrace, lamp_update) {
@@ -168,7 +148,7 @@ void skillshot_rollover_disable( void ) {
 	lamp_tristate_off (LM_MIDDLE_ROLLOVER);
 	lamp_tristate_off (LM_RIGHT_ROLLOVER);
 
-	flag_on (FLAG_LOOP_GATE_OPENED);
+	global_flag_on (GLOBAL_FLAG_LOOP_GATE_OPENED);
 
 	task_kill_gid (GID_SKILLSHOT_ROLLOVER_TIMER);
 }
@@ -182,7 +162,7 @@ void skillshot_rollover_timer( void ) {
 void skillshot_rollover_enable( void ) {
 	current_rollover = SW_MIDDLE_ROLLOVER;
 	global_flag_on(GLOBAL_FLAG_SKILLSHOT_ROLLOVER_ENABLED);
-	flag_off (FLAG_LOOP_GATE_OPENED);
+	global_flag_off (GLOBAL_FLAG_LOOP_GATE_OPENED);
 
 	// kill any existing task, just to make sure
 	task_kill_gid (GID_SKILLSHOT_ROLLOVER_TIMER);

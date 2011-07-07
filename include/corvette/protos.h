@@ -49,6 +49,8 @@ __machine__ void zr1_calibrate(void);
 __machine__ void zr1_start_ball_search(void);
 __machine__ void zr1_set_shake_speed(U8 new_shake_speed);
 __machine__ void zr1_set_shake_range(U8 new_shake_range);
+__machine__ bool zr1_mb_can_award_lite_lock(void);
+__machine__ void zr1_mb_award_lite_lock(void);
 
 /* racetrack.c */
 void racetrack_float(void);
@@ -62,6 +64,8 @@ void racetrack_set_desired_car_position(U8 lane, U8 position_percentage);
 
 /* vmode_dragrace.c */
 void dragrace_start(U8 starter_gid);
+void dragrace_disable( void );
+void dragrace_enable( void );
 
 /* goal_collect_cars.c */
 void award_car(void);

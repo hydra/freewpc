@@ -18,8 +18,12 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+/**
+ * TODO pause the system timer while a drag race is running
+ */
 #include <freewpc.h>
 #include <corvette/racetrack.h>
+#include <corvette/vmode_dragrace.h>
 
 //
 // DRAGRACE
@@ -80,7 +84,7 @@ void dragrace_start_anim (void) {
 	dmd_alloc_low_clean ();
 	font_render_string_center (&font_supercar9, 64, 16, "READY");
 	dmd_show_low ();
-	sample_start (SND_RACE_STARTER_01, SL_1S);
+	sample_start (SND_RACE_STARTER_01, SL_500MS);
 	task_sleep_sec(1);
 
 	// set
@@ -88,7 +92,7 @@ void dragrace_start_anim (void) {
 	dmd_alloc_low_clean ();
 	font_render_string_center (&font_supercar9, 64, 16, "SET");
 	dmd_show_low ();
-	sample_start (SND_RACE_STARTER_01, SL_1S);
+	sample_start (SND_RACE_STARTER_01, SL_500MS);
 	task_sleep_sec(1);
 
 	// go
@@ -97,7 +101,7 @@ void dragrace_start_anim (void) {
 	dmd_alloc_low_clean ();
 	font_render_string_center (&font_supercar9, 64, 16, "GO");
 	dmd_show_low ();
-	sample_start (SND_RACE_STARTER_02, SL_1S);
+	sample_start (SND_RACE_STARTER_02, SL_2S);
 }
 
 void dragrace_loser_anim(void) {
@@ -113,7 +117,7 @@ void dragrace_loser_anim(void) {
 	lamp_tristate_off(LM_RIGHT_TREE_RED);
 
 	dmd_alloc_low_clean ();
-	font_render_string_center (&font_supercar9, 64, 16, "LOOSER");
+	font_render_string_center (&font_supercar9, 64, 16, "LOSER");
 	dmd_show_low ();
 
 	task_sleep_sec(3);
@@ -150,8 +154,8 @@ void dragrace_deff (void) {
 
 	racetrack_race();
 
-	// start with a 10 second race and shorten by one second for each dragrace won.
-	dragrace_counter_max = (DRAGRACE_TICKS_PER_SECOND * 10) - (dragraces_won * DRAGRACE_TICKS_PER_SECOND);
+	// start with an 8 second race and shorten by one second for each dragrace won.
+	dragrace_counter_max = (DRAGRACE_TICKS_PER_SECOND * 8) - (dragraces_won * DRAGRACE_TICKS_PER_SECOND);
 	if (dragrace_counter_max < DRAGRACE_TICKS_PER_SECOND * 5) {
 		// race must be at least 5 seconds long
 		dragrace_counter_max = DRAGRACE_TICKS_PER_SECOND * 5;
@@ -248,6 +252,9 @@ void dragrace_task( void ) {
 }
 
 void dragrace_start( U8 starter_gid ) {
+	if (global_flag_test(GLOBAL_FLAG_DRAGRACE_IN_PROGRESS)) {
+		return;
+	}
 	dragrace_starter_gid = starter_gid;
 	global_flag_on(GLOBAL_FLAG_DRAGRACE_IN_PROGRESS);
 	flipper_disable();
@@ -285,7 +292,56 @@ CALLSET_ENTRY(dragrace, ball_start) {
 	dragrace_starter_gid = 0;
 }
 
+CALLSET_BOOL_ENTRY(dragrace, dev_route_66_popper_kick_request) {
+	if (!global_flag_test(GLOBAL_FLAG_DRAGRACE_IN_PROGRESS)) {
+		return TRUE;
+	}
+
+	// hold the kickout for a bit.
+	return FALSE;
+}
+
+void dragrace_disable( void ) {
+	if (!global_flag_test(GLOBAL_FLAG_DRAGRACE_ENABLED)) {
+		return;
+	}
+
+	lamp_tristate_off(LM_RACE_TODAY);
+	lamp_tristate_off(LM_ROUTE_66_ARROW);
+
+	global_flag_off(GLOBAL_FLAG_DRAGRACE_ENABLED);
+	global_flag_off(GLOBAL_FLAG_DIVERTER_OPENED);
+}
+
+void dragrace_enable( void ) {
+	global_flag_on(GLOBAL_FLAG_DRAGRACE_ENABLED);
+	global_flag_on(GLOBAL_FLAG_DIVERTER_OPENED);
+}
+
+CALLSET_ENTRY(dragrace, dev_route_66_popper_enter) {
+	if (!global_flag_test(GLOBAL_FLAG_DRAGRACE_ENABLED)) {
+		return;
+	}
+	// kill the shot/arrow lights
+	dragrace_disable();
+
+	dragrace_start(GID_DRAGRACE);
+}
+
+CALLSET_ENTRY (dragrace, lamp_update) {
+	if (!global_flag_test(GLOBAL_FLAG_DRAGRACE_ENABLED)) {
+		return;
+	}
+
+	lamp_tristate_flash(LM_RACE_TODAY);
+	lamp_tristate_flash(LM_ROUTE_66_ARROW);
+}
+
 CALLSET_ENTRY(dragrace, vmode_dragrace_won) {
+	if (!was_dragrace_started_by(GID_DRAGRACE)) {
+		return;
+	}
+	score(SC_25M); // TODO score based on how hard the race was?
 }
 
 CALLSET_ENTRY(dragrace, vmode_dragrace_lost) {
