@@ -189,6 +189,7 @@ The possible attributes for switches are:
 @item intest
 @item button
 @item noscore
+@item noevent
 @end table
 
 Additionally, these attributes are used to tag special switches.

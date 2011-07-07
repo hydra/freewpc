@@ -299,7 +299,6 @@ void zr1_test_enter (void)
 
 }
 
-
 struct window_ops corvette_zr1_test_window = {
 	DEFAULT_WINDOW,
 	.init = zr1_test_init,
@@ -320,4 +319,5 @@ struct menu corvette_zr1_test_item = {
 	.flags = M_ITEM,
 	.var = { .subwindow = { &corvette_zr1_test_window, NULL } },
 };
+
 #endif

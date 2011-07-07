@@ -21,6 +21,7 @@
 #ifdef SKILL_ENABLED
 #include <freewpc.h>
 #include <corvette/racetrack.h>
+#include <corvette/vmode_dragrace.h>
 /*
  * TODO implement race-for-pinks skill-shot mode
  */
@@ -29,250 +30,15 @@
 // DRAGRACE SKILLSHOT
 //
 // The aim is to hit the right ramp (while diverter is open), hold the ball in the route 66 popper
-// then start a video mode where the player bashes alternate flipper buttons to get the blue car to outrun the red
-// car, ala track-and-field.
-// Each drag-race one should increase the difficulty of the next one
-// The more cars you have collected, the easier it should be to win a drag race (as you'd be using your best car right!)
-// If the player wins a drag race award them something suitable (for now, just points).
-
-U8 dragrace_counter_max;
-U8 dragrace_counter;
-
-U8 player_car_position;
-U8 computer_car_position;
-
-enum dragrace_button_expectations {
-	EXPECT_LEFT = 0,
-	EXPECT_RIGHT
-};
-enum dragrace_button_expectations dragrace_button_expectation;
-
-#define DRAGRACE_TICKS_PER_SECOND 10 // see dragrace_deff()
-
-__local__ U8 dragraces_won; // starts at 0, increases by one for each drag-race won.
-
-CALLSET_ENTRY(dragrace, start_game) {
-	dragraces_won = 0;
-}
-
-void dragrace_draw( void ) {
-	dmd_alloc_low_clean ();
-	font_render_string_center (&font_supercar9, 64, 10, "DRAGRACE");
-
-	// TODO replace these counters with pretty dragrace progress animation/graphics.
-
-	sprintf("%d", dragrace_counter_max - dragrace_counter); // count down
-	font_render_string_center (&font_supercar9, 64, 20, sprintf_buffer);
-
-	sprintf("%d", player_car_position);
-	font_render_string_center (&font_supercar9, 32, 20, sprintf_buffer);
-	sprintf("%d", computer_car_position);
-	font_render_string_center (&font_supercar9, 96, 20, sprintf_buffer);
-
-	dmd_show_low ();
-}
-
-void dragrace_start_anim (void) {
-	//ball_search_timer_reset();
-
-	// TODO show graphic of racetrack starting grid or something suitable
-
-	// ready
-	lamp_tristate_on(LM_TREE_TOP_YELLOW);
-	dmd_alloc_low_clean ();
-	font_render_string_center (&font_supercar9, 64, 16, "READY");
-	dmd_show_low ();
-	sample_start (SND_RACE_STARTER_01, SL_1S);
-	task_sleep_sec(1);
-
-	// set
-	lamp_tristate_on(LM_TREE_BOTTOM_YELLOW);
-	dmd_alloc_low_clean ();
-	font_render_string_center (&font_supercar9, 64, 16, "SET");
-	dmd_show_low ();
-	sample_start (SND_RACE_STARTER_01, SL_1S);
-	task_sleep_sec(1);
-
-	// go
-	lamp_tristate_flash(LM_LEFT_TREE_GREEN);
-	lamp_tristate_flash(LM_RIGHT_TREE_GREEN);
-	dmd_alloc_low_clean ();
-	font_render_string_center (&font_supercar9, 64, 16, "GO");
-	dmd_show_low ();
-	sample_start (SND_RACE_STARTER_02, SL_1S);
-}
-
-void dragrace_loser_anim(void) {
-
-	dbprintf ("dragrace_loser_anim: start\n");
-	//ball_search_timer_reset();
-
-	// TODO sound
-	// TODO animation/graphics
-	lamp_tristate_off(LM_LEFT_TREE_GREEN);
-	lamp_tristate_on(LM_RIGHT_TREE_GREEN);
-	lamp_tristate_on(LM_LEFT_TREE_RED);
-	lamp_tristate_off(LM_RIGHT_TREE_RED);
-
-	dmd_alloc_low_clean ();
-	font_render_string_center (&font_supercar9, 64, 16, "LOOSER");
-	dmd_show_low ();
-
-	task_sleep_sec(3);
-	dbprintf ("dragrace_loser_anim: exit\n");
-}
-
-void dragrace_winner_anim(void) {
-
-	dbprintf ("dragrace_winner_anim: start\n");
-	//ball_search_timer_reset();
-
-	// TODO sound
-	// TODO animation/graphics
-	lamp_tristate_on(LM_LEFT_TREE_GREEN);
-	lamp_tristate_off(LM_RIGHT_TREE_GREEN);
-	lamp_tristate_off(LM_LEFT_TREE_RED);
-	lamp_tristate_on(LM_RIGHT_TREE_RED);
-
-	dmd_alloc_low_clean ();
-	font_render_string_center (&font_supercar9, 64, 16, "WINNER");
-	dmd_show_low ();
-
-	task_sleep_sec(3);
-	dbprintf ("dragrace_winner_anim: exit\n");
-}
-
-void dragrace_deff (void) {
-	dbprintf ("dragrace_deff: start\n");
-
-	dbprintf ("dragraces won: %d\n", dragraces_won);
-	// TODO wait for cars to return if racetrack is working while resetting ball search timer
-
-	dragrace_start_anim();
-
-	racetrack_race();
-
-	// start with a 10 second race and shorten by one second for each dragrace won.
-	dragrace_counter_max = (DRAGRACE_TICKS_PER_SECOND * 10) - (dragraces_won * DRAGRACE_TICKS_PER_SECOND);
-	if (dragrace_counter_max < DRAGRACE_TICKS_PER_SECOND * 5) {
-		// race must be at least 5 seconds long
-		dragrace_counter_max = DRAGRACE_TICKS_PER_SECOND * 5;
-	}
-	dbprintf ("dragraces won (before): %d\n", dragraces_won);
-
-	player_car_position = 0;
-	computer_car_position = 0;
-	dragrace_button_expectation = EXPECT_LEFT;
-	dragrace_counter = 0;
-
-	//for (dragrace_counter = 0; dragrace_counter < dragrace_counter_max && player_car_position != 100 && computer_car_position != 100; dragrace_counter++) {
-	while (1) {
-		dbprintf ("dragrace status:\n");
-		dbprintf ("counter: %d\n", dragrace_counter);
-		dbprintf ("computer_car_position: %d\n", computer_car_position);
-		dbprintf ("player_car_position: %d\n", player_car_position);
-		dbprintf ("dragrace_button_expectation: %d\n", dragrace_button_expectation);
-		if (dragrace_counter == dragrace_counter_max) {
-			break;
-		}
-		if (player_car_position == 100) {
-			break;
-		}
-		if (computer_car_position == 100) {
-			break;
-		}
-		dragrace_counter++;
-
-		// FIXME calling this causes a random crash!
-		//ball_search_timer_reset();
-
-		// c = dragrace_counter, cm = dragrace_counter_max, ccp = computer_car_position
-		// Hard Race: 20(c) / 50(cm) = 0.4, 0.4 * 100 = 40% = ccp
-		// Easy Race: 40(c) / 100(cm) = 0.2, 0.2 * 100 = 40% = ccp
-		computer_car_position = (dragrace_counter * (U16)100) / dragrace_counter_max;
+// then start a drag-race video mode
 
 
-		racetrack_set_desired_car_position(LANE_RIGHT, computer_car_position);
-		racetrack_set_desired_car_position(LANE_LEFT, player_car_position);
-
-		// TODO engine sounds
-
-		// leave 'GO' on the screen for 1 second, after which draw the race status
-
-		if (dragrace_counter > DRAGRACE_TICKS_PER_SECOND) {
-			dragrace_draw();
-		}
-
-		task_sleep(TIME_100MS); // if changed adjust DRAGRACE_TICKS_PER_SECOND
-	}
-
-	lamp_tristate_off(LM_TREE_TOP_YELLOW);
-	lamp_tristate_off(LM_TREE_BOTTOM_YELLOW);
-
-	if (player_car_position == 100 && computer_car_position < 100) {
-		dragraces_won++;
-		dragrace_winner_anim();
-		score(SC_50M);
-		// TODO award car or something
-	} else {
-		dragrace_loser_anim();
-	}
-
-	lamp_tristate_off(LM_LEFT_TREE_GREEN);
-	lamp_tristate_off(LM_RIGHT_TREE_GREEN);
-	lamp_tristate_off(LM_LEFT_TREE_RED);
-	lamp_tristate_off(LM_RIGHT_TREE_RED);
-
-
-	dbprintf ("dragraces won (after): %d\n", dragraces_won);
-
-	dbprintf ("dragrace_deff: exit\n");
-	deff_exit ();
-}
-
-void dragrace_stop( void ) {
-	flipper_enable();
-	ball_search_monitor_start();
-	racetrack_car_return();
-	global_flag_off(GLOBAL_FLAG_DRAGRACE_IN_PROGRESS);
-	task_kill_gid(GID_DRAGRACE_TASK);
-}
-
-void dragrace_task( void ) {
-	deff_start_sync(DEFF_DRAGRACE);
-	dragrace_stop();
-	task_exit();
-}
-
-void dragrace_start( void ) {
-	global_flag_on(GLOBAL_FLAG_DRAGRACE_IN_PROGRESS);
-	flipper_disable();
-	ball_search_monitor_stop();
-	racetrack_car_return();
-	task_kill_gid(GID_DRAGRACE_TASK);
-	task_create_gid1(GID_DRAGRACE_TASK, dragrace_task);
-}
-
-CALLSET_ENTRY (dragrace, sw_left_button) {
-	if (!global_flag_test (GLOBAL_FLAG_DRAGRACE_IN_PROGRESS)) {
+CALLSET_ENTRY(skillshot_dragrace, vmode_dragrace_won) {
+	if (!was_dragrace_started_by(GID_SKILLSHOT_DRAGRACE)) {
 		return;
 	}
-	if (dragrace_button_expectation != EXPECT_LEFT || player_car_position == 100) {
-		return;
-	}
-	dragrace_button_expectation = EXPECT_RIGHT;
-	player_car_position++;
-}
-
-CALLSET_ENTRY (dragrace, sw_right_button) {
-	if (!global_flag_test (GLOBAL_FLAG_DRAGRACE_IN_PROGRESS)) {
-		return;
-	}
-	if (dragrace_button_expectation != EXPECT_RIGHT || player_car_position == 100) {
-		return;
-	}
-	dragrace_button_expectation = EXPECT_LEFT;
-	player_car_position++;
+	score(SC_50M);
+	award_car();
 }
 
 void skillshot_dragrace_disable( void ) {
@@ -309,7 +75,7 @@ CALLSET_ENTRY(skillshot_dragrace, dev_route_66_popper_enter) {
 	// kill the skillshot timer and shot/arrow lights
 	skillshot_dragrace_disable();
 
-	dragrace_start();
+	dragrace_start(GID_SKILLSHOT_DRAGRACE);
 }
 
 CALLSET_BOOL_ENTRY(skillshot_dragrace, dev_route_66_popper_kick_request) {

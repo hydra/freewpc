@@ -177,24 +177,24 @@ U8 new_speed;
 /**
  * @param lane_number See LANE_* defines.
  */
-void racetrack_process_lane(U8 lane_number) {
+void racetrack_process_lane(U8 lane_number, racetrack_lane_t *racetrack_lane) {
 
 	//
 	// handle transitions
 	//
 
-	switch(racetrack_lanes[lane_number].state) {
+	switch(racetrack_lane->state) {
 		case LANE_RETURN:
 			//
 			// detect at-start-of-track
 			//
-			if (switch_poll_logical(racetrack_lanes[lane_number].start_switch)) {
-				racetrack_lanes[lane_number].state = LANE_STOP;
+			if (switch_poll_logical(racetrack_lane->start_switch)) {
+				racetrack_lane->state = LANE_STOP;
 			}
 		break;
 		case LANE_SEEK:
-			if (racetrack_lanes[lane_number].encoder_count >= racetrack_lanes[lane_number].desired_encoder_count) {
-				racetrack_lanes[lane_number].state = LANE_STOP;
+			if (racetrack_lane->encoder_count >= racetrack_lane->desired_encoder_count) {
+				racetrack_lane->state = LANE_STOP;
 			}
 		break;
 		default:
@@ -203,15 +203,15 @@ void racetrack_process_lane(U8 lane_number) {
 
 	}
 
-	switch(racetrack_lanes[lane_number].state) {
+	switch(racetrack_lane->state) {
 		case LANE_SEEK:
 		case LANE_CALIBRATE:
 			//
 			// detect end-of-track (usable)
 			//
 
-			if (racetrack_lanes[lane_number].encoder_count > RACETRACK_LENGTH_USABLE) {
-				racetrack_lanes[lane_number].state = LANE_STOP;
+			if (racetrack_lane->encoder_count > RACETRACK_LENGTH_USABLE) {
+				racetrack_lane->state = LANE_STOP;
 				if (lane_number == LANE_LEFT) {
 					racetrack_encoder_mask |= RT_EM_END_OF_TRACK_LEFT;
 				} else {
@@ -226,8 +226,8 @@ void racetrack_process_lane(U8 lane_number) {
 			// If the cars are pushed all the way to the end of the track, and then reversed we
 			// should wait for the start-of-track opto to be switched on, if it's not switched
 			// on and we should stop if the encoder has registered almost all of the track.
-			if (racetrack_lanes[lane_number].encoder_count > RACETRACK_LENGTH_LIMIT) {
-				racetrack_lanes[lane_number].state = LANE_STOP;
+			if (racetrack_lane->encoder_count > RACETRACK_LENGTH_LIMIT) {
+				racetrack_lane->state = LANE_STOP;
 				break;
 			}
 
@@ -252,7 +252,7 @@ void racetrack_process_lane(U8 lane_number) {
 				(lane_number == LANE_LEFT && ((racetrack_encoder_mask & RT_EM_SEEN_LEFT) == 0)) ||
 				(lane_number == LANE_RIGHT && ((racetrack_encoder_mask & RT_EM_SEEN_RIGHT) == 0))
 			) {
-				racetrack_lanes[lane_number].state = LANE_STOP; // stalled!
+				racetrack_lane->state = LANE_STOP; // stalled!
 				if (lane_number == LANE_LEFT) {
 					racetrack_encoder_mask |= RT_EM_STALLED_LEFT;
 				} else {
@@ -277,9 +277,9 @@ void racetrack_process_lane(U8 lane_number) {
 	// handle state
 	//
 
-	switch (racetrack_lanes[lane_number].state) {
+	switch (racetrack_lane->state) {
 		case LANE_STOP:
-			sol_disable(racetrack_lanes[lane_number].solenoid);
+			sol_disable(racetrack_lane->solenoid);
 		break;
 
 		case LANE_SEEK:
@@ -287,8 +287,8 @@ void racetrack_process_lane(U8 lane_number) {
 			// if they're close, use a slow speed, if they're far apart use a fast speed.
 			// using a fast speed to move a short distance means the car will over-run it's desired position
 
-			encoder_difference = racetrack_lanes[lane_number].desired_encoder_count - racetrack_lanes[lane_number].encoder_count;
-			new_speed = racetrack_lanes[lane_number].speed;
+			encoder_difference = racetrack_lane->desired_encoder_count - racetrack_lane->encoder_count;
+			new_speed = racetrack_lane->speed;
 			if (encoder_difference > 50) {
 				new_speed = RACETRACK_SPEED_FASTEST;
 			} else if (encoder_difference > 25) {
@@ -296,39 +296,39 @@ void racetrack_process_lane(U8 lane_number) {
 			} else {
 				new_speed = RACETRACK_SPEED_SLOWEST;
 			}
-			if (new_speed < racetrack_lanes[lane_number].speed) {
+			if (new_speed < racetrack_lane->speed) {
 				// go faster
-				racetrack_lanes[lane_number].speed_ticks_remaining = 1; // cause the solenoid to enable now (see below)
-				racetrack_lanes[lane_number].speed = new_speed;
-			} else if (new_speed > racetrack_lanes[lane_number].speed) {
+				racetrack_lane->speed_ticks_remaining = 1; // cause the solenoid to enable now (see below)
+				racetrack_lane->speed = new_speed;
+			} else if (new_speed > racetrack_lane->speed) {
 				// go slower
-				racetrack_lanes[lane_number].speed_ticks_remaining = 2; // cause the solenoid to disable now (see below)
-				racetrack_lanes[lane_number].speed = new_speed;
+				racetrack_lane->speed_ticks_remaining = 2; // cause the solenoid to disable now (see below)
+				racetrack_lane->speed = new_speed;
 			}
 			// follow though ...
 		case LANE_CALIBRATE:
 		case LANE_RETURN:
-			if (racetrack_lanes[lane_number].state == LANE_RETURN) { // yes, because we followed though
+			if (racetrack_lane->state == LANE_RETURN) { // yes, because we followed though
 				// slow down when we get near the start, to prevent belt slip
-				if (racetrack_lanes[lane_number].encoder_count > RACETRACK_LENGTH_SLOWDOWN_IN_REVERSE) {
-					racetrack_lanes[lane_number].speed = RACETRACK_SPEED_SLOW;
+				if (racetrack_lane->encoder_count > RACETRACK_LENGTH_SLOWDOWN_IN_REVERSE) {
+					racetrack_lane->speed = RACETRACK_SPEED_SLOW;
 				}
 			}
 
 			// turn the solenoid on once every 'speed' ticks
-			racetrack_lanes[lane_number].speed_ticks_remaining--;
-			if (racetrack_lanes[lane_number].speed_ticks_remaining == 0) {
-				racetrack_lanes[lane_number].speed_ticks_remaining = racetrack_lanes[lane_number].speed;
+			racetrack_lane->speed_ticks_remaining--;
+			if (racetrack_lane->speed_ticks_remaining == 0) {
+				racetrack_lane->speed_ticks_remaining = racetrack_lane->speed;
 
 				if (!(
 					((racetrack_encoder_mask & RT_EM_STALLED_LEFT) > 0 && lane_number == LANE_LEFT) ||
 					((racetrack_encoder_mask & RT_EM_STALLED_RIGHT) > 0 && lane_number == LANE_RIGHT)
 				)) {
 					// never enable the solenoid if the car has stalled
-					sol_enable(racetrack_lanes[lane_number].solenoid);
+					sol_enable(racetrack_lane->solenoid);
 				}
 			} else {
-				sol_disable(racetrack_lanes[lane_number].solenoid);
+				sol_disable(racetrack_lane->solenoid);
 			}
 		break;
 		default:
@@ -372,9 +372,9 @@ void racetrack_reset_track_state(void) {
 	}
 }
 
-void racetrack_update_track_state(void) {
-	racetrack_process_lane(LANE_LEFT);
-	racetrack_process_lane(LANE_RIGHT);
+static inline void racetrack_update_track_state(void) {
+	racetrack_process_lane(LANE_LEFT, &racetrack_lanes[LANE_LEFT]);
+	racetrack_process_lane(LANE_RIGHT, &racetrack_lanes[LANE_RIGHT]);
 }
 
 
@@ -688,7 +688,7 @@ static inline void racetrack_state_race_run(void) {
 }
 
 // This RTT needs to be FAST as it's scheduled frequently
-void corvette_racetrack_encoder_rtt (void) {
+inline void corvette_racetrack_encoder_rtt (void) {
 
 	racetrack_encoder_previous_mask = racetrack_encoder_mask;
 	// check the optos and update the bitmask
@@ -700,7 +700,7 @@ void corvette_racetrack_encoder_rtt (void) {
 		racetrack_encoder_mask &= ~RT_EM_PREVIOUS_STATE_LEFT;
 	}
 
-	if ((racetrack_encoder_mask & RT_EM_PREVIOUS_STATE_LEFT) != (racetrack_encoder_previous_mask & RT_EM_PREVIOUS_STATE_LEFT)) {
+	if (unlikely((racetrack_encoder_mask & RT_EM_PREVIOUS_STATE_LEFT) != (racetrack_encoder_previous_mask & RT_EM_PREVIOUS_STATE_LEFT))) {
 		// encoder state changed
 		racetrack_lanes[LANE_LEFT].encoder_count++;
 		racetrack_encoder_mask |= (RT_EM_SEEN_LEFT);
@@ -714,7 +714,7 @@ void corvette_racetrack_encoder_rtt (void) {
 		racetrack_encoder_mask &= ~RT_EM_PREVIOUS_STATE_RIGHT;
 	}
 
-	if ((racetrack_encoder_mask & RT_EM_PREVIOUS_STATE_RIGHT) != (racetrack_encoder_previous_mask & RT_EM_PREVIOUS_STATE_RIGHT)) {
+	if (unlikely((racetrack_encoder_mask & RT_EM_PREVIOUS_STATE_RIGHT) != (racetrack_encoder_previous_mask & RT_EM_PREVIOUS_STATE_RIGHT))) {
 		// encoder state changed
 		racetrack_lanes[LANE_RIGHT].encoder_count++;
 		racetrack_encoder_mask |= (RT_EM_SEEN_RIGHT);
