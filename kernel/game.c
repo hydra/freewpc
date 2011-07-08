@@ -89,10 +89,6 @@ U8 timed_game_timer;
 
 U8 timed_game_suspend_count;
 
-#ifdef MACHINE_TZ
-extern void loop_master_check (void);
-extern void combo_master_check (void);
-#endif
 void start_ball (void);
 
 
@@ -161,11 +157,7 @@ void end_game (void)
 		{
 			deff_start_sync (DEFF_SCORES_IMPORTANT);
 			high_score_check ();
-//TODO Could do with something modular/per machine here
-#ifdef MACHINE_TZ
-//			loop_master_check ();
-//			combo_master_check ();
-#endif
+			callset_invoke (extra_initials_check);
 			match_start ();
 			log_event (SEV_INFO, MOD_GAME, EV_STOP, 0);
 			callset_invoke (end_game);
@@ -483,20 +475,16 @@ void start_ball (void)
 	}
 
 	/* Serve a ball to the plunger, by requesting a kick from the
-	 * trough device.  However, if a ball is detected in the plunger lane
+	 * trough device.  However, if a ball is detected on the shooter switch
 	 * for whatever reason, then don't kick a new ball, just use the
 	 * one that is there.  In that case, need to increment live ball count
 	 * manually. */
 #if defined(MACHINE_SHOOTER_SWITCH)
-	if (!switch_poll_logical (MACHINE_SHOOTER_SWITCH))
-	{
-		serve_ball ();
-	}
-	else
-	{
+	if (switch_poll_logical (MACHINE_SHOOTER_SWITCH))
 		device_add_live ();
-	}
+	else
 #endif
+		serve_ball ();
 
 	flipper_enable ();
 #ifdef CONFIG_GI
