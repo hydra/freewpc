@@ -32,30 +32,6 @@
 
 extern void dump_switch_details(U8 sw);
 
-// TODO implement flags
-#define CF_NEVER               0
-#define CF_ALWAYS              (1 << 0)
-#define CF_SINGLE_BALL_ONLY    (1 << 1)
-#define CF_MULTI_BALL_ONLY     (1 << 3)
-
-
-/*
- * TODO use this bit of old code
- *
-	if (!(
-			(combo->flags & CF_ALWAYS) ||
-			((combo->flags & CF_SINGLE_BALL_ONLY) && single_ball_play()) ||
-			((combo->flags & CF_MULTI_BALL_ONLY) && !single_ball_play())
-	)) {
-#ifdef CONFIG_DEBUG_COMBOS
-		dbprintf("skipping, flags: %d, sbp: %d\n", combo->flags, single_ball_play());
-#endif
-		return;
-	}
-
-
- */
-
 /*
  * To avoid filling the ROM with loads of strings and for more readable code, we use combodbprintf instead of dbprintf and a #ifdef/#endif pair
  * The debug messages are only compiled in when in unit-test mode.
@@ -105,6 +81,7 @@ U16 *step_time_ptr;
 U16 *step_time_allowed_ptr;
 U16 *wildcard_time_ptr;
 const combo_def_t *last_matched_combo;
+U8 last_matched_combo_id;
 U8 machine_combos_count;
 
 
@@ -234,7 +211,6 @@ void combo_process_switch_for_combo(const U8 combo_id, const combo_def_t *combo)
 		} else {
 			combodbprintf("switch matches wildcard step\n");
 			*wildcard_time_ptr = sw_last_scheduled_time;
-			//if (sw_last_scheduled_time < *step_time_ptr + next_step->time_allowed) {
 			combodbprintf("timer must be < %ld\n", *step_time_ptr + *step_time_allowed_ptr);
 			if (*step_time_allowed_ptr == 0 || sw_last_scheduled_time < *step_time_ptr + *step_time_allowed_ptr) {
 				advance = TRUE;
@@ -309,6 +285,7 @@ void combo_process_switch_for_combo(const U8 combo_id, const combo_def_t *combo)
 		combodbprintf("### combo matched! ###\n");
 
 		last_matched_combo = combo;
+		last_matched_combo_id = combo_id;
 #ifdef CONFIG_UNITTEST
 		combo_matches++;
 #else
@@ -331,14 +308,26 @@ void combo_process_switch(void) {
 	// iterate over each combo and update the last-hit markers
 
 	U8 combo_index = 0;
+	const combo_def_t *combo;
 
 	for (combo_index = 0; combo_index < machine_combos_count; combo_index++) {
-		combo_process_switch_for_combo(combo_index, machine_combos[combo_index]);
+		combo = machine_combos[combo_index];
+		if (!(
+				(combo->flags & CF_ALWAYS) ||
+				((combo->flags & CF_SINGLE_BALL_ONLY) && single_ball_play()) ||
+				((combo->flags & CF_MULTI_BALL_ONLY) && !single_ball_play())
+		)) {
+			combodbprintf("Skipping combo, flags: %d, sbp: %d\n", combo->flags, single_ball_play());
+			return;
+		}
+
+		combo_process_switch_for_combo(combo_index, combo);
 	}
 }
 
 void combo_reset_current_step_markers(void) {
 	last_matched_combo = 0;
+	last_matched_combo_id = -1;
 	memset(current_step_markers, 0x00, sizeof(U8) * machine_combos_count);
 	memset(step_time_list, 0x00,sizeof(U16) * machine_combos_count);
 	memset(step_time_allowed_list, 0x00, sizeof(U16) * machine_combos_count);
@@ -347,6 +336,5 @@ void combo_reset_current_step_markers(void) {
 	unittest_current_step_marker = 0;
 #endif
 }
-
 
 #endif

@@ -278,8 +278,10 @@ Racetrack Errors:
 3M:
 5M:
 10M:
+15M:
 20M:
 25M:
+40M:
 50M:
 
 [highscores]

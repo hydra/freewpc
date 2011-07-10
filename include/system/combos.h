@@ -25,6 +25,17 @@
 
 typedef void (*combo_handler_t) (void);
 
+/**
+ * Combo flags
+ */
+#define CF_NEVER               0
+#define CF_ALWAYS              (1 << 0)
+#define CF_SINGLE_BALL_ONLY    (1 << 1)
+#define CF_MULTI_BALL_ONLY     (1 << 3)
+
+/**
+ * Combo step flags
+ */
 #define CSTP_NO_FLAGS 0
 #define CSTP_WILDCARD (1<<0)
 
@@ -44,7 +55,11 @@ typedef struct combo_def_s {
 #if defined(CONFIG_DEBUG_COMBOS) || defined(CONFIG_UNITTEST)
 	const char *name;
 #endif
-	/** A function to call when the switch pattern produces an event.
+	/** Flags for the combo, see CF_* defines
+	 */
+	U8 flags;
+
+	/** A function to call when the combo produces an event.
 	 * All functions are assumed to be callsets, and located in the
 	 * callset page of the ROM. */
 	const combo_handler_t fn; // invoked with callset_pointer_invoke(fn);
@@ -52,6 +67,11 @@ typedef struct combo_def_s {
 	const U8 steps;
 	const combo_step_t *step_list[];
 } combo_def_t;
+
+#define DEFAULT_COMBO \
+	.flags = CF_SINGLE_BALL_ONLY, \
+	.fn = null_function, \
+	.steps = 0
 
 
 #ifdef CONFIG_UNITTEST
@@ -73,6 +93,7 @@ extern U16 wildcard_time_list[];
 extern U8 machine_combos_count;
 extern const combo_def_t *machine_combos[];
 extern const combo_def_t *last_matched_combo;
+extern U8 last_matched_combo_id;
 
 extern void combo_process_switch(void);
 extern void combo_reset_current_step_markers(void);
