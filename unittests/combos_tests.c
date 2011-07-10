@@ -576,6 +576,39 @@ const combo_step_t cstp_ut_test_d = {
 	}
 };
 
+const combo_step_t cstp_ut_test_e = {
+	.flags = CSTP_NO_FLAGS,
+	.switches = 1,
+	.switch_list = {
+		{ SW_UNITTEST_E, TIME_2S}
+	}
+};
+
+const combo_step_t cstp_ut_test_f = {
+	.flags = CSTP_NO_FLAGS,
+	.switches = 1,
+	.switch_list = {
+		{ SW_UNITTEST_F, TIME_1S}
+	}
+};
+
+const combo_step_t cstp_ut_test_g = {
+	.flags = CSTP_NO_FLAGS,
+	.switches = 1,
+	.switch_list = {
+		{ SW_UNITTEST_G, TIME_2S}
+	}
+};
+
+const combo_step_t cstp_ut_test_h = {
+	.flags = CSTP_NO_FLAGS,
+	.switches = 1,
+	.switch_list = {
+		{ SW_UNITTEST_H, TIME_1S}
+	}
+};
+
+
 const combo_step_t cstp_ut_test_l = {
 	.flags = CSTP_NO_FLAGS,
 	.switches = 1,
@@ -759,6 +792,37 @@ void test_test2_combo_is_matched_for_scenario18( void )
 	assert_int_equal(1, combo_matches);
 }
 
+
+/**
+ * This combo matches the Right Orbit to Inner Orbit switch pattern on Corvette, with timings in scenario_19_test_data_items taken from the real machine
+ */
+const combo_def_t unittest_test3_combo = {
+	.name = "TEST3",
+	.steps = 5,
+	.step_list = {
+		&cstp_ut_test_e,
+		&cstp_ut_test_f,
+		&cstp_ut_wildcard_5sec,
+		&cstp_ut_test_g,
+		&cstp_ut_test_f,
+	}
+};
+
+const combo_test_data_item_t scenario_19_test_data_items[] = {
+	{ SW_UNITTEST_E, 145},
+	{ SW_UNITTEST_F, 36},
+	{ SW_UNITTEST_G, 60},
+	{ SW_UNITTEST_F, 18},
+};
+
+void test_test3_combo_is_matched_for_scenario19( void )
+{
+	prepare_for_combo_test(&unittest_test3_combo);
+	const U8 expected_step_markers_for_scenario_19_and_test3_combo[] = {1,2,4,0};
+	test_combo(UNITTEST_COMBO_ID, &unittest_test3_combo, scenario_19_test_data_items, expected_step_markers_for_scenario_19_and_test3_combo, sizeof(scenario_19_test_data_items) / sizeof(combo_test_data_item_t));
+	assert_int_equal(1, combo_matches);
+}
+
 void test_fixture_combos( void )
 {
 	test_fixture_start();
@@ -795,6 +859,8 @@ void test_fixture_combos( void )
 	run_test(test_lr_rl_combo_for_scenario_17);
 
 	run_test(test_test2_combo_is_matched_for_scenario18);
+
+	run_test(test_test3_combo_is_matched_for_scenario19);
 
 	test_fixture_end();
 }

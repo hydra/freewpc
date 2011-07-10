@@ -18,6 +18,9 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+/**
+ * TODO add a idle task that checks the step markers of all combos and lights appropriate arrows
+ */
 #include <freewpc.h>
 
 #ifdef CONFIG_COMBOS
