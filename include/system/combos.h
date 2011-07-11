@@ -39,6 +39,13 @@ typedef void (*combo_handler_t) (void);
 #define CSTP_NO_FLAGS 0
 #define CSTP_WILDCARD (1<<0)
 
+/**
+ * Combo IDs
+ *
+ * Machines should declare defines, one for each combo, end with "_COMBO_ID", e.g. "R66_TO_ZR1_COMBO_ID 0", start numbering at 0.
+ */
+#define UNKNOWN_COMBO_ID 0xFF
+
 typedef struct combo_switch_s {
 	U8 switch_id;
 	U16 time_allowed; // takes precedence over the value in combo_step_t that uses this combo_switch_t
@@ -90,6 +97,7 @@ extern U8 current_step_markers[];
 extern U16 step_time_list[];
 extern U16 step_time_allowed_list[];
 extern U16 wildcard_time_list[];
+extern U16 wildcard_time_allowed_list[];
 extern U8 machine_combos_count;
 extern const combo_def_t *machine_combos[];
 extern const combo_def_t *last_matched_combo;
