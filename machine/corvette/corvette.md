@@ -76,7 +76,7 @@ define MACHINE_HAS_UPPER_LEFT_FLIPPER
 55: Corvette 5, yellow, x(35), y(9)
 56: Pit Stop Arrow, amber, x(18), y(9)
 57: Spinner Arrow, amber, x(17), y(11)
-58: Drive Again, red, x(45), y(9)
+58: Drive Again, red, shoot-again, x(45), y(9)
 61: Left Outer Tail, red, x(40), y(6) # Bonus X2
 62: Left Inner Tail, red, x(40), y(5) # Bonus X4
 63: Catch Me, white, x(41), y(9)
