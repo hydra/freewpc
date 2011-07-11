@@ -74,12 +74,14 @@ U8 unittest_current_step_marker;
 U16 unittest_step_time;
 U16 unittest_step_time_allowed;
 U16 unittest_wildcard_time;
+U16 unittest_wildcard_time_allowed;
 #endif
 
 U8 *current_step_marker_ptr;
 U16 *step_time_ptr;
 U16 *step_time_allowed_ptr;
 U16 *wildcard_time_ptr;
+U16 *wildcard_time_allowed_ptr;
 const combo_def_t *last_matched_combo;
 U8 last_matched_combo_id;
 U8 machine_combos_count;
@@ -110,6 +112,16 @@ void reset_markers_for_current_combo(void) {
 	*current_step_marker_ptr = 0; // start again at the first step.
 	*step_time_ptr = 0;
 	*step_time_allowed_ptr = 0;
+	*wildcard_time_ptr = 0;
+	*wildcard_time_allowed_ptr = 0;
+}
+
+void reset_markers_for_combo(U8 combo_id) {
+	current_step_markers[combo_id] = 0;
+	step_time_list[combo_id] = 0;
+	step_time_allowed_list[combo_id] = 0;
+	wildcard_time_list[combo_id] = 0;
+	wildcard_time_allowed_list[combo_id] = 0;
 }
 
 void combo_process_switch_for_combo(const U8 combo_id, const combo_def_t *combo) {
@@ -136,12 +148,14 @@ void combo_process_switch_for_combo(const U8 combo_id, const combo_def_t *combo)
 	step_time_ptr = &step_time_list[combo_id];
 	step_time_allowed_ptr = &step_time_allowed_list[combo_id];
 	wildcard_time_ptr = &wildcard_time_list[combo_id];
+	wildcard_time_allowed_ptr = &wildcard_time_allowed_list[combo_id];
 #ifdef CONFIG_UNITTEST
 	if (combo_id == UNITTEST_COMBO_ID) {
 		current_step_marker_ptr = &unittest_current_step_marker;
 		step_time_ptr = &unittest_step_time;
 		step_time_allowed_ptr = &unittest_step_time_allowed;
 		wildcard_time_ptr = &unittest_wildcard_time;
+		wildcard_time_allowed_ptr = &unittest_wildcard_time_allowed;
 	}
 #endif
 
@@ -223,6 +237,7 @@ void combo_process_switch_for_combo(const U8 combo_id, const combo_def_t *combo)
 					combodbprintf("no more steps, not retrying\n");
 				}
 				time_allowed = next_step->time_allowed;
+				*wildcard_time_allowed_ptr = time_allowed;
 
 				// TODO based on combo step flags, call the combo's callset - the handler can then check the marker and react accordingly (for sounds, lights, etc);
 
@@ -244,15 +259,14 @@ void combo_process_switch_for_combo(const U8 combo_id, const combo_def_t *combo)
 				*step_time_allowed_ptr = time_allowed;
 			}
 		} else {
-			combodbprintf("step not unmatched\n");
+			combodbprintf("step not matched\n");
 			if (current_step) {
 				if (current_step->switches == 0) {
 					combodbprintf("...but current switch is wildcard\n");
 				} else {
 
 					// was there a wildcard in the combo before this switch? look for the previous wildcard
-
-					wildcard_marker = combo->steps;
+					wildcard_marker = *current_step_marker_ptr + 1;
 					do {
 						if (combo->step_list[wildcard_marker - 1]->switches == 0) {
 							break;
@@ -327,14 +341,78 @@ void combo_process_switch(void) {
 
 void combo_reset_current_step_markers(void) {
 	last_matched_combo = 0;
-	last_matched_combo_id = -1;
+	last_matched_combo_id = UNKNOWN_COMBO_ID;
 	memset(current_step_markers, 0x00, sizeof(U8) * machine_combos_count);
 	memset(step_time_list, 0x00,sizeof(U16) * machine_combos_count);
 	memset(step_time_allowed_list, 0x00, sizeof(U16) * machine_combos_count);
 	memset(wildcard_time_list, 0x00, sizeof(U16) * machine_combos_count);
+	memset(wildcard_time_allowed_list, 0x00, sizeof(U16) * machine_combos_count);
 #ifdef CONFIG_UNITTEST
 	unittest_current_step_marker = 0;
 #endif
 }
 
 #endif
+
+
+/**
+ * Process each combo and see if the marker should be reset due to timeouts
+ */
+CALLSET_ENTRY(combos, idle_every_second)
+{
+#ifdef CONFIG_COMBOS
+	U8 combo_id = 0;
+	const combo_def_t *combo;
+	U8 switch_index;
+	U16 max_time_allowed = 0;
+
+	U16 now = get_sys_time();
+
+	for (combo_id = 0; combo_id < machine_combos_count; combo_id++) {
+		//dbprintf("cid: %d, sm: %d, sta: %ld\n", combo_id, current_step_markers[combo_id], step_time_allowed_list[combo_id]);
+		if (current_step_markers[combo_id] == 0) {
+			continue; // already at first step, nothing to reset.
+		}
+
+		combo = machine_combos[combo_id];
+		if (
+			((combo->flags & CF_SINGLE_BALL_ONLY) && !single_ball_play()) ||
+			((combo->flags & CF_MULTI_BALL_ONLY) && single_ball_play())
+		) {
+			reset_markers_for_combo(combo_id);
+			continue;
+		}
+
+		// if wildcard and time expired then reset
+		//dbprintf("now: %ld, expires: %ld\n", now, wildcard_time_list[combo_id] + wildcard_time_allowed_list[combo_id]);
+		if (wildcard_time_allowed_list[combo_id] && now >= wildcard_time_list[combo_id] + wildcard_time_allowed_list[combo_id]) {
+			//dbprintf("expired (1)\n");
+			reset_markers_for_combo(combo_id);
+			continue;
+		}
+		// if step time allowed then check for expiry
+		if (step_time_allowed_list[combo_id] && now >= step_time_list[combo_id] + step_time_allowed_list[combo_id]) {
+			//dbprintf("expired (2)\n");
+			reset_markers_for_combo(combo_id);
+			continue;
+		}
+
+		if (likely(combo->steps)) {
+			const combo_step_t *combo_step = combo->step_list[current_step_markers[combo_id] - 1];
+			for (switch_index = 0; switch_index < combo_step->switches; switch_index ++) {
+				const combo_switch_t *combo_switch = &combo_step->switch_list[switch_index];
+				if (combo_switch->time_allowed > max_time_allowed) {
+					max_time_allowed = combo_switch->time_allowed;
+				}
+			}
+			if (likely(max_time_allowed)) {
+				if (now >= step_time_list[combo_id] + max_time_allowed) {
+					//dbprintf("expired (3)\n");
+					reset_markers_for_combo(combo_id);
+					continue;
+				}
+			}
+		}
+	}
+#endif
+}
