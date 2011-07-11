@@ -128,7 +128,7 @@ void dump_recent_switches( void ) {
 }
 #endif
 
-void reset_recent_switches() {
+void reset_recent_switches(void) {
 	next_recent_switch = 0;
 	memset(recent_switches, UNKNOWN_SWITCH_ID, sizeof(recent_switches));
 }
