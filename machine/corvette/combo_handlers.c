@@ -202,6 +202,38 @@ CALLSET_ENTRY (combo, route66_ramp_to_zr1_ramp_to_skidpad_ramp_combo_shot)
 	score (SC_40M); // XXX
 }
 
+CALLSET_ENTRY (combo, inner_loop_to_inner_loop_combo_shot)
+{
+	// TODO sounds, deff, scoring
+	deff_start(DEFF_COMBO_NAME); // XXX
+	sound_start (ST_SAMPLE, SND_EXPLOSION_01, SL_2S, PRI_GAME_QUICK2); // XXX
+	score (SC_20M); // XXX
+}
+
+CALLSET_ENTRY (combo, inner_loop_to_skidpad_ramp_combo_shot)
+{
+	// TODO sounds, deff, scoring
+	deff_start(DEFF_COMBO_NAME); // XXX
+	sound_start (ST_SAMPLE, SND_EXPLOSION_01, SL_2S, PRI_GAME_QUICK2); // XXX
+	score (SC_20M); // XXX
+}
+
+CALLSET_ENTRY (combo, zr1_ramp_to_inner_loop_combo_shot)
+{
+	// TODO sounds, deff, scoring
+	deff_start(DEFF_COMBO_NAME); // XXX
+	sound_start (ST_SAMPLE, SND_EXPLOSION_01, SL_2S, PRI_GAME_QUICK2); // XXX
+	score (SC_20M); // XXX
+}
+
+CALLSET_ENTRY (combo, skidpad_ramp_to_zr1_ramp_combo_shot)
+{
+	// TODO sounds, deff, scoring
+	deff_start(DEFF_COMBO_NAME); // XXX
+	sound_start (ST_SAMPLE, SND_EXPLOSION_01, SL_2S, PRI_GAME_QUICK2); // XXX
+	score (SC_10M); // XXX
+}
+
 #else
 //FIXME genmachine expects these to be defined because it doesn't know about #ifdef CONFIG_COMBOS
 //__far__(C_STRING(MACHINE_PAGE)) void machine_combos_init_complete(void) {}
@@ -219,4 +251,8 @@ __far__(C_STRING(MACHINE_PAGE)) void combo_route66_ramp_to_zr1_ramp_combo_shot(v
 __far__(C_STRING(MACHINE_PAGE)) void combo_zr1_ramp_to_route66_ramp_combo_shot(void) {}
 __far__(C_STRING(MACHINE_PAGE)) void combo_zr1_ramp_to_skidpad_ramp_combo_shot(void) {}
 __far__(C_STRING(MACHINE_PAGE)) void combo_route66_ramp_to_zr1_ramp_to_skidpad_ramp_combo_shot(void) {}
+__far__(C_STRING(MACHINE_PAGE)) void combo_inner_loop_to_inner_loop_combo_shot(void) {}
+__far__(C_STRING(MACHINE_PAGE)) void combo_inner_loop_to_skidpad_ramp_combo_shot(void) {}
+__far__(C_STRING(MACHINE_PAGE)) void combo_zr1_ramp_to_inner_loop_combo_shot(void) {}
+__far__(C_STRING(MACHINE_PAGE)) void combo_skidpad_ramp_to_zr1_ramp_combo_shot(void) {}
 #endif

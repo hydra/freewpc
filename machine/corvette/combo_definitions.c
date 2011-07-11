@@ -249,6 +249,21 @@ const combo_step_t cstp_zr1_exit = {
 	}
 };
 
+extern void callset_inner_loop_to_skidpad_ramp_combo_shot(void);
+const combo_def_t il_skidpad_combo = {
+	DEFAULT_COMBO,
+	COMBO_NAME("IL SP")
+	.fn = callset_inner_loop_to_skidpad_ramp_combo_shot,
+	.steps = 5,
+	.step_list = {
+		&cstp_inner_loop_entry,
+		&cstp_inner_loop_exit,
+		&cstp_wildcard_5sec,
+		&cstp_skid_pad_entry,
+		&cstp_skid_pad_exit
+	}
+};
+
 extern void callset_rl_skidpad_combo_shot(void);
 const combo_def_t rl_skidpad_combo = {
 	DEFAULT_COMBO,
@@ -295,6 +310,21 @@ const combo_def_t zr1_ramp_to_route66_ramp_combo = {
 	}
 };
 
+extern void callset_inner_loop_to_inner_loop_combo_shot(void);
+const combo_def_t il_il_combo = {
+	DEFAULT_COMBO,
+	COMBO_NAME("IL IL")
+	.fn = callset_inner_loop_to_inner_loop_combo_shot,
+	.steps = 5,
+	.step_list = {
+		&cstp_inner_loop_entry,
+		&cstp_inner_loop_exit,
+		&cstp_wildcard_5sec,
+		&cstp_inner_loop_entry,
+		&cstp_inner_loop_exit
+	}
+};
+
 extern void callset_zr1_ramp_to_skidpad_ramp_combo_shot(void);
 const combo_def_t zr1_ramp_to_skidpad_ramp_combo = {
 	DEFAULT_COMBO,
@@ -328,6 +358,37 @@ const combo_def_t route66_ramp_to_zr1_ramp_to_skidpad_ramp_combo = {
 	}
 };
 
+extern void callset_zr1_ramp_to_inner_loop_combo_shot(void);
+const combo_def_t zr1_ramp_to_inner_loop_combo = {
+	DEFAULT_COMBO,
+	COMBO_NAME("ZR1 IL")
+	.fn = callset_zr1_ramp_to_inner_loop_combo_shot,
+	.steps = 5,
+	.step_list = {
+		&cstp_zr1_entry,
+		&cstp_zr1_exit,
+		&cstp_wildcard_5sec,
+		&cstp_inner_loop_entry,
+		&cstp_inner_loop_exit
+	}
+};
+
+extern void callset_skidpad_ramp_to_zr1_ramp_combo_shot(void);
+const combo_def_t skidpad_ramp_to_zr1_ramp_combo = {
+	DEFAULT_COMBO,
+	COMBO_NAME("SP ZR1")
+	.fn = callset_skidpad_ramp_to_zr1_ramp_combo_shot,
+	.steps = 5,
+	.step_list = {
+		&cstp_skid_pad_entry,
+		&cstp_skid_pad_exit,
+		&cstp_wildcard_5sec,
+		&cstp_zr1_entry,
+		&cstp_zr1_exit
+	}
+};
+
+
 const combo_def_t *machine_combos[COMBO_COUNT] = {
 	&lr_rl_combo,
 	&rl_lr_combo,
@@ -340,8 +401,14 @@ const combo_def_t *machine_combos[COMBO_COUNT] = {
 	&route66_ramp_to_zr1_ramp_combo,
 	&zr1_ramp_to_route66_ramp_combo,
 	&zr1_ramp_to_skidpad_ramp_combo,
-	&route66_ramp_to_zr1_ramp_to_skidpad_ramp_combo
+	&route66_ramp_to_zr1_ramp_to_skidpad_ramp_combo,
+	&il_il_combo,
+	&il_skidpad_combo,
+	&zr1_ramp_to_inner_loop_combo,
+	&skidpad_ramp_to_zr1_ramp_combo
 };
+
+
 
 U8 current_step_markers[COMBO_COUNT]; // 1-based index
 U16 step_time_list[COMBO_COUNT]; // the system timer at the time the last-match step that counted

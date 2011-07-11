@@ -8,7 +8,7 @@
 #ifndef COMBO_DEFINITIONS_H_
 #define COMBO_DEFINITIONS_H_
 
-#define COMBO_COUNT 12
+#define COMBO_COUNT 16
 
 #define LR_RL_COMBO_ID 0
 #define RL_LR_COMBO_ID 1
@@ -22,6 +22,10 @@
 #define ZR1_TO_R66_COMBO_ID 9
 #define ZR1_TO_SP_COMBO_ID 10
 #define R66_TO_ZR1_TO_SP_COMBO_ID 11
+#define IL_IL_COMBO_ID 12
+#define IL_SP_COMBO_ID 13
+#define ZR1_TO_IL_COMBO_ID 14
+#define SP_TO_ZR1_COMBO_ID 15
 
 
 #endif /* COMBO_DEFINITIONS_H_ */
