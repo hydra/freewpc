@@ -254,6 +254,8 @@ GI Strobe: PRI_LEFF4, GI(ALL), page(MACHINE_PAGE)
 GI Flash: PRI_LEFF4, GI(ALL), page(MACHINE_PAGE)
 
 [fonts]
+lucida9:
+cu17:
 
 [timers]
 Center Ramp Entered:

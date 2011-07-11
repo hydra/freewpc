@@ -105,11 +105,9 @@ Ball Save: shared, PRI_LEFF3, LAMPS(BALL_SAVE), page(COMMON_PAGE)
 
 [fonts]
 mono5:
-lucida9:
 tinynum:
 var5:
 fixed6:
-cu17:
 fixed10:
 term6:
 times8:
