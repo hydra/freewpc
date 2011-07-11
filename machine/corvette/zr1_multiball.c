@@ -59,8 +59,8 @@ void zr1_mb_lit_deff (void)
 	speech_start(SPCH_HEAD_FOR_THE_LT5, SL_3S);
 	dmd_alloc_low_clean ();
 	dmd_draw_border (dmd_low_buffer);
-	font_render_string_center (&font_term6, 64, 9, "SHOOT ENGINE");
-	font_render_string_center (&font_term6, 64, 21, "FOR ZR1 MULTIBALL");
+	font_render_string_center (&font_supercar9, 64, 9, "SHOOT ENGINE");
+	font_render_string_center (&font_supercar9, 64, 21, "FOR ZR1 MULTIBALL");
 	dmd_show_low ();
 	task_sleep_sec (2);
 	deff_exit ();
