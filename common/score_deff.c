@@ -111,13 +111,21 @@ const struct score_font_info
 	U8 x;
 	U8 y;
 } score_font_info_table[] = {
+#ifdef FON_LUCIDA9
 	[SCORE_POS_CENTER_LARGE] = { fontargs_render_string_center, &font_lucida9, 64, 10 },
 
 	[SCORE_POS_UL_LARGE] = { fontargs_render_string_left, &font_lucida9, 0, 1 },
 	[SCORE_POS_UR_LARGE] = { fontargs_render_string_right, &font_lucida9, 127, 1 },
 	[SCORE_POS_LL_LARGE] = { fontargs_render_string_left, &font_lucida9, 0, 10 },
 	[SCORE_POS_LR_LARGE] = { fontargs_render_string_right, &font_lucida9, 127, 10 },
+#else
+	[SCORE_POS_CENTER_LARGE] = { fontargs_render_string_center, &font_fixed10, 64, 10 },
 
+	[SCORE_POS_UL_LARGE] = { fontargs_render_string_left, &font_fixed10, 0, 1 },
+	[SCORE_POS_UR_LARGE] = { fontargs_render_string_right, &font_fixed10, 127, 1 },
+	[SCORE_POS_LL_LARGE] = { fontargs_render_string_left, &font_fixed10, 0, 10 },
+	[SCORE_POS_LR_LARGE] = { fontargs_render_string_right, &font_fixed10, 127, 10 },
+#endif
 	[SCORE_POS_UL_SMALL] = { fontargs_render_string_left, &font_mono5, 0, 1 },
 	[SCORE_POS_UR_SMALL] = { fontargs_render_string_right, &font_mono5, 127, 1 },
 	[SCORE_POS_LL_SMALL] = { fontargs_render_string_left, &font_mono5, 0, 16 },
