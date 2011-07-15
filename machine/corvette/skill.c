@@ -59,6 +59,7 @@ void skillshot_dragrace_enable( void ) {
 	// kill any existing task, just to make sure
 	task_kill_gid(GID_SKILLSHOT_DRAGRACE_TIMER);
 	task_create_gid1(GID_SKILLSHOT_DRAGRACE_TIMER, skillshot_dragrace_timer);
+	sound_start (ST_SPEECH, SPCH_YOU_WANNA_RACE, SL_2S, PRI_VIDEO_MODE);
 	global_flag_on(GLOBAL_FLAG_SKILLSHOT_DRAGRACE_ENABLED);
 	dragrace_enable();
 }
@@ -109,6 +110,7 @@ void skillshot_skidpad_enable( void ) {
 	// kill any existing task, just to make sure
 	task_kill_gid (GID_SKILLSHOT_SKIDPAD_TIMER);
 	task_create_gid1 (GID_SKILLSHOT_SKIDPAD_TIMER, skillshot_skidpad_timer);
+	sound_start (ST_SPEECH, SPCH_TAKE_YOUR_BEST_SHOT, SL_2S, PRI_VIDEO_MODE);
 	global_flag_on(GLOBAL_FLAG_SKILLSHOT_SKIDPAD_ENABLED);
 }
 

@@ -282,6 +282,7 @@ Racetrack Errors:
 15M:
 20M:
 25M:
+30M:
 40M:
 50M:
 
@@ -330,9 +331,16 @@ Goal Car Awarded: page(MACHINE_PAGE), PRI_GAME_QUICK4, D_PAUSE
 Combo Name: page(MACHINE_PAGE), PRI_GAME_QUICK5, D_SCORE+D_RESTARTABLE
 
 [leffs]
-Amode: runner, PRI_LEFF1, LAMPS(ALL), GI(ALL), page(MACHINE_PAGE)
-Color Cycle: runner, PRI_LEFF3, LAMPS(ALL), page(MACHINE_PAGE)
-Build Up: runner, PRI_LEFF3, LAMPS(ALL), page(MACHINE_PAGE)
+Amode: runner, PRI_LEFF1, LAMPS(ALL), GI(ALL), page(MACHINE2_PAGE)
+Color Cycle: runner, PRI_LEFF3, LAMPS(ALL), page(MACHINE2_PAGE)
+Build Up: runner, PRI_LEFF3, LAMPS(ALL), page(MACHINE2_PAGE)
+Left Ramp: shared, PRI_LEFF2, page(MACHINE2_PAGE)
+Right Ramp: shared, PRI_LEFF2, page(MACHINE2_PAGE)
+Orbit Shot: PRI_LEFF1, PRI_LEFF2, GI(ALL), page(MACHINE2_PAGE)
+Two Combos Shot: PRI_LEFF1, PRI_LEFF2, GI(ALL), page(MACHINE2_PAGE)
+Three Combos Shot: PRI_LEFF1, PRI_LEFF2, GI(ALL), page(MACHINE2_PAGE)
+Four Combos Shot: PRI_LEFF1, PRI_LEFF2, GI(ALL), page(MACHINE2_PAGE)
+Five Combos Shot: PRI_LEFF1, PRI_LEFF2, GI(ALL), page(MACHINE2_PAGE)
 
 [fonts]
 supercar9:

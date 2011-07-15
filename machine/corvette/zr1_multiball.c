@@ -45,6 +45,7 @@ score_t zr1_mb_jackpot_value;
 
 void zr1_ball_locked_deff (void)
 {
+	music_effect_start(SND_AWARD_04, SL_3S);
 	dmd_alloc_low_clean ();
 	dmd_draw_border (dmd_low_buffer);
 	sprintf ("BALL %d LOCKED", lock_count);
@@ -210,7 +211,7 @@ static void jackpot_check (void) {
 	zr1_mb_light_horsepower_jackpot();
 
 
-	// TODO see if both hit very quickly, if so award super jackpot.
+	// TODO see if both hit very quickly, if so award super jackpot - maybe use a combo?
 }
 
 static void zr1_mb_award_horsepower_jackpot (void)
