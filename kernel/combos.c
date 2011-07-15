@@ -303,6 +303,8 @@ void combo_process_switch_for_combo(const U8 combo_id, const combo_def_t *combo)
 #ifdef CONFIG_UNITTEST
 		combo_matches++;
 #else
+		callset_invoke(any_combo_shot);
+
 		if (combo->fn) {
 			callset_pointer_invoke(combo->fn);
 		}
@@ -350,6 +352,55 @@ void combo_reset_current_step_markers(void) {
 #ifdef CONFIG_UNITTEST
 	unittest_current_step_marker = 0;
 #endif
+}
+
+const combo_def_t *find_combo_with_step_at(const combo_step_t *step_to_match) {
+
+	U8 combo_id;
+	const combo_def_t *combo;
+	const combo_step_t *next_step;
+	U8 wildcard_marker;
+
+	//dbprintf("looking for step: %ld\n", step_to_match);
+	for (combo_id = 0; combo_id < machine_combos_count; combo_id++) {
+		//dbprintf("combo: %d, sm: %d\n", combo_id, current_step_markers[combo_id]);
+		if (current_step_markers[combo_id] == 0) {
+			// skip the first step otherwise lamps would be flashing all the time...
+			continue;
+		}
+
+		combo = machine_combos[combo_id];
+
+		if (!(
+				(combo->flags & CF_ALWAYS) ||
+				((combo->flags & CF_SINGLE_BALL_ONLY) && single_ball_play()) ||
+				((combo->flags & CF_MULTI_BALL_ONLY) && !single_ball_play())
+		)) {
+			return NULL;
+		}
+
+		next_step = combo->step_list[current_step_markers[combo_id]];
+		if (next_step == step_to_match) {
+			//dbprintf("matched (1)\n");
+			return combo;
+		}
+
+		// find the previous wildcard step (including the current step)
+		wildcard_marker = current_step_markers[combo_id] + 1;
+		do {
+			if (combo->step_list[wildcard_marker - 1]->switches == 0) {
+				break;
+			}
+			wildcard_marker--;
+		} while (wildcard_marker != 0);
+		//dbprintf("wcm: %d\n", wildcard_marker);
+		// see the next step following the wildcard is the step we're after
+		if (wildcard_marker > 0 && combo->step_list[wildcard_marker] == step_to_match) {
+			//dbprintf("matched (2)\n");
+			return combo;
+		}
+	}
+	return NULL;
 }
 
 #endif

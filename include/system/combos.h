@@ -105,6 +105,7 @@ extern U8 last_matched_combo_id;
 
 extern void combo_process_switch(void);
 extern void combo_reset_current_step_markers(void);
+extern const combo_def_t *find_combo_with_step_at(const combo_step_t *step_to_match);
 
 #endif
 

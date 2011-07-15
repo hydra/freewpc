@@ -28,7 +28,6 @@
  *
  * There MUST be a call to combo_reset_current_step_markers() after machine_combos_count has been set via an 'init' callset handler.
  *
- * TODO Every 1 second check the current combo markers and light appropriate lamps
  */
 
 #ifdef CONFIG_COMBOS
@@ -80,7 +79,7 @@ const combo_step_t cstp_wildcard_5sec = {
 extern void callset_lr_rl_combo_shot(void);
 const combo_def_t lr_rl_combo = {
 	DEFAULT_COMBO,
-	COMBO_NAME("LR RL")
+	COMBO_NAME("LO RO")
 	.fn = callset_lr_rl_combo_shot,
 	.steps = 5,
 	.step_list = {
@@ -95,7 +94,7 @@ const combo_def_t lr_rl_combo = {
 extern void callset_rl_lr_combo_shot(void);
 const combo_def_t rl_lr_combo = {
 	DEFAULT_COMBO,
-	COMBO_NAME("RL LR")
+	COMBO_NAME("RO LO")
 	.fn = callset_rl_lr_combo_shot,
 	.steps = 5,
 	.step_list = {
@@ -110,7 +109,7 @@ const combo_def_t rl_lr_combo = {
 extern void callset_rl_rl_combo_shot(void);
 const combo_def_t rl_rl_combo = {
 	DEFAULT_COMBO,
-	COMBO_NAME("RL RL")
+	COMBO_NAME("RO RO")
 	.fn = callset_rl_rl_combo_shot,
 	.steps = 5,
 	.step_list = {
@@ -125,7 +124,7 @@ const combo_def_t rl_rl_combo = {
 extern void callset_lr_lr_combo_shot(void);
 const combo_def_t lr_lr_combo = {
 	DEFAULT_COMBO,
-	COMBO_NAME("LR LR")
+	COMBO_NAME("LO LO")
 	.fn = callset_lr_lr_combo_shot,
 	.steps = 5,
 	.step_list = {
@@ -189,7 +188,7 @@ const combo_step_t cstp_inner_loop_exit = {
 extern void callset_rl_il_combo_shot(void);
 const combo_def_t rl_il_combo = {
 	DEFAULT_COMBO,
-	COMBO_NAME("RL IL")
+	COMBO_NAME("RO IL")
 	.fn = callset_rl_il_combo_shot,
 	.steps = 5,
 	.step_list = {
@@ -267,7 +266,7 @@ const combo_def_t il_skidpad_combo = {
 extern void callset_rl_skidpad_combo_shot(void);
 const combo_def_t rl_skidpad_combo = {
 	DEFAULT_COMBO,
-	COMBO_NAME("RL SP")
+	COMBO_NAME("RO SP")
 	.fn = callset_rl_skidpad_combo_shot,
 	.steps = 5,
 	.step_list = {
@@ -388,6 +387,66 @@ const combo_def_t skidpad_ramp_to_zr1_ramp_combo = {
 	}
 };
 
+extern void callset_left_orbit_to_zr1_ramp_combo_shot(void);
+const combo_def_t left_orbit_to_zr1_ramp_combo = {
+	DEFAULT_COMBO,
+	COMBO_NAME("LO ZR1")
+	.fn = callset_left_orbit_to_zr1_ramp_combo_shot,
+	.steps = 5,
+	.step_list = {
+		&cstp_left_outer_loop_entry,
+		&cstp_left_outer_loop_exit,
+		&cstp_wildcard_5sec,
+		&cstp_zr1_entry,
+		&cstp_zr1_exit
+	}
+};
+
+extern void callset_right_orbit_to_route66_ramp_combo_shot(void);
+const combo_def_t right_orbit_to_route66_ramp_combo = {
+	DEFAULT_COMBO,
+	COMBO_NAME("RO R66")
+	.fn = callset_right_orbit_to_route66_ramp_combo_shot,
+	.steps = 5,
+	.step_list = {
+		&cstp_right_outer_loop_entry,
+		&cstp_right_outer_loop_exit,
+		&cstp_wildcard_5sec,
+		&cstp_route_66_entry,
+		&cstp_route_66_exit
+	}
+};
+
+extern void callset_skidpad_ramp_to_left_orbit_combo_shot(void);
+const combo_def_t skidpad_ramp_to_left_orbit_combo = {
+	DEFAULT_COMBO,
+	COMBO_NAME("SP LO")
+	.fn = callset_skidpad_ramp_to_left_orbit_combo_shot,
+	.steps = 5,
+	.step_list = {
+		&cstp_skid_pad_entry,
+		&cstp_skid_pad_exit,
+		&cstp_wildcard_5sec,
+		&cstp_left_outer_loop_entry,
+		&cstp_left_outer_loop_exit
+	}
+};
+
+extern void callset_route66_ramp_to_left_orbit_combo_shot(void);
+const combo_def_t route66_ramp_to_left_orbit_combo = {
+	DEFAULT_COMBO,
+	COMBO_NAME("R66 LO")
+	.fn = callset_route66_ramp_to_left_orbit_combo_shot,
+	.steps = 5,
+	.step_list = {
+		&cstp_route_66_entry,
+		&cstp_route_66_exit,
+		&cstp_wildcard_5sec,
+		&cstp_left_outer_loop_entry,
+		&cstp_left_outer_loop_exit
+	}
+};
+
 
 const combo_def_t *machine_combos[COMBO_COUNT] = {
 	&lr_rl_combo,
@@ -405,7 +464,11 @@ const combo_def_t *machine_combos[COMBO_COUNT] = {
 	&il_il_combo,
 	&il_skidpad_combo,
 	&zr1_ramp_to_inner_loop_combo,
-	&skidpad_ramp_to_zr1_ramp_combo
+	&skidpad_ramp_to_zr1_ramp_combo,
+	&left_orbit_to_zr1_ramp_combo,
+	&right_orbit_to_route66_ramp_combo,
+	&skidpad_ramp_to_left_orbit_combo,
+	&route66_ramp_to_left_orbit_combo
 };
 
 
