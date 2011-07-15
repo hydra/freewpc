@@ -32,10 +32,6 @@ define require
 $(if $($1),,$(error $1 is not defined : $($1)))
 endef
 
-define md_config
-$(if $(shell grep ^$1:.*Yes $(PLATFORM_DESC)),y,)
-endef
-
 define have
 $1 := y
 AUTO_CFLAGS += -D$1
@@ -84,12 +80,6 @@ include $(MMAKEFILE)
 # grep it to set additional configuration variables.
 $(eval $(call require,MACHINE_FILE))
 PLATFORM ?= wpc
-CONFIG_DMD := $(call md_config,DMD)
-CONFIG_ALPHA := $(call md_config,Alphanumeric)
-CONFIG_PIC := $(call md_config,PIC)
-CONFIG_FLIPTRONIC := $(call md_config,Fliptronic)
-CONFIG_DCS := $(call md_config,DCS)
-CONFIG_WPC95 := $(call md_config,WPC95)
 
 # PLATFORM says which hardware platform is targeted.  Valid values
 # are 'wpc' and 'whitestar'.  The MACHINE Makefile should have
@@ -142,7 +132,7 @@ BUILD_YEAR := $(shell date +%Y)
 
 
 .PHONY : platform_target
-ifeq ($(CONFIG_SIM), y)
+ifeq ($(CPU), native)
 platform_target : native
 else
 ifdef TARGET_ROMPATH
@@ -186,17 +176,6 @@ TMPFILES += $(ERR)
 #######################################################################
 ###	Programs
 #######################################################################
-
-# Path to the compiler and linker
-ifeq ($(CPU),m6809)
-GCC_ROOT ?= /usr/local/bin
-CC := $(GCC_ROOT)/m6809-unknown-none-gcc-$(GCC_VERSION)
-AS = $(CC) -xassembler-with-cpp
-LD = $(GCC_ROOT)/m6809-unknown-none-ld
-REQUIRED += $(CC) $(LD)
-else
-GCC_VERSION = NATIVE
-endif
 
 HOSTCC := gcc
 
@@ -312,19 +291,6 @@ CFLAGS += $(EXTRA_CFLAGS) $(AUTO_CFLAGS)
 
 SCHED_HEADERS := include/freewpc.h include/interrupt.h $(SCHED_HEADERS)
 SCHED_FLAGS += $(patsubst %,-i % , $(notdir $(SCHED_HEADERS)))
-ifeq ($(CONFIG_DMD),y)
-SCHED_FLAGS += -D CONFIG_DMD
-endif
-ifeq ($(CONFIG_ALPHA),y)
-SCHED_FLAGS += -D CONFIG_SEG
-endif
-ifeq ($(CONFIG_PIC),y)
-SCHED_FLAGS += -D CONFIG_PIC
-endif
-ifeq ($(CONFIG_FLIPTRONIC),y)
-SCHED_FLAGS += -D CONFIG_FLIPTRONIC
-endif
-
 
 # Fix up names based on machine definitions
 ifdef GAME_ROM_PREFIX
@@ -371,29 +337,18 @@ MD_OBJS = $(PAGED_MD_OBJS) $(SYSTEM_MD_OBJS)
 ###	Object File Distribution
 #######################################################################
 
-# Because WPC uses ROM paging, the linking job is more
-# difficult to get right.  We require that the programmer
-# explicitly state which pages things should belong in.
-
-# A list of the paged sections that we will use.  Not all pages
-# are currently needed.
-#
-# Alphanumeric games like Funhouse are restricted to 128KB total,
-# so only 6 non-system pages.  DMD games are allowed to use more.
-ifeq ($(CONFIG_DMD),y)
-PAGE_NUMBERS += 52 53 54 55
-endif
-PAGE_NUMBERS += 56 57 58 59 60 61
-ifeq ($(PLATFORM),wpcsound)
-BLANK_SIZE := 304
+ifneq ($(CONFIG_SIM), y)
+NUM_PAGED_SECTIONS := $(words $(CONFIG_CODE_PAGE_LIST))
+NUM_BLANK_PAGES := $(shell echo $$(($(ROM_PAGE_COUNT) - $(CONFIG_FIXED_PAGE_COUNT) - $(NUM_PAGED_SECTIONS))))
+BLANK_SIZE := $(shell echo $$(( $(NUM_BLANK_PAGES) * $(CONFIG_ROM_BANK_SIZE))))
+PAGED_SECTIONS := $(foreach pg,$(CONFIG_CODE_PAGE_LIST),page$(pg))
+FIRST_BANK = $(shell echo $$(( $(CONFIG_MAX_ROM_PAGES) - $(ROM_PAGE_COUNT) )))
+BOTTOM_BANK = $(firstword $(CONFIG_CODE_PAGE_LIST))
+TOP_BANK = $(lastword $(CONFIG_CODE_PAGE_LIST))
 else
-PAGE_SIZE = 16
-FIXED_PAGE_COUNT = 2
-NUM_PAGED_SECTIONS := $(words $(PAGE_NUMBERS))
-NUM_BLANK_PAGES := $(shell echo $$(($(ROM_PAGE_COUNT) - $(FIXED_PAGE_COUNT) - $(NUM_PAGED_SECTIONS))))
-BLANK_SIZE := $(shell echo $$(( $(NUM_BLANK_PAGES) * $(PAGE_SIZE))))
+BLANK_SIZE := 512
+CONFIG_SYSTEM_CODE_PAGE := 0
 endif
-PAGED_SECTIONS = $(foreach pg,$(PAGE_NUMBERS),page$(pg))
 
 #
 # Memory Map
@@ -417,19 +372,12 @@ endef
 
 $(eval $(call AREA_SETUP, direct,    0x0004,   0x00FC))
 $(eval $(call AREA_SETUP, ram,       0x0100,   0x1300))
-ifneq ($(PLATFORM),wpcsound)
 $(eval $(call AREA_SETUP, local,     0x1400,   0x0040))
 $(eval $(call AREA_SETUP, permanent, 0x1600,   0x0080))
-endif
 $(eval $(call AREA_SETUP, stack,     0x1680,   0x0180,  virtual))
-ifeq ($(PLATFORM),wpcsound)
-$(eval $(call AREA_SETUP, paged,     0x4000,   0x8000,  virtual))
-$(eval $(call AREA_SETUP, sysrom,    0xC000,   0x3FF0,  virtual))
-else
 $(eval $(call AREA_SETUP, nvram,     0x1810,   0x07F0))
 $(eval $(call AREA_SETUP, paged,     0x4000,   0x4000,  virtual))
 $(eval $(call AREA_SETUP, sysrom,    0x8000,   0x7FF0,  virtual))
-endif
 $(eval $(call AREA_SETUP, vector,    0xFFF0,   0x0010,  virtual))
 
 SYSROM_SIZE := $(shell echo $$(($(AREASIZE_sysrom) + $(AREASIZE_vector))))
@@ -475,7 +423,7 @@ CFLAGS += -D$(strip $2)_PAGE=$(strip $1)
 endif
 endef
 
-$(foreach page,$(PAGE_NUMBERS),$(eval $(call PAGE_INIT, $(page))))
+$(foreach page,$(CONFIG_CODE_PAGE_LIST),$(eval $(call PAGE_INIT, $(page))))
 ifeq ($(CONFIG_DMD),y)
 $(eval $(call PAGE_ALLOC, 52, MACHINE3))
 $(eval $(call PAGE_ALLOC, 53, MACHINE2))
@@ -500,8 +448,8 @@ $(eval $(call PAGE_ALLOC, 60, TEST2))
 $(eval $(call PAGE_ALLOC, 61, FONT))
 $(eval $(call PAGE_ALLOC, 61, FON))
 
-$(SYSTEM_OBJS) : PAGE=62
-CFLAGS += -DSYS_PAGE=62 -DSYSTEM_PAGE=62
+$(SYSTEM_OBJS) : PAGE=$(CONFIG_SYSTEM_CODE_PAGE)
+CFLAGS += -DSYS_PAGE=$(CONFIG_SYSTEM_CODE_PAGE) -DSYSTEM_PAGE=$(CONFIG_SYSTEM_CODE_PAGE)
 
 PAGED_OBJS = $(foreach area,$(PAGED_SECTIONS),$($(area)_OBJS))
 
@@ -1055,15 +1003,15 @@ info:
 	$(Q)echo "REQUIRED = $(REQUIRED)"
 	$(Q)echo "PATH_REQUIRED = $(PATH_REQUIRED)"
 	$(Q)echo "NUM_BLANK_PAGES = $(NUM_BLANK_PAGES)"
-	$(Q)echo "CONFIG_DMD = $(CONFIG_DMD)"
-	$(Q)echo "CONFIG_PIC = $(CONFIG_PIC)"
-	$(Q)echo "CONFIG_FONT = $(CONFIG_FONT)"
 	$(Q)echo "MACH_DESC = $(MACH_DESC)"
 	$(Q)echo "HOST_OBJS = $(HOST_OBJS)"
 	$(Q)echo "SCHED_FLAGS = $(SCHED_FLAGS)"
 	$(Q)echo "NATIVE_PROG = $(NATIVE_PROG)"
 	$(Q)echo "NATIVE_OBJS = $(NATIVE_OBJS)"
 	$(Q)echo "C_OBJS = $(C_OBJS)"
+	$(Q)echo "SYSTEM_PAGE = $(CONFIG_SYSTEM_CODE_PAGE)"
+	$(Q)echo "BOTTOM_BANK = $(BOTTOM_BANK)"
+	$(Q)echo "TOP_BANK = $(TOP_BANK)"
 
 .PHONY : areainfo
 areainfo:

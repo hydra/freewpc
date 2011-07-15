@@ -3,6 +3,7 @@
 CPU := native
 C := cpu/$(CPU)
 
+GCC_VERSION = NATIVE
 CFLAGS =
 
 # TODO : don't define CONFIG_LITTLE_ENDIAN on sparc, etc.
@@ -45,6 +46,11 @@ endif
 ifeq ($(CONFIG_UI), console)
 CFLAGS += -DCONFIG_UI -DCONFIG_UI_CONSOLE
 NATIVE_OBJS += $(D)/ui_console.o
+endif
+
+ifeq ($(CONFIG_UI), remote)
+CFLAGS += -DCONFIG_UI -DCONFIG_UI_REMOTE
+NATIVE_OBJS += $(D)/ui_remote.o
 endif
 
 ifeq ($(CONFIG_SOFT_REALTIME), y)

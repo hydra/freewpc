@@ -110,11 +110,6 @@ struct frame
 	struct buffer *curbuf;
 
 	/*
-	 * The image type for curbuf.
-	 */
-	U8 type;
-
-	/*
 	 * The optional label name assigned to this frame.
 	 */
    const char *name;
@@ -131,12 +126,6 @@ struct frame
 	 * more difficult times.
 	 */
 	int cost;
-
-	/*
-	 * The starting address for this frame, as an offset from the
-	 * start of the image area.
-	 */
-	unsigned long addr;
 
 	/*
 	 * Nonzero if this frame has already been scanned and cannot be
@@ -285,15 +274,15 @@ void compress_frames (void)
 	struct buffer *newbuf;
 
 	/* Calculate the total size of ROM space needed.
-		We are conservative in our estimate here.  Allow 4 bytes per pointer
-		because of alignment.  Add an extra 64 bytes per frame to estimate
+		We are conservative in our estimate here.
+		Add an extra 64 bytes per frame to estimate
 		cases where an image has to be pushed to the next page to keep all
 		the data together. */
 	total_size = (frame_count+1) * 3;
 	for (frame = frame_array, i = 0; i < frame_count; i++, frame++)
 		total_size += frame->curbuf->len + 1 + 64;
 
-	/* Compress until everything fits: */
+	/* Compress until everything fits */
 	while (total_size > max_rom_size)
 	{
 		//printf ("Total size = %05X, ROM holds %05X\n", total_size, max_rom_size);
@@ -301,21 +290,23 @@ void compress_frames (void)
 		/* Find the uncompressed frame with lowest cost */
 		aframe = NULL;
 		for (frame = frame_array, i = 0; i < frame_count; i++, frame++)
-			if (frame->type == 0 &&
-				 !frame->already_scanned &&
+			if (!frame->already_scanned &&
 				!(frame->curbuf->type & TYPE_BITMAP) &&
 				(frame->cost < (aframe ? aframe->cost : 999)))
 			{
 				aframe = frame;
 			}
-		//printf ("Will try to compress frame #%d\n", aframe - frame_array);
 
 		/* If everything has been compressed already, and we don't fit still, then
 		just give up */
 		if (aframe == NULL)
 			error ("out of space after compression");
 
-		/* Mark this frame as checked, so we don't try again later */
+		//printf ("Will try to compress frame #%d\n", aframe - frame_array);
+
+		/* Mark this frame as checked, so we don't try again later.  This
+		is important in case all compression algorithms produce larger files
+		than what we started with. */
 		aframe->already_scanned = 1;
 
 		/* Try all compression methods.  Take the best one, or none at all
@@ -330,13 +321,13 @@ void compress_frames (void)
 				/* printf ("Encoder %d reduces size from %d to %d\n", i,
 					aframe->curbuf->len, newbuf->len); */
 				newbuf->type |= aframe->rawbuf->type;
-				aframe->type = i+1;
 				if (aframe->curbuf != aframe->rawbuf)
 					buffer_free (aframe->curbuf);
 				aframe->curbuf = newbuf;
 			}
 			else
 			{
+				/* This method is not better, so just discard it. */
 				//printf ("Encoder %d gave %d bytes, ignoring\n", i, newbuf->len);
 				buffer_free (newbuf);
 			}
@@ -348,27 +339,6 @@ void compress_frames (void)
 	}
 	/* printf ("Done compressing.  Total size %05X is less than ROM size %05X\n",
 		total_size, max_rom_size); */
-}
-
-
-/**
- * Assign a linear start address to each frame.
- */
-void assign_addresses (void)
-{
-	struct frame *frame;
-	int i;
-	unsigned int addr;
-
-	/* The address of the first image start just beyond the image table header */
-	addr = (frame_count+1) * 3;
-	for (frame = frame_array, i = 0; i < frame_count; i++, frame++)
-	{
-		unsigned int len = frame_length_with_header (frame->curbuf);
-		frame->addr = round_up_to_page (addr, len);
-		//printf ("Frame %d addr = %05lX\n", i, frame->addr);
-		addr = frame->addr + len;
-	}
 }
 
 
@@ -388,10 +358,8 @@ void add_frame (const char *label, struct buffer *buf)
 	frame = &frame_array[frame_count];
 	frame->rawbuf = buf;
 	frame->curbuf = buf;
-	frame->type = 0;
 	frame->name = NULL;
 	frame->cost = 0;
-	frame->addr = 0;
 	frame->already_scanned = 0;
 	frame_count++;
 }
@@ -656,13 +624,16 @@ int main (int argc, char *argv[])
 		}
 		else
 		{
+			/* Any non-option argument is treated as a config file, which is loaded
+			and parsed.  Any images named in these files are loaded. */
 			parse_config (arg);
 		}
 	}
 
-	/* Finalize all output */
-	assign_addresses ();
+	/* Try to compress frames if necessary */
 	compress_frames ();
+
+	/* Write the image table */
 	write_output (outfilename);
 
 	fprintf (lblfile, "\n#define MAX_IMAGE_NUMBER %d\n", frame_count);

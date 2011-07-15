@@ -112,6 +112,9 @@ void simlog (enum sim_log_class class, const char *format, ...)
 	{
 		if (class != SLC_DEBUG_PORT)
 			fprintf (ofp, "[SIM] ");
+#ifdef CONFIG_SIM_TIMESTAMP
+		fprintf (ofp, "(%08ld) ", realtime_read ());
+#endif
 		fprintf (ofp, "%s", buf);
 		fputc ('\n', ofp);
 		fflush (ofp);
@@ -315,11 +318,6 @@ int main (int argc, char *argv[])
 	writeb (WPC_LAMP_COL_STROBE, 0);
 #if !(MACHINE_PIC == 1)
 	writeb (WPC_SW_COL_STROBE, 0);
-#endif
-#if (MACHINE_DMD == 1)
-	writeb (WPC_DMD_LOW_PAGE, 0);
-	writeb (WPC_DMD_HIGH_PAGE, 0);
-	writeb (WPC_DMD_ACTIVE_PAGE, 0);
 #endif
 
 	/* Initialize the state of the switches; optos are backwards */

@@ -111,27 +111,10 @@ void fatal (errcode_t error_code)
 	db_dump_all ();
 #endif
 
+	/* In simulation, exit whenever a fatal occurs. */
 #ifdef CONFIG_NATIVE
 	sim_exit (error_code);
-#else
-	/* Go into a loop, long enough for the error message to be visible.
-	Then reset the system. */
-	{
-		U16 count, secs;
-		for (secs = 0; secs < 10; secs++)
-		{
-			for (count = 0; count < 25000; count++)
-			{
-				/* 4 nops = 8 cycles.  Loop overhead is about 6, so
-				 * that's 14 cycles total for the inner loop.
-				 * At 2M cycles per sec, we need ~15000 iterations per second */
-				noop ();
-				noop ();
-				noop ();
-				noop ();
-			}
-		}
-	}
+#endif
 
 	/* Defining STOP_ON_ERROR is helpful during debugging a problem.
 	Having the machine reset makes it hard to debug after the fact. */
@@ -139,13 +122,8 @@ void fatal (errcode_t error_code)
 	while (1);
 #endif
 
-	/* Restart the system by jumping to the reset vector again. */
-#ifdef __m6809__
-	start ();
-#else
+	/* Restart the system */
 	warm_reboot ();
-#endif
-#endif
 }
 
 

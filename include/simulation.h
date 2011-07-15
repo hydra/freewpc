@@ -1,5 +1,5 @@
 /*
- * Copyright 2007-2010 by Brian Dominy <brian@oddchange.com>
+ * Copyright 2007-2011 by Brian Dominy <brian@oddchange.com>
  *
  * This file is part of FreeWPC.
  *
@@ -125,6 +125,9 @@ void asciidmd_init (void);
 
 void sim_coil_init (void);
 void sim_coil_change (unsigned int coil, unsigned int on);
+bool sim_coil_is_active (unsigned int coil);
+void diverter_coil_init (unsigned int id, struct ball_node *node);
+void coil_clone (unsigned int parent_id, unsigned int child_id);
 
 unsigned char hwtimer_read (void);
 void hwtimer_write (unsigned char val);
@@ -138,5 +141,10 @@ void keyboard_init (void);
 
 void protected_memory_load (void);
 void protected_memory_save (void);
+
+void mach_node_init (void);
+
+void sim_init (void);
+__attribute__((noreturn)) void sim_exit (U8);
 
 #endif /* _SIMULATION_H */
