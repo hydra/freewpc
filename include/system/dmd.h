@@ -106,7 +106,7 @@ typedef struct
 #define dmd_low_buffer			((dmd_buffer_t)pinio_dmd_window_ptr (PINIO_DMD_WINDOW_0))
 #define dmd_high_buffer			((dmd_buffer_t)pinio_dmd_window_ptr (PINIO_DMD_WINDOW_1))
 
-extern U8 *dmd_trans_data_ptr;
+extern const U8 *dmd_trans_data_ptr;
 extern bool dmd_in_transition;
 extern dmd_transition_t *dmd_transition;
 extern dmd_pagepair_t dmd_visible_pages;
