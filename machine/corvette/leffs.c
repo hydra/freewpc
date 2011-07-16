@@ -137,8 +137,10 @@ void two_combos_shot_leff (void)
 
 void three_combos_shot_leff (void)
 {
-	gi_leff_dim (GI_PLAYFIELD_LL, 3);
-	gi_leff_dim (GI_PLAYFIELD_LR, 3);
+	gi_leff_disable (PINIO_GI_STRINGS);
+	gi_leff_dim (GI_PLAYFIELD_UL, 3);
+	gi_leff_dim (GI_PLAYFIELD_UR, 3);
+	gi_leff_enable (GI_PLAYFIELD_LL + GI_PLAYFIELD_LR);
 
 	U8 i;
 	for (i=0; i < 2; i++)
@@ -151,13 +153,14 @@ void three_combos_shot_leff (void)
 		task_sleep (TIME_100MS * 2);
 	}
 	leff_exit ();
+	gi_leff_enable (PINIO_GI_STRINGS);
 }
 
 
 void four_combos_shot_leff (void)
 {
 	gi_leff_disable (PINIO_GI_STRINGS);
-	gi_leff_enable (GI_PLAYFIELD_UL + GI_PLAYFIELD_UR);
+	gi_leff_enable (GI_PLAYFIELD_LL + GI_PLAYFIELD_LR);
 
 	U8 i;
 	for (i=0; i < 3; i++)
