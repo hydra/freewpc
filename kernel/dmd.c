@@ -113,8 +113,8 @@ __fastram__ void (*dmd_rtt) (void);
  * save a pointer into the DMD buffer, indicating what should
  * be updated on the next cycle of the transition.
  */
-U8 *dmd_trans_data_ptr;
-U8 *dmd_trans_data_ptr2;
+const U8 *dmd_trans_data_ptr;
+const U8 *dmd_trans_data_ptr2;
 
 /** The page number of the composite page, used during
  * transitions.  Each frame of the transition sequence
@@ -579,7 +579,7 @@ void dmd_do_transition (void)
 		/* Handle the transition of the bright page.
 		 * Use the upper composite pair page (+1). */
 		{
-			U8 *tmp_trans_data_ptr;
+			const U8 *tmp_trans_data_ptr;
 
 			tmp_trans_data_ptr = dmd_trans_data_ptr;
 			dmd_trans_data_ptr = dmd_trans_data_ptr2;

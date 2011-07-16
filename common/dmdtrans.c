@@ -197,7 +197,7 @@ void trans_scroll_left_new (void)
 	U16 i;
 
 
-	register U8 *src = dmd_trans_data_ptr;
+	register const U8 *src = dmd_trans_data_ptr;
 	register U8 *dst = dmd_high_buffer + 15;
 	for (i=0; i < 32L * 16; i += 64)
 	{
@@ -239,7 +239,7 @@ void trans_scroll_right_new (void)
 {
 	U16 i;
 
-	register U8 *src = dmd_trans_data_ptr;
+	register const U8 *src = dmd_trans_data_ptr;
 	register U8 *dst = dmd_high_buffer;
 	for (i=0; i < 32L * 16; i += 64)
 	{
@@ -447,7 +447,7 @@ void trans_bitfade_init (void)
 
 void trans_bitfade_old (void)
 {
-	register U8 *mask = dmd_trans_data_ptr;
+	register const U8 *mask = dmd_trans_data_ptr;
 	register U8 *src = dmd_low_buffer;
 	register U8 *dst = dmd_high_buffer;
 	register U16 i;
@@ -466,7 +466,7 @@ void trans_bitfade_old (void)
 
 void trans_bitfade_new (void)
 {
-	register U8 *mask = dmd_trans_data_ptr++;
+	register const U8 *mask = dmd_trans_data_ptr++;
 	register U8 *src = dmd_low_buffer;
 	register U8 *dst = dmd_high_buffer;
 	register U16 i;
