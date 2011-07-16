@@ -62,20 +62,16 @@ PINMAME_OTHER_ROMS = corvsnd*
 
 GAME_OBJS = zr1.o racetrack.o
 
-GAME2_OBJS = corvette_amode.o leffs.o
+GAME2_OBJS = corvette_amode.o leffs.o sounds.o
 
 GAME_TEST_OBJS = zr1_test.o racetrack_test.o
 
 GAME_INCLUDES =
 
 GAME_PAGED_OBJS = simple.o driver.o kickback.o \
-	jets.o trivial.o sling.o zr1_multiball.o shots.o \
+	jets.o trivial.o sling.o zr1_multiball.o \
 	deffs.o skill.o vmode_dragrace.o \
 	goal_collect_cars.o pitstop_award.o
-
-
-GAME_PAGED_OBJS += $(if $(CONFIG_COMBOS),combo_handlers.o)	
-KERNEL_HW_OBJS += $(if $(CONFIG_COMBOS),machine/corvette/combo_definitions.o)
 
 #SCHED_HEADERS += build/kickback_driver.h
 
@@ -84,3 +80,13 @@ KERNEL_HW_OBJS += $(if $(CONFIG_COMBOS),machine/corvette/combo_definitions.o)
 #	build/kickback_driver.h build/spinner.h build/loop_gate.h \#
 #	build/zr1_up_rev_gate.h build/zr1_low_rev_gate.h \
 #	build/diverter.h
+
+#################################################
+#
+# Game specific configuration
+#
+#################################################
+
+CONFIG_COMBOS := y
+GAME_PAGED_OBJS += combo_handlers.o	
+GAME_OBJS += combo_definitions.o

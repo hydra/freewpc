@@ -25,6 +25,7 @@ define MACHINE_BALL_IN_PLAY_MUSIC MUS_MAIN
 #define MACHINE_END_GAME_MUSIC MUS_END_GAME
 define MACHINE_BALL_SAVE_LAMP LM_DRIVE_AGAIN
 define MACHINE_HAS_UPPER_LEFT_FLIPPER
+define COMBO_COUNT 26
 
 # DC - To generate the x/y coordinates I took a screengrab of the lamp-locations diagram in the manual such that the
 # width of the playfield was 409 pixels wide then I pasted the image into mspaint (windows 7 version) and moved the
@@ -266,6 +267,7 @@ Racetrack Errors:
 30K:
 50K:
 100K:
+150K:
 200K:
 250K:
 300K:

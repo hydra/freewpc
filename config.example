@@ -36,10 +36,12 @@
 #CONFIG_BPT := y
 
 #
-# Experimental combo and recent switch settings
+# Combo and recent switch settings
 #
-CONFIG_RECENT_SWITCHES := n
-CONFIG_COMBOS := n
+# These can be put in the machine's makefile if the machine needs them
+#
+#CONFIG_RECENT_SWITCHES := n
+#CONFIG_COMBOS := n
 
 #
 # Set if you wish to override the major/minor version numbers

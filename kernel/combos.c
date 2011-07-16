@@ -23,7 +23,7 @@
 /*
  * IMPORTANT
  *
- * There MUST be a call to combo_reset_current_step_markers() after machine_combos_count has been set via an 'init' callset handler.
+ * There MUST be a call to combo_reset_current_step_markers() after COMBO_COUNT has been set via an 'init' callset handler.
  * See 'machine/corvette/combo_definitions.c'
  *
  */
@@ -84,7 +84,6 @@ U16 *wildcard_time_ptr;
 U16 *wildcard_time_allowed_ptr;
 const combo_def_t *last_matched_combo;
 U8 last_matched_combo_id;
-U8 machine_combos_count;
 
 
 /**
@@ -326,7 +325,7 @@ void combo_process_switch(void) {
 	U8 combo_index = 0;
 	const combo_def_t *combo;
 
-	for (combo_index = 0; combo_index < machine_combos_count; combo_index++) {
+	for (combo_index = 0; combo_index < COMBO_COUNT; combo_index++) {
 		combo = machine_combos[combo_index];
 		if (!(
 				(combo->flags & CF_ALWAYS) ||
@@ -344,11 +343,11 @@ void combo_process_switch(void) {
 void combo_reset_current_step_markers(void) {
 	last_matched_combo = 0;
 	last_matched_combo_id = UNKNOWN_COMBO_ID;
-	memset(current_step_markers, 0x00, sizeof(U8) * machine_combos_count);
-	memset(step_time_list, 0x00,sizeof(U16) * machine_combos_count);
-	memset(step_time_allowed_list, 0x00, sizeof(U16) * machine_combos_count);
-	memset(wildcard_time_list, 0x00, sizeof(U16) * machine_combos_count);
-	memset(wildcard_time_allowed_list, 0x00, sizeof(U16) * machine_combos_count);
+	memset(current_step_markers, 0x00, sizeof(U8) * COMBO_COUNT);
+	memset(step_time_list, 0x00,sizeof(U16) * COMBO_COUNT);
+	memset(step_time_allowed_list, 0x00, sizeof(U16) * COMBO_COUNT);
+	memset(wildcard_time_list, 0x00, sizeof(U16) * COMBO_COUNT);
+	memset(wildcard_time_allowed_list, 0x00, sizeof(U16) * COMBO_COUNT);
 #ifdef CONFIG_UNITTEST
 	unittest_current_step_marker = 0;
 #endif
@@ -362,7 +361,7 @@ const combo_def_t *find_combo_with_step_at(const combo_step_t *step_to_match) {
 	U8 wildcard_marker;
 
 	//dbprintf("looking for step: %ld\n", step_to_match);
-	for (combo_id = 0; combo_id < machine_combos_count; combo_id++) {
+	for (combo_id = 0; combo_id < COMBO_COUNT; combo_id++) {
 		//dbprintf("combo: %d, sm: %d\n", combo_id, current_step_markers[combo_id]);
 		if (current_step_markers[combo_id] == 0) {
 			// skip the first step otherwise lamps would be flashing all the time...
@@ -405,6 +404,17 @@ const combo_def_t *find_combo_with_step_at(const combo_step_t *step_to_match) {
 
 #endif
 
+U8 current_step_markers[COMBO_COUNT]; // 1-based index
+U16 step_time_list[COMBO_COUNT]; // the system timer at the time the last-match step that counted
+U16 step_time_allowed_list[COMBO_COUNT]; // the time that was allowed by the last-hit switch or step that counted
+U16 wildcard_time_list[COMBO_COUNT]; // the system timer at the time the last wildcard step that counted
+U16 wildcard_time_allowed_list[COMBO_COUNT]; // the allowed time for the last wildcard step that counted
+
+CALLSET_ENTRY(combos, init, start_ball) {
+#ifdef CONFIG_COMBOS
+	combo_reset_current_step_markers();
+#endif
+}
 
 /**
  * Process each combo and see if the marker should be reset due to timeouts
@@ -419,7 +429,7 @@ CALLSET_ENTRY(combos, idle_every_second)
 
 	U16 now = get_sys_time();
 
-	for (combo_id = 0; combo_id < machine_combos_count; combo_id++) {
+	for (combo_id = 0; combo_id < COMBO_COUNT; combo_id++) {
 		//dbprintf("cid: %d, sm: %d, sta: %ld\n", combo_id, current_step_markers[combo_id], step_time_allowed_list[combo_id]);
 		if (current_step_markers[combo_id] == 0) {
 			continue; // already at first step, nothing to reset.
