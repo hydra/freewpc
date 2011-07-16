@@ -44,7 +44,7 @@ void kickback_disable (void)
 	kickback_driver_disable();
 }
 
-static inline bool kickback_enabled (void)
+inline bool kickback_enabled (void)
 {
 	return lamp_test (LM_KICKBACK_ARROW);
 }
