@@ -31,13 +31,27 @@ typedef void (*combo_handler_t) (void);
 #define CF_NEVER               0
 #define CF_ALWAYS              (1 << 0)
 #define CF_SINGLE_BALL_ONLY    (1 << 1)
-#define CF_MULTI_BALL_ONLY     (1 << 3)
+#define CF_MULTI_BALL_ONLY     (1 << 2)
+#define CF_RESERVED_1          (1 << 3) // reserved for future use
+#define CF_RESERVED_2          (1 << 4) // reserved for future use
+// use these flags as desired in your combo definitions and handlers
+#define CF_USER_1              (1 << 5)
+#define CF_USER_2              (1 << 6)
+#define CF_USER_3              (1 << 7)
 
 /**
  * Combo step flags
  */
-#define CSTP_NO_FLAGS 0
-#define CSTP_WILDCARD (1<<0)
+#define CSTP_NO_FLAGS			0
+#define CSTP_WILDCARD			(1 << 0)
+#define CSTP_RESERVED_1			(1 << 1)
+#define CSTP_RESERVED_2			(1 << 2)
+// use these flags as desired in your combo definitions and handlers
+#define CSTP_USER_1				(1 << 3)
+#define CSTP_USER_2				(1 << 4)
+#define CSTP_USER_3				(1 << 5)
+#define CSTP_USER_4				(1 << 6)
+#define CSTP_USER_5				(1 << 7)
 
 /**
  * Combo IDs
@@ -59,7 +73,7 @@ typedef struct combo_step_s {
 } combo_step_t;
 
 typedef struct combo_def_s {
-#if defined(CONFIG_DEBUG_COMBOS) || defined(CONFIG_UNITTEST)
+#if defined(CONFIG_DEBUG_COMBOS) || defined(CONFIG_UNITTEST) || defined(CONFIG_NAMED_COMBOS)
 	const char *name;
 #endif
 	/** Flags for the combo, see CF_* defines
@@ -75,8 +89,10 @@ typedef struct combo_def_s {
 	const combo_step_t *step_list[];
 } combo_def_t;
 
+#define DEFAULT_COMBO_FLAGS (CF_SINGLE_BALL_ONLY)
+
 #define DEFAULT_COMBO \
-	.flags = CF_SINGLE_BALL_ONLY, \
+	.flags = DEFAULT_COMBO_FLAGS, \
 	.fn = null_function, \
 	.steps = 0
 
@@ -98,7 +114,6 @@ extern U16 step_time_list[];
 extern U16 step_time_allowed_list[];
 extern U16 wildcard_time_list[];
 extern U16 wildcard_time_allowed_list[];
-extern U8 machine_combos_count;
 extern const combo_def_t *machine_combos[];
 extern const combo_def_t *last_matched_combo;
 extern U8 last_matched_combo_id;

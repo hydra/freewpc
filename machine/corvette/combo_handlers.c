@@ -26,8 +26,6 @@
 #include <freewpc.h>
 #include <combo_definitions.h>
 
-#ifdef CONFIG_COMBOS
-
 U8 chained_combos;
 U8 combo_chain_ticks_remaining;
 
@@ -37,15 +35,22 @@ CALLSET_ENTRY(combo, start_ball) {
 }
 
 /**
- * Award the player 10M, 20M...40M for 2 to 5, respectively, chained combos.
- * Award the player 50M for more than 5 chained combos
+ * Award the player 10M, 20M...40M for 2 to 5 chained shots, respectively.
+ * Award the player 50M for more than 5 chained shots
  *
- * NOTE it's possible to exclude combos from this by checking the value of last_matched_combo_id
+ * NOTE it's also possible to exclude shots from this by checking the value of last_matched_combo_id
  *
  */
 CALLSET_ENTRY(combo, any_combo_shot) {
+	deff_start(DEFF_COMBO_NAME); // XXX
+	sound_start (ST_SAMPLE, SND_EXPLOSION_01, SL_2S, PRI_GAME_QUICK2); // XXX
+
+	if (!(last_matched_combo->flags & CF_USE_FOR_SHOT_CHAINING)) {
+		return;
+	}
+
 	chained_combos++;
-	combo_chain_ticks_remaining = 5; // allow 10 seconds for another combo to be shot
+	combo_chain_ticks_remaining = 5; // allow 5 seconds for another shot to be made
 	if (chained_combos > 5) {
 		leff_start(LEFF_FIVE_COMBOS_SHOT);
 		score (SC_50M);
@@ -63,6 +68,7 @@ CALLSET_ENTRY(combo, any_combo_shot) {
 		score (SC_10M);
 	}
 }
+
 
 CALLSET_ENTRY(combo, idle_every_second) {
 	if (unlikely(combo_chain_ticks_remaining > 0)) {
@@ -108,188 +114,146 @@ CALLSET_ENTRY (combo, lamp_update) {
 
 }
 
+CALLSET_ENTRY (combo, left_orbit_combo_shot) {
+	// TODO sounds, deff
+	score (SC_100K);
+}
+
+CALLSET_ENTRY (combo, right_orbit_combo_shot) {
+	// TODO sounds, deff
+	score (SC_100K);
+}
+
+CALLSET_ENTRY (combo, zr1_ramp_combo_shot) {
+	// TODO sounds, deff
+	score (SC_150K);
+}
+
+CALLSET_ENTRY (combo, route66_ramp_combo_shot) {
+	// TODO sounds, deff
+	score (SC_150K);
+}
+
+CALLSET_ENTRY (combo, skidpad_ramp_combo_shot) {
+	// TODO sounds, deff
+	score (SC_200K);
+}
+
+CALLSET_ENTRY (combo, inner_loop_combo_shot) {
+	// TODO sounds, deff
+	score (SC_200K);
+}
+
 CALLSET_ENTRY (combo, rl_lr_combo_shot)
 {
 	// TODO sounds, deff
-	deff_start(DEFF_COMBO_NAME); // XXX
-	sound_start (ST_SAMPLE, SND_EXPLOSION_01, SL_2S, PRI_GAME_QUICK2); // XXX
 	score (SC_2M);
 }
 
 CALLSET_ENTRY (combo, lr_rl_combo_shot)
 {
 	// TODO sounds, deff
-	deff_start(DEFF_COMBO_NAME); // XXX
-	sound_start (ST_SAMPLE, SND_EXPLOSION_01, SL_2S, PRI_GAME_QUICK2); // XXX
 	score (SC_2M);
 }
 
 CALLSET_ENTRY (combo, lr_lr_combo_shot)
 {
 	// TODO sounds, deff
-	deff_start(DEFF_COMBO_NAME); // XXX
-	sound_start (ST_SAMPLE, SND_EXPLOSION_01, SL_2S, PRI_GAME_QUICK2); // XXX
 	score (SC_1M);
 }
 
 CALLSET_ENTRY (combo, rl_rl_combo_shot)
 {
 	// TODO sounds, deff
-	deff_start(DEFF_COMBO_NAME); // XXX
-	sound_start (ST_SAMPLE, SND_EXPLOSION_01, SL_2S, PRI_GAME_QUICK2); // XXX
 	score (SC_1M);
 }
 
 CALLSET_ENTRY (combo, rr_ll_combo_shot, ll_rr_combo_shot)
 {
 	// TODO sounds, deff
-	deff_start(DEFF_COMBO_NAME); // XXX
-	sound_start (ST_SAMPLE, SND_EXPLOSION_01, SL_2S, PRI_GAME_QUICK2); // XXX
 	score (SC_50M);
 }
 
 CALLSET_ENTRY (combo, rl_il_combo_shot)
 {
 	// TODO sounds, deff
-	deff_start(DEFF_COMBO_NAME); // XXX
-	sound_start (ST_SAMPLE, SND_EXPLOSION_01, SL_2S, PRI_GAME_QUICK2); // XXX
 	score (SC_5M); // XXX
 }
 
 CALLSET_ENTRY (combo, rl_skidpad_combo_shot)
 {
 	// TODO sounds, deff
-	deff_start(DEFF_COMBO_NAME); // XXX
-	sound_start (ST_SAMPLE, SND_EXPLOSION_01, SL_2S, PRI_GAME_QUICK2); // XXX
 	score (SC_5M);
 }
 
 CALLSET_ENTRY (combo, route66_ramp_to_zr1_ramp_combo_shot)
 {
 	// TODO sounds, deff
-	deff_start(DEFF_COMBO_NAME); // XXX
-	sound_start (ST_SAMPLE, SND_EXPLOSION_01, SL_2S, PRI_GAME_QUICK2); // XXX
 	score (SC_5M);
 }
 
 CALLSET_ENTRY (combo, zr1_ramp_to_route66_ramp_combo_shot)
 {
 	// TODO sounds, deff
-	deff_start(DEFF_COMBO_NAME); // XXX
-	sound_start (ST_SAMPLE, SND_EXPLOSION_01, SL_2S, PRI_GAME_QUICK2); // XXX
 	score (SC_5M);
 }
 
 CALLSET_ENTRY (combo, zr1_ramp_to_skidpad_ramp_combo_shot)
 {
 	// TODO sounds, deff
-	deff_start(DEFF_COMBO_NAME); // XXX
-	sound_start (ST_SAMPLE, SND_EXPLOSION_01, SL_2S, PRI_GAME_QUICK2); // XXX
 	score (SC_5M);
 }
 
 CALLSET_ENTRY (combo, route66_ramp_to_zr1_ramp_to_skidpad_ramp_combo_shot)
 {
 	// TODO sounds, deff
-	deff_start(DEFF_COMBO_NAME); // XXX
-	sound_start (ST_SAMPLE, SND_EXPLOSION_01, SL_2S, PRI_GAME_QUICK2); // XXX
 	score (SC_10M);
 }
 
 CALLSET_ENTRY (combo, inner_loop_to_inner_loop_combo_shot)
 {
 	// TODO sounds, deff
-	deff_start(DEFF_COMBO_NAME); // XXX
-	sound_start (ST_SAMPLE, SND_EXPLOSION_01, SL_2S, PRI_GAME_QUICK2); // XXX
 	score (SC_5M);
 }
 
 CALLSET_ENTRY (combo, inner_loop_to_skidpad_ramp_combo_shot)
 {
 	// TODO sounds, deff
-	deff_start(DEFF_COMBO_NAME); // XXX
-	sound_start (ST_SAMPLE, SND_EXPLOSION_01, SL_2S, PRI_GAME_QUICK2); // XXX
 	score (SC_10M); // XXX
 }
 
 CALLSET_ENTRY (combo, zr1_ramp_to_inner_loop_combo_shot)
 {
 	// TODO sounds, deff
-	deff_start(DEFF_COMBO_NAME); // XXX
-	sound_start (ST_SAMPLE, SND_EXPLOSION_01, SL_2S, PRI_GAME_QUICK2); // XXX
 	score (SC_5M); // XXX
 }
 
 CALLSET_ENTRY (combo, skidpad_ramp_to_zr1_ramp_combo_shot)
 {
 	// TODO sounds, deff
-	deff_start(DEFF_COMBO_NAME); // XXX
-	sound_start (ST_SAMPLE, SND_EXPLOSION_01, SL_2S, PRI_GAME_QUICK2); // XXX
 	score (SC_5M);
 }
 
 CALLSET_ENTRY (combo, left_orbit_to_zr1_ramp_combo_shot)
 {
 	// TODO sounds, deff
-	deff_start(DEFF_COMBO_NAME); // XXX
-	sound_start (ST_SAMPLE, SND_EXPLOSION_01, SL_2S, PRI_GAME_QUICK2); // XXX
 	score (SC_5M);
 }
 
 CALLSET_ENTRY (combo, right_orbit_to_route66_ramp_combo_shot)
 {
 	// TODO sounds, deff
-	deff_start(DEFF_COMBO_NAME); // XXX
-	sound_start (ST_SAMPLE, SND_EXPLOSION_01, SL_2S, PRI_GAME_QUICK2); // XXX
 	score (SC_5M);
 }
 
 CALLSET_ENTRY (combo, skidpad_ramp_to_left_orbit_combo_shot)
 {
 	// TODO sounds, deff
-	deff_start(DEFF_COMBO_NAME); // XXX
-	sound_start (ST_SAMPLE, SND_EXPLOSION_01, SL_2S, PRI_GAME_QUICK2); // XXX
 	score (SC_5M);
 }
 
 CALLSET_ENTRY (combo, route66_ramp_to_left_orbit_combo_shot)
 {
 	// TODO sounds, deff
-	deff_start(DEFF_COMBO_NAME); // XXX
-	sound_start (ST_SAMPLE, SND_EXPLOSION_01, SL_2S, PRI_GAME_QUICK2); // XXX
 	score (SC_5M);
 }
-
-
-
-#else
-//FIXME genmachine expects these to be defined because it doesn't know about #ifdef CONFIG_COMBOS
-//__far__(C_STRING(MACHINE_PAGE)) void machine_combos_init_complete(void) {}
-__far__(C_STRING(MACHINE_PAGE)) void combo_start_ball(void) {}
-__far__(C_STRING(MACHINE_PAGE)) void combo_any_combo_shot(void) {}
-__far__(C_STRING(MACHINE_PAGE)) void combo_idle_every_second(void) {}
-__far__(C_STRING(MACHINE_PAGE)) void combo_name_deff(void) {}
-__far__(C_STRING(MACHINE_PAGE)) void combo_lamp_update(void) {}
-__far__(C_STRING(MACHINE_PAGE)) void combo_rl_lr_combo_shot(void) {}
-__far__(C_STRING(MACHINE_PAGE)) void combo_lr_rl_combo_shot(void) {}
-__far__(C_STRING(MACHINE_PAGE)) void combo_lr_lr_combo_shot(void) {}
-__far__(C_STRING(MACHINE_PAGE)) void combo_rl_rl_combo_shot(void) {}
-__far__(C_STRING(MACHINE_PAGE)) void combo_rr_ll_combo_shot(void) {}
-__far__(C_STRING(MACHINE_PAGE)) void combo_ll_rr_combo_shot(void) {}
-__far__(C_STRING(MACHINE_PAGE)) void combo_rl_il_combo_shot(void) {}
-__far__(C_STRING(MACHINE_PAGE)) void combo_rl_skidpad_combo_shot(void) {}
-__far__(C_STRING(MACHINE_PAGE)) void combo_route66_ramp_to_zr1_ramp_combo_shot(void) {}
-__far__(C_STRING(MACHINE_PAGE)) void combo_zr1_ramp_to_route66_ramp_combo_shot(void) {}
-__far__(C_STRING(MACHINE_PAGE)) void combo_zr1_ramp_to_skidpad_ramp_combo_shot(void) {}
-__far__(C_STRING(MACHINE_PAGE)) void combo_route66_ramp_to_zr1_ramp_to_skidpad_ramp_combo_shot(void) {}
-__far__(C_STRING(MACHINE_PAGE)) void combo_inner_loop_to_inner_loop_combo_shot(void) {}
-__far__(C_STRING(MACHINE_PAGE)) void combo_inner_loop_to_skidpad_ramp_combo_shot(void) {}
-__far__(C_STRING(MACHINE_PAGE)) void combo_zr1_ramp_to_inner_loop_combo_shot(void) {}
-__far__(C_STRING(MACHINE_PAGE)) void combo_skidpad_ramp_to_zr1_ramp_combo_shot(void) {}
-__far__(C_STRING(MACHINE_PAGE)) void combo_left_orbit_to_zr1_ramp_combo_shot(void) {}
-__far__(C_STRING(MACHINE_PAGE)) void combo_right_orbit_to_route66_ramp_combo_shot(void) {}
-__far__(C_STRING(MACHINE_PAGE)) void combo_skidpad_ramp_to_left_orbit_combo_shot(void) {}
-__far__(C_STRING(MACHINE_PAGE)) void combo_route66_ramp_to_left_orbit_combo_shot(void) {}
-
-
-#endif

@@ -271,7 +271,7 @@ static void zr1_mb_award_lock ( void )
 	}
 }
 
-CALLSET_ENTRY (zr1_multiball, left_orbit_shot, left_orbit_to_rollover_shot)
+CALLSET_ENTRY (zr1_multiball, left_orbit_combo_shot)
 {
 	if (flag_test (FLAG_ZR1_MULTIBALL_RUNNING)) {
 		return;
@@ -325,7 +325,7 @@ CALLSET_ENTRY (zr1_multiball, dev_zr1_popper_enter) {
 	zr1_mb_award_lock ();
 }
 
-CALLSET_ENTRY (zr1_multiball, skid_pad_shot)
+CALLSET_ENTRY (zr1_multiball, sw_skid_pad_exit)
 {
 	if (!flag_test (FLAG_ZR1_MULTIBALL_RUNNING)) {
 		return;
@@ -333,7 +333,7 @@ CALLSET_ENTRY (zr1_multiball, skid_pad_shot)
 	zr1_mb_award_torque_jackpot ();
 }
 
-CALLSET_ENTRY (zr1_multiball, inner_loop_shot)
+CALLSET_ENTRY (zr1_multiball, sw_inner_loop_entry)
 {
 	if (!flag_test (FLAG_ZR1_MULTIBALL_RUNNING)) {
 		return;
