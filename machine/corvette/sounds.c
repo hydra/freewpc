@@ -51,3 +51,9 @@ CALLSET_ENTRY (sounds, inner_loop_combo_shot)
 {
 	sound_start (ST_SAMPLE, SND_ENGINE_REV_05, SL_2S, PRI_GAME_QUICK5);
 }
+
+CALLSET_ENTRY (sounds, extra_ball_award) {
+	sound_start (ST_MUSIC, SND_DITTY_06, SL_4S, PRI_EB);
+	task_sleep_sec(2);
+	sound_start (ST_SPEECH, SND_EXTRA_BALL_AWARD, SL_2S, PRI_EB);
+}

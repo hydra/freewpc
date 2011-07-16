@@ -53,7 +53,3 @@ CALLSET_ENTRY (simple, end_ball, tilt) {
 	global_flag_off (GLOBAL_FLAG_LOOP_GATE_OPENED);
 	global_flag_off (GLOBAL_FLAG_DIVERTER_OPENED);
 }
-
-CALLSET_ENTRY (simple, extra_ball_award) {
-	music_effect_start (SND_DITTY_06, SL_4S);
-}
