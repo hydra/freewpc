@@ -31,6 +31,7 @@ enum possible_pitstop_award {
 	AWARD_SCORE_50M,
 	AWARD_BONUS_MULTIPLIER,
 	AWARD_LITE_LOCK,
+	AWARD_LITE_KICKBACK,
 	AWARD_DRAGRACE,
 	AWARD_EXTRA_BALL,
 	// TODO add more things!
@@ -47,6 +48,7 @@ char *pitstop_award_options_titles[PITSTOP_AWARD_COUNT] = {
 	"50 MILLION",
 	"BONUS MULTIPLIER",
 	"LITE LOCK",
+	"LITE KICKBACK",
 	"DRAG RACE",
 	"EXTRA BALL"
 };
@@ -104,6 +106,10 @@ void determine_allowable_pitstop_awards(void) {
 
 		if (!zr1_mb_can_award_lite_lock()) {
 			allowable_pitstop_awards[AWARD_LITE_LOCK] = FALSE;
+		}
+
+		if (kickback_enabled()) {
+			allowable_pitstop_awards[AWARD_LITE_KICKBACK] = FALSE;
 		}
 
 		// TODO if we've still got more than PITSTOP_AWARD_ITEMS allowable then disable the last awarded thing
@@ -249,6 +255,10 @@ void pitstop_award_task(void) {
 		break;
 		case AWARD_DRAGRACE:
 			dragrace_enable();
+		break;
+		case AWARD_LITE_KICKBACK:
+			kickback_enable ();
+		break;
 		default:
 		// TODO handle remaining awards
 		break;
