@@ -21,10 +21,10 @@
 #include <freewpc.h>
 #include "kickback_driver.h"
 
-void kickback_relit_deff (void)
+void kickback_enabled_deff (void)
 {
 	dmd_alloc_low_clean ();
-	font_render_string_center (&font_fixed6, 64, 16, "KICKBACK IS LIT");
+	font_render_string_center (&font_fixed6, 64, 16, "KICKBACK ON");
 	dmd_show_low ();
 	task_sleep (TIME_1500MS);
 	deff_exit ();
@@ -32,6 +32,8 @@ void kickback_relit_deff (void)
 
 void kickback_enable (void)
 {
+	lamp_flash_off(LM_LITE_KICKBACK);
+	lamp_flash_off(LM_RIGHT_STANDUP_ARROW);
 	lamp_on(LM_KICKBACK_ARROW);
 	kickback_driver_enable();
 }
@@ -57,6 +59,12 @@ void kickback_finish (void)
 	task_exit ();
 }
 
+void award_kickback(void)
+{
+	deff_start (DEFF_KICKBACK_ENABLED);
+	kickback_enable ();
+
+}
 
 CALLSET_ENTRY (kickback, sw_kickback)
 {
@@ -74,10 +82,8 @@ CALLSET_ENTRY (kickback, sw_kickback)
 CALLSET_ENTRY (kickback, sw_right_standup)
 {
 	if (lamp_flash_test (LM_LITE_KICKBACK)) {
-		lamp_flash_off(LM_LITE_KICKBACK);
-		lamp_flash_off(LM_RIGHT_STANDUP_ARROW);
 		sound_start (ST_SAMPLE, SND_BLASTER, SL_1S, PRI_GAME_QUICK3);
-		kickback_enable ();
+		award_kickback();
 	} else {
 		sound_start (ST_SAMPLE, SND_BOING, SL_1S, PRI_GAME_QUICK3);
 	}

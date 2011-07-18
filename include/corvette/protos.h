@@ -53,7 +53,7 @@ __machine__ bool zr1_mb_can_award_lite_lock(void);
 __machine__ void zr1_mb_award_lite_lock(void);
 
 /* kickback.c */
-__machine__ void kickback_enable (void);
+__machine__ void award_kickback (void);
 __machine__ bool kickback_enabled (void);
 
 /* racetrack.c */

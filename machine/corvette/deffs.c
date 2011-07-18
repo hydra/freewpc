@@ -56,12 +56,6 @@ void extra_ball_deff (void)
 	flash_and_exit_deff (20, TIME_100MS);
 }
 
-void special_deff (void)
-{
-	sprintf ("SPECIAL");
-	flash_and_exit_deff (20, TIME_100MS);
-}
-
 void jackpot_deff (void)
 {
 	U8 i;
