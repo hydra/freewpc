@@ -174,6 +174,8 @@ void zr1_mb_start_task( void )
 
 	zr1_center();
 
+	award_kickback();
+
 	flag_on (FLAG_ZR1_MULTIBALL_RUNNING);
 	zr1_mb_light_torque_jackpot ();
 	zr1_mb_light_horsepower_jackpot ();

@@ -257,7 +257,7 @@ void pitstop_award_task(void) {
 			dragrace_enable();
 		break;
 		case AWARD_LITE_KICKBACK:
-			kickback_enable ();
+			award_kickback ();
 		break;
 		default:
 		// TODO handle remaining awards

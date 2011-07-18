@@ -315,7 +315,6 @@ void dragrace_disable( void ) {
 
 void dragrace_enable( void ) {
 	global_flag_on(GLOBAL_FLAG_DRAGRACE_ENABLED);
-	global_flag_on(GLOBAL_FLAG_DIVERTER_OPENED);
 }
 
 CALLSET_ENTRY(dragrace, dev_route_66_popper_enter) {
@@ -328,13 +327,30 @@ CALLSET_ENTRY(dragrace, dev_route_66_popper_enter) {
 	dragrace_start(GID_DRAGRACE);
 }
 
+CALLSET_ENTRY (dragrace, device_update) {
+	if (!global_flag_test(GLOBAL_FLAG_DRAGRACE_ENABLED)) {
+		return;
+	}
+
+	if (live_balls > 1) {
+		global_flag_off(GLOBAL_FLAG_DIVERTER_OPENED);
+	} else {
+		global_flag_on(GLOBAL_FLAG_DIVERTER_OPENED);
+	}
+}
+
 CALLSET_ENTRY (dragrace, lamp_update) {
 	if (!global_flag_test(GLOBAL_FLAG_DRAGRACE_ENABLED)) {
 		return;
 	}
 
-	lamp_tristate_flash(LM_RACE_TODAY);
-	lamp_tristate_flash(LM_ROUTE_66_ARROW);
+	if (live_balls > 1) {
+		lamp_tristate_off(LM_RACE_TODAY);
+		lamp_tristate_off(LM_ROUTE_66_ARROW);
+	} else {
+		lamp_tristate_flash(LM_RACE_TODAY);
+		lamp_tristate_flash(LM_ROUTE_66_ARROW);
+	}
 }
 
 CALLSET_ENTRY(dragrace, vmode_dragrace_won) {
