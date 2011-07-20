@@ -32,7 +32,7 @@ enum possible_pitstop_award {
 	AWARD_BONUS_MULTIPLIER,
 	AWARD_LITE_LOCK,
 	AWARD_LITE_KICKBACK,
-	AWARD_DRAGRACE,
+	AWARD_LITE_DRAGRACE,
 	AWARD_EXTRA_BALL,
 	// TODO add more things!
 	PITSTOP_AWARD_MAX = AWARD_EXTRA_BALL,
@@ -49,7 +49,7 @@ char *pitstop_award_options_titles[PITSTOP_AWARD_COUNT] = {
 	"BONUS MULTIPLIER",
 	"LITE LOCK",
 	"LITE KICKBACK",
-	"DRAG RACE",
+	"LITE DRAG RACE",
 	"EXTRA BALL"
 };
 
@@ -97,7 +97,7 @@ void determine_allowable_pitstop_awards(void) {
 		// TODO if lock is already lit, disallow it.
 
 		if (global_flag_test(GLOBAL_FLAG_DRAGRACE_ENABLED)) {
-			allowable_pitstop_awards[AWARD_DRAGRACE] = FALSE;
+			allowable_pitstop_awards[AWARD_LITE_DRAGRACE] = FALSE;
 		}
 
 		if (!can_award_extra_ball()) {
@@ -253,8 +253,8 @@ void pitstop_award_task(void) {
 		case AWARD_LITE_LOCK:
 			zr1_mb_award_lite_lock();
 		break;
-		case AWARD_DRAGRACE:
-			dragrace_enable();
+		case AWARD_LITE_DRAGRACE:
+			award_lite_dragrace();
 		break;
 		case AWARD_LITE_KICKBACK:
 			award_kickback ();

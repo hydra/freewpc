@@ -21,24 +21,9 @@
 // TODO remove excess debug logging when things have settled down
 
 #include <freewpc.h>
+#include <corvette/cars.h>
 
 __local__ U8 cars_collected;
-
-enum car_list {
-	CARS_MIN = 0,
-	CAR_1953_BLUEFLAME = CARS_MIN,
-	CAR_1963_GRAND_SPORT,
-	CAR_1963_FUELIE,
-	CAR_1967_STINGRAY_L88,
-	CAR_1971_STINGRAY_LT1,
-	CAR_1978_STINGRAY_L82,
-	CAR_1982_L83,
-	CAR_1989_L98,
-	CAR_1993_ZR1,
-	CARS_MAX = CAR_1993_ZR1,
-};
-
-#define CAR_COUNT (CARS_MAX + 1) // 9 pf lights, 9 cars to collect
 
 U8 car_lamp_map[CAR_COUNT] = {
 	LM_CORVETTE_1,
@@ -62,6 +47,18 @@ sound_code_t car_award_sound_map[CAR_COUNT] = {
 	SPCH_BEST_TAKE_CARE_OF_L83,
 	SPCH_BEST_TAKE_CARE_OF_CHALLENGE_CAR,
 	SPCH_BEST_TAKE_CARE_OF_ZR1
+};
+
+char *car_names[CAR_COUNT] = {
+	"BLUE FLAME",
+	"GRAN SPORT",
+	"FUELIE",
+	"67 STINGRAY",
+	"LT1",
+	"PACE CAR",
+	"L83",
+	"CHALLENGE CAR",
+	"ZR1"
 };
 
 void goal_car_awarded_deff(void) {
