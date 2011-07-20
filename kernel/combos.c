@@ -422,6 +422,11 @@ CALLSET_ENTRY(combos, init, start_ball) {
 CALLSET_ENTRY(combos, idle_every_second)
 {
 #ifdef CONFIG_COMBOS
+
+	if (!in_live_game) {
+		return;
+	}
+
 	U8 combo_id = 0;
 	const combo_def_t *combo;
 	U8 switch_index;
