@@ -164,10 +164,10 @@ define COMBO_COUNT 26
 
 [drives]
 H1: Trough Release, ballserve, duty(SOL_DUTY_100), time(TIME_66MS)
-H2: ZR1 Low Rev Gate, duty(SOL_DUTY_50), time(TIME_66MS)
+H2: ZR1 Low Rev Gate, duty(SOL_DUTY_25), time(TIME_100MS)
 H3: Kickback, duty(SOL_DUTY_75), time(TIME_66MS)
-H4: Pit Stop Popper, duty(SOL_DUTY_75), time(TIME_66MS)
-H5: ZR1 Up Rev Gate, duty(SOL_DUTY_50), time(TIME_66MS)
+H4: Pit Stop Popper, duty(SOL_DUTY_75), time(TIME_33MS)
+H5: ZR1 Up Rev Gate, duty(SOL_DUTY_75), time(TIME_33MS)
 H6: Not Used 1, nosearch
 H7: Knocker, knocker, duty(SOL_DUTY_75), time(TIME_50MS)
 H8: Route 66 Kickout, duty(SOL_DUTY_75), time(TIME_66MS)
@@ -179,7 +179,7 @@ L4: Lower Jet, duty(SOL_DUTY_75), time(TIME_33MS)
 L5: Upper Jet, duty(SOL_DUTY_75), time(TIME_33MS) # actually the RIGHT jet
 L6: Not Used 2, nosearch
 L7: ZR1 Lockup, duty(SOL_DUTY_100), time(TIME_100MS)
-L8: Loop Gate, duty(SOL_DUTY_50), time(TIME_66MS)
+L8: Loop Gate, duty(SOL_DUTY_75), time(TIME_33MS)
 
 # G = J126 on Power Driver Board
 G1: Race Direction, nosearch
@@ -367,7 +367,7 @@ Spinner: driver(spinner), sw_event=sw_spinner, sw_number=SW_SPINNER
 
 Loop Gate: driver(duty),
 	sol=SOL_LOOP_GATE,
-	ontime=TIME_300MS, duty_ontime=TIME_33MS, duty_offtime=TIME_16MS, timeout=60
+	ontime=TIME_300MS, duty_ontime=TIME_16MS, duty_offtime=TIME_66MS, timeout=60
 
 Diverter: driver(divhold),
 	power_sol=SOL_RAMP_DIVERTER,
@@ -379,11 +379,11 @@ Diverter: driver(divhold),
 
 ZR1 Low Rev Gate: driver(duty),
 	sol=SOL_ZR1_LOW_REV_GATE,
-	ontime=TIME_300MS, duty_ontime=TIME_33MS, duty_offtime=TIME_16MS, timeout=60
+	ontime=TIME_300MS, duty_ontime=TIME_16MS, duty_offtime=TIME_66MS, timeout=60
 
 ZR1 Up Rev Gate: driver(duty),
 	sol=SOL_ZR1_UP_REV_GATE,
-	ontime=TIME_300MS, duty_ontime=TIME_33MS, duty_offtime=TIME_16MS, timeout=60
+	ontime=TIME_300MS, duty_ontime=TIME_16MS, duty_offtime=TIME_66MS, timeout=60
 
 Kickback Driver: driver(spsol),
 	sw=SW_KICKBACK, sol=SOL_KICKBACK,
