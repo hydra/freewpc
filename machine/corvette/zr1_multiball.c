@@ -354,6 +354,10 @@ CALLSET_ENTRY (zr1_multiball, lamp_update)
 
 CALLSET_ENTRY (zr1_multiball, device_update)
 {
+// XXX remove this when gate testing is completed
+#ifdef CONFIG_DEVELOPMENT_TESTS_ENABLED
+	return;
+#endif
 	// TODO other modes will want to change (open) the up rev gate, perform suitable mode check here (e.g. if mode set then bail and let mode control it instead)
 
 	// close the ZR1 upper 'rev' gate when zr1 multiball lock is lit
