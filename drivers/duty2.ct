@@ -39,10 +39,19 @@
    define and it cannot be zero. */
 @@parameter ontime
 
-/* A mask that specifies how to duty cycle the coil during the remainder
-   of the on-time.  Use one of the DUTY_MASK_xxx defines for this. */
-@@parameter duty_mask
+/* A value that specifies how to duty cycle the coil during the remainder
+   of the on-time.  See the 'mode' parameter below. */
+@@parameter duty
 
+/* A mode that specifies how the duty parameter should be used
+   0 = default, Use one of the DUTY_MASK_MODE0_* defines
+   1 = alternate, Use one of the DUTY_MASK_MODE1_* defines
+   2 = divide the timer by the duty value, if remainder = 0 solenoid goes on.
+   3 = divide the timer by the duty value, if remainder > 0 solenoid goes on.
+   
+   Modes 2 and 3 are less efficient, use mode 0 and 1 whenever possible.
+ */
+@@parameter mode
 
 @@
 @@file @self.sched
@@ -66,13 +75,52 @@ extern __fastram__ U16 @self_timer;
 #define @self_START_TIME        (@timeout * TIME_SCALE)
 #define @self_DUTY_START_TIME   ((@timeout - @ontime) * TIME_SCALE)
 
-#define DUTY_MASK_50   0x1
-#define DUTY_MASK_25   0x3
-#define DUTY_MASK_12   0x7
-#define DUTY_MASK_6    0xF
+#define @SELF_MODE @mode // 0 == AND, 1 == OR
+
+#if (@SELF_MODE == 1)
+//
+// valid masks for mode 1 ONLY
+//
+#define DUTY_MASK_MODE1_75   0x3  // on for 75% of the time, pattern: off on  on  on
+#define DUTY_MASK_MODE1_50_A 0x1  // on for 50% of the time, pattern: on  off on  off
+#define DUTY_MASK_MODE1_50_B 0x2  // on for 50% of the time, pattern: on  on  off off
+
+#undef DUTY_MASK_MODE0_50
+#undef DUTY_MASK_MODE0_25
+#undef DUTY_MASK_MODE0_12
+#undef DUTY_MASK_MODE0_6
+
+#endif
+
+#if (@SELF_MODE == 0)
+//
+// valid masks for mode 0 ONLY
+//
+#define DUTY_MASK_MODE0_50   0x1
+#define DUTY_MASK_MODE0_25   0x3
+#define DUTY_MASK_MODE0_12   0x7
+#define DUTY_MASK_MODE0_6    0xF
+
+#undef DUTY_MASK_MODE1_75
+#undef DUTY_MASK_MODE1_50_A
+#undef DUTY_MASK_MODE1_50_B
+
+#endif
+
+#if (@SELF_MODE > 1)
+// masks are not using in mode 2 and 3, the duty parameter should be an integer
+#undef DUTY_MASK_75
+#undef DUTY_MASK_50
+#undef DUTY_MASK_25
+#undef DUTY_MASK_12
+#undef DUTY_MASK_6
+#endif
+
+
 
 void @self_start (void);
 void @self_stop (void);
+void @self_restart (void);
 
 
 /**
@@ -89,7 +137,18 @@ extern inline void @self_service (void)
 		}
 		else if (@self_timer <= @self_DUTY_START_TIME)
 		{
-			if (unlikely (((U8)@self_timer & @duty_mask) == 0))
+#if (@SELF_MODE == 0)		
+			if (unlikely (((U8)@self_timer | @duty) > 0))
+#endif
+#if (@SELF_MODE == 1)
+			if (unlikely (((U8)@self_timer & @duty) == 0))
+#endif			
+#if (@SELF_MODE == 2)
+			if (unlikely ((U8)@self_timer % @duty == 0))
+#endif			
+#if (@SELF_MODE == 3)
+			if (unlikely ((U8)@self_timer % @duty > 0))
+#endif			
 			{
 				sol_enable (@sol);
 			}
@@ -132,6 +191,16 @@ void @self_stop (void)
 	disable_interrupts ();
 	@self_timer = 0;
 	sol_disable (@sol);
+	enable_interrupts ();
+}
+
+/**
+ * The user API to restart a duty-cycling solenoid without the power pulse
+ */
+void @self_restart (void)
+{
+	disable_interrupts ();
+	@self_timer = @self_DUTY_START_TIME;
 	enable_interrupts ();
 }
 
