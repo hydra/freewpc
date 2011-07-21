@@ -196,13 +196,13 @@ void pitstop_award_deff(void) {
 		task_sleep_sec(1);
 
 		if (pitstop_award_items_remaining >= 3) {
-			sample_start (SND_GUITAR_03, SL_100MS);
+			sample_start (SND_TRAFFIC_ZOOM_02, SL_4S);
 			eliminate_pitstop_award();
 		} else if (pitstop_award_items_remaining == 2) {
-			sample_start (SND_GUITAR_02, SL_100MS);
+			sample_start (SND_TRAFFIC_ZOOM_05, SL_4S);
 			eliminate_pitstop_award();
 		} else if (pitstop_award_items_remaining == 1) {
-			sample_start (SND_GUITAR_01, SL_100MS);
+			sample_start (SND_TRAFFIC_ZOOM_03, SL_4S);
 		}
 		dmd_invert_page (dmd_low_buffer);
 		dmd_show_low();
