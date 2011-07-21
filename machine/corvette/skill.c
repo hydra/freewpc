@@ -282,18 +282,34 @@ char **current_skill_menu_text;
 #define SKILL_SHOW_SHOT_INFO (4 * 5)
 
 void skill_menu_draw(void) {
-	dbprintf ("skill_menu: drawing menu, selection:%d\n", skill_menu_selection);
+	//dbprintf ("skill_menu: drawing menu, selection:%d\n", skill_menu_selection);
 	dmd_alloc_low_clean ();
+
+	bool draw_flashing_items1 = skill_menu_draw_count % 2;        // ON-OFF-ON-OFF
+	bool draw_flashing_items2 = skill_menu_draw_count % 3 > 0;    // ON--ON--OFF--
+	bool draw_flashing_items3 = skill_menu_draw_count % 4 >= 2; // ON-----OFF---
 
 	// every 5 seconds toggle left hand side of the menu screen between instructions for the menu and instructions for the shot
 	skill_menu_draw_count++;
-	// 2 = alternate between 2 things
-	if (skill_menu_draw_count % (SKILL_SHOW_SHOT_INFO * 2) > SKILL_SHOW_SHOT_INFO) {
+	// 3 = alternate between 3 things
+	U8 draw_count_mod = skill_menu_draw_count % (SKILL_SHOW_SHOT_INFO * 3);
+	if (draw_count_mod > SKILL_SHOW_SHOT_INFO * 2) {
 		current_skill_menu_text = (char **)&skill_menu_text[skill_menu_selection + 1];
-		font_render_string_center (&font_var5, 64, 29, "LAUNCH BALL TO START");
+		if (draw_flashing_items3) {
+			font_render_string_center (&font_var5, 64, 29, "LAUNCH BALL TO START");
+		}
+	} else if (draw_count_mod > SKILL_SHOW_SHOT_INFO) {
+		current_skill_menu_text = (char **)&skill_menu_text[skill_menu_selection + 1];
+		font_render_string_center (&font_var5, 64, 29, "USE FLIPPERS TO SELECT");
 	} else {
 		current_skill_menu_text = skill_menu_text[0];
-		font_render_string_center (&font_var5, 64, 29, "USE FLIPPERS TO SELECT");
+		if (draw_flashing_items1) {
+			sprintf("PLAYER %d UP", player_up);
+			font_render_string_left (&font_var5, 0, 27, sprintf_buffer);
+		}
+		sprintf_score (scores[player_up - 1]);
+		font_render_string_right (&font_var5, 127, 27, sprintf_buffer);
+
 	}
 
 	dmd_draw_horiz_line ((U16 *)dmd_low_buffer, 25);
@@ -311,19 +327,21 @@ void skill_menu_draw(void) {
 	font_render_string_center (&font_var5, 96, 4 + 5 + 5 + 3 + 3, "DRAGRACE");
 
 	// TODO flash box around selected item
-	switch (skill_menu_selection) {
-		case SKILL_ROLLOVER:
-			font_render_string_center (&font_var5, 70, 4, ">");
-			font_render_string_center (&font_var5, 122, 4, "<");
-		break;
-		case SKILL_SKIDPAD:
-			font_render_string_center (&font_var5, 70, 12, ">");
-			font_render_string_center (&font_var5, 122, 12, "<");
-		break;
-		case SKILL_DRAGRACE:
-			font_render_string_center (&font_var5, 70, 4 + 5 + 5 + 3 + 3, ">");
-			font_render_string_center (&font_var5, 122, 4 + 5 + 5 + 3 + 3, "<");
-		break;
+	if (draw_flashing_items2) {
+		switch (skill_menu_selection) {
+			case SKILL_ROLLOVER:
+				font_render_string_center (&font_var5, 70, 4, ">");
+				font_render_string_center (&font_var5, 122, 4, "<");
+			break;
+			case SKILL_SKIDPAD:
+				font_render_string_center (&font_var5, 70, 12, ">");
+				font_render_string_center (&font_var5, 122, 12, "<");
+			break;
+			case SKILL_DRAGRACE:
+				font_render_string_center (&font_var5, 70, 4 + 5 + 5 + 3 + 3, ">");
+				font_render_string_center (&font_var5, 122, 4 + 5 + 5 + 3 + 3, "<");
+			break;
+		}
 	}
 
 
@@ -332,12 +350,12 @@ void skill_menu_draw(void) {
 
 void skill_menu_deff (void)
 {
-	dbprintf ("skill_menu_deff, enabled: %d\n", global_flag_test(GLOBAL_FLAG_SKILLSHOT_MENU_ENABLED));
+	//dbprintf ("skill_menu_deff, enabled: %d\n", global_flag_test(GLOBAL_FLAG_SKILLSHOT_MENU_ENABLED));
 	do {
 		skill_menu_draw();
 		task_sleep(TIME_250MS);
 	} while (global_flag_test(GLOBAL_FLAG_SKILLSHOT_MENU_ENABLED));
-	dbprintf ("skill_menu_deff: exit, selection:%d\n", skill_menu_selection);
+	//dbprintf ("skill_menu_deff: exit, selection:%d\n", skill_menu_selection);
 	deff_exit ();
 }
 
@@ -345,13 +363,13 @@ void skill_menu_start(void) {
 	skill_menu_draw_count = 0;
 	global_flag_on(GLOBAL_FLAG_SKILLSHOT_MENU_ENABLED);
 	skill_menu_selection = SKILL_ROLLOVER;
-	dbprintf ("skill_menu_start\n");
+	//dbprintf ("skill_menu_start\n");
 	deff_start (DEFF_SKILL_MENU);
 }
 
 void skill_menu_select(void) {
 	global_flag_off(GLOBAL_FLAG_SKILLSHOT_MENU_ENABLED);
-	dbprintf ("skill_menu_select: selection:%d\n", skill_menu_selection);
+	//dbprintf ("skill_menu_select: selection:%d\n", skill_menu_selection);
 	switch(skill_menu_selection) {
 		case SKILL_ROLLOVER:
 			skillshot_rollover_enable();
@@ -395,7 +413,7 @@ CALLSET_ENTRY (skill_menu, sw_left_button) {
 		skill_menu_selection--;
 	}
 	skill_menu_draw_count = SKILL_SHOW_SHOT_INFO;
-	dbprintf ("skill_menu: left, selection: %d\n", skill_menu_selection);
+	//dbprintf ("skill_menu: left, selection: %d\n", skill_menu_selection);
 }
 
 CALLSET_ENTRY (skill_menu, sw_right_button) {
@@ -408,7 +426,7 @@ CALLSET_ENTRY (skill_menu, sw_right_button) {
 		skill_menu_selection++;
 	}
 	skill_menu_draw_count = SKILL_SHOW_SHOT_INFO;
-	dbprintf ("skill_menu: right, selection: %d\n", skill_menu_selection);
+	//dbprintf ("skill_menu: right, selection: %d\n", skill_menu_selection);
 }
 
 
@@ -418,13 +436,13 @@ CALLSET_ENTRY (skill_menu, sw_shooter) {
 	}
 
 	if (!switch_poll_logical (SW_SHOOTER)) {
-		dbprintf ("skill_menu: sw_shooter\n");
+		//dbprintf ("skill_menu: sw_shooter\n");
 		skill_menu_select();
 	}
 }
 
 CALLSET_ENTRY (skill_menu, any_pf_switch) {
-	dbprintf ("skill_menu: any_pf_switch\n");
+	//dbprintf ("skill_menu: any_pf_switch\n");
 	if (!global_flag_test(GLOBAL_FLAG_SKILLSHOT_MENU_ENABLED)) {
 		return;
 	}
@@ -440,11 +458,11 @@ CALLSET_ENTRY (skill_menu, any_pf_switch) {
 }
 
 CALLSET_ENTRY (skill, start_ball, shoot_again) {
-	dbprintf ("skill_menu: start_ball/shoot_again\n");
+	//dbprintf ("skill_menu: start_ball/shoot_again\n");
 	skill_menu_start();
 }
 
 CALLSET_ENTRY (skill, end_ball, stop_game) {
-	dbprintf ("skill_menu: end_ball/stop_game\n");
+	//dbprintf ("skill_menu: end_ball/stop_game\n");
 	skillshot_disable();
 }
