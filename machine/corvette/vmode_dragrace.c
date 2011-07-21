@@ -396,12 +396,3 @@ CALLSET_ENTRY(dragrace, vmode_dragrace_won) {
 CALLSET_ENTRY(dragrace, vmode_dragrace_lost) {
 }
 
-// XXX
-CALLSET_ENTRY(dragrace, sw_left_standup_1) {
-	award_lite_dragrace();
-}
-
-// XXX
-CALLSET_ENTRY(dragrace, sw_left_standup_2) {
-	award_car();
-}
