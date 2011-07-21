@@ -164,12 +164,18 @@ __fastram__ S8 @self_timer;
 
 /**
  * The user API to start a diverter.
+ *
+ * Does nothing if the diverter is aleady active
  */
 void @self_start (void) {
-	disable_interrupts ();
+	if (@self_timer != 0) {
+		return;
+	}
 	
+	disable_interrupts ();
+
 	/* Start the high power pulse */
-	@self_timer = @SELF_POWER_TICKS;	
+	@self_timer = @SELF_POWER_TICKS;
 	
 	enable_interrupts ();
 }
