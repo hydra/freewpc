@@ -163,7 +163,7 @@ define COMBO_COUNT 26
 
 [drives]
 H1: Trough Release, ballserve, duty(SOL_DUTY_100), time(TIME_66MS)
-H2: ZR1 Low Rev Gate, duty(SOL_DUTY_25), time(TIME_100MS)
+H2: ZR1 Low Rev Gate, duty(SOL_DUTY_50), time(TIME_100MS)
 H3: Kickback, duty(SOL_DUTY_75), time(TIME_66MS)
 H4: Pit Stop Popper, duty(SOL_DUTY_75), time(TIME_33MS)
 H5: ZR1 Up Rev Gate, duty(SOL_DUTY_75), time(TIME_33MS)
@@ -364,10 +364,6 @@ Lower Jet: driver(jet), sw=SW_LOWER_JET, sol=SOL_LOWER_JET
 
 Spinner: driver(spinner), sw_event=sw_spinner, sw_number=SW_SPINNER
 
-Loop Gate: driver(duty),
-	sol=SOL_LOOP_GATE,
-	ontime=TIME_300MS, duty_ontime=TIME_16MS, duty_offtime=TIME_66MS, timeout=60
-
 Diverter: driver(divhold),
 	power_sol=SOL_RAMP_DIVERTER,
 	hold_sol=SOL_RAMP_DIVERTER_HOLD,
@@ -376,13 +372,26 @@ Diverter: driver(divhold),
 	schedule_ms=32,
 	includetest(yes)
 
-ZR1 Low Rev Gate: driver(duty),
-	sol=SOL_ZR1_LOW_REV_GATE,
-	ontime=TIME_300MS, duty_ontime=TIME_16MS, duty_offtime=TIME_66MS, timeout=60
+Loop Gate: driver(duty2),
+	sol=SOL_LOOP_GATE, timeout=TIME_4S, ontime=TIME_16MS, duty=DUTY_MASK_MODE0_50, mode=0
 
-ZR1 Up Rev Gate: driver(duty),
-	sol=SOL_ZR1_UP_REV_GATE,
-	ontime=TIME_300MS, duty_ontime=TIME_16MS, duty_offtime=TIME_66MS, timeout=60
+# ZR1 Low Rev Gate solenoid is problematic and does NOT like to be left 'on' otherwise it gets hot
+# using too-low a duty cycle makes it flap about.
+#
+# tried using mode0, DUTY_MASK values of 25% or less but the solenoid just flaps wildly about.
+# tried using mode0, 50% but it buzzes and smells pretty quickly
+# tried using mode1, 75% and it doesn't buzz but it causes the solenoid to SMOKE!
+# tried using mode2, duty=10 (10%) but it flaps wildly.
+# tried using mode2, duty=8 (12.5%) but it flaps wildly.
+# tried using mode2, duty=7 (14.2%) but it flaps wildly.
+# tried using mode2, duty=6 (16.6%) but it flaps wildly but only some of the time.
+# tried using mode2, duty=5 (20%) but it flaps wildly but only some of the time and is ok apart from when the cpu is busy
+# tried using mode2, duty=4 (25%), donesn't buzz too badly and doesn't get too hot.
+ZR1 Low Rev Gate: driver(duty2),
+	sol=SOL_ZR1_LOW_REV_GATE, timeout=TIME_4S, ontime=TIME_16MS, duty=4, mode=2
+
+ZR1 Up Rev Gate: driver(duty2),
+	sol=SOL_ZR1_UP_REV_GATE, timeout=TIME_4S, ontime=TIME_16MS, duty=DUTY_MASK_MODE0_50, mode=0
 
 Kickback Driver: driver(spsol),
 	sw=SW_KICKBACK, sol=SOL_KICKBACK,

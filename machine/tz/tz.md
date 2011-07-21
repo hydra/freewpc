@@ -281,16 +281,16 @@ Clock Mech: driver(bivar),
 	reverse_sol=SOL_CLOCK_REVERSE
 
 Bridge Open: driver(duty2),
-	sol=SOL_RIGHT_RAMP_DIV, timeout=TIME_4S, ontime=TIME_33MS, duty_mask=DUTY_MASK_25
+	sol=SOL_RIGHT_RAMP_DIV, timeout=TIME_4S, ontime=TIME_33MS, duty=DUTY_MASK_MODE0_25, mode=0
 
 Shooter Div: driver(duty2),
-	sol=SOL_SHOOTER_DIV, timeout=TIME_4S, ontime=TIME_500MS, duty_mask=DUTY_MASK_12
+	sol=SOL_SHOOTER_DIV, timeout=TIME_4S, ontime=TIME_500MS, duty=DUTY_MASK_MODE0_12, mode=0
 
 Ramp Div: driver(duty2),
-	sol=SOL_RAMP_DIVERTOR, timeout=TIME_3S, ontime=TIME_33MS, duty_mask=DUTY_MASK_50
+	sol=SOL_RAMP_DIVERTOR, timeout=TIME_3S, ontime=TIME_33MS, duty=DUTY_MASK_MODE0_50, mode=0
 
 Gumball Div: driver(duty2),
-	sol=SOL_GUMBALL_DIV, timeout=TIME_2S, ontime=TIME_33MS, duty_mask=DUTY_MASK_50
+	sol=SOL_GUMBALL_DIV, timeout=TIME_2S, ontime=TIME_33MS, duty=DUTY_MASK_MODE0_50, mode=0
 
 Outhole: driver(outhole), sol=SOL_OUTHOLE, swno=SW_OUTHOLE, swevent=sw_outhole
 
