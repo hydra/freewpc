@@ -305,10 +305,10 @@ void skill_menu_draw(void) {
 		current_skill_menu_text = skill_menu_text[0];
 		if (draw_flashing_items1) {
 			sprintf("PLAYER %d UP", player_up);
-			font_render_string_left (&font_var5, 0, 27, sprintf_buffer);
+			font_render_string_left (&font_var5, 32, 27, sprintf_buffer);
 		}
 		sprintf_score (scores[player_up - 1]);
-		font_render_string_right (&font_var5, 127, 27, sprintf_buffer);
+		font_render_string_right (&font_var5, 96, 27, sprintf_buffer);
 
 	}
 
