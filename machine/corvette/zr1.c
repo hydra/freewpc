@@ -630,7 +630,7 @@ void zr1_shake_2sec_task (void)
  */
 CALLSET_ENTRY (zr1, valid_playfield)
 {
-	task_create_gid1 (GID_ZR1_SHAKE, zr1_shake_2sec_task);
+	task_recreate_gid(GID_ZR1_SHAKE, zr1_shake_2sec_task);
 }
 
 /**
@@ -691,8 +691,14 @@ CALLSET_ENTRY (zr1, start_game) {
 	zr1_center();
 }
 
-CALLSET_ENTRY (zr1, end_game) {
+static void zr1_end_game_float_task(void) {
+	task_sleep_sec(10);
 	zr1_float();
+	task_exit();
+}
+
+CALLSET_ENTRY (zr1, end_game) {
+	task_recreate_gid(GID_ZR1_END_GAME_FLOAT_TASK, zr1_end_game_float_task);
 }
 
 #endif
