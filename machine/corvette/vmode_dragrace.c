@@ -26,6 +26,7 @@
 
 #include <corvette/racetrack.h>
 #include <corvette/vmode_dragrace.h>
+#include <button_expectation.h>
 
 extern __local__ U8 cars_collected;
 extern char *car_names[];
@@ -46,12 +47,6 @@ U8 computer_car_position;
 
 /** holds the gid of the last thing to start a dragrace, for use in dragrace_won/dragrace_lost callset handlers */
 U8 dragrace_starter_gid;
-
-enum dragrace_button_expectations {
-	EXPECT_LEFT = 0,
-	EXPECT_RIGHT
-};
-enum dragrace_button_expectations dragrace_button_expectation;
 
 #define DRAGRACE_TICKS_PER_SECOND 10 // see dragrace_deff()
 
@@ -195,7 +190,7 @@ void dragrace_deff (void) {
 
 	player_car_position = 0;
 	computer_car_position = 0;
-	dragrace_button_expectation = EXPECT_LEFT;
+	button_expectation = EXPECT_LEFT;
 
 	while (1) {
 #ifdef CONFIG_DEBUG_DRAGRACE
@@ -203,7 +198,7 @@ void dragrace_deff (void) {
 		dbprintf ("counter: %d\n", dragrace_counter);
 		dbprintf ("computer_car_position: %d\n", computer_car_position);
 		dbprintf ("player_car_position: %d\n", player_car_position);
-		dbprintf ("dragrace_button_expectation: %d\n", dragrace_button_expectation);
+		dbprintf ("button_expectation: %d\n", button_expectation);
 #endif
 
 		if (player_car_position == 100) {
@@ -293,10 +288,10 @@ CALLSET_ENTRY (dragrace, sw_left_button) {
 	if (!global_flag_test (GLOBAL_FLAG_DRAGRACE_IN_PROGRESS)) {
 		return;
 	}
-	if (dragrace_button_expectation != EXPECT_LEFT) {
+	if (button_expectation != EXPECT_LEFT) {
 		return;
 	}
-	dragrace_button_expectation = EXPECT_RIGHT;
+	button_expectation = EXPECT_RIGHT;
 	dragrace_advance_player_car();
 }
 
@@ -304,10 +299,10 @@ CALLSET_ENTRY (dragrace, sw_right_button) {
 	if (!global_flag_test (GLOBAL_FLAG_DRAGRACE_IN_PROGRESS)) {
 		return;
 	}
-	if (dragrace_button_expectation != EXPECT_RIGHT) {
+	if (button_expectation != EXPECT_RIGHT) {
 		return;
 	}
-	dragrace_button_expectation = EXPECT_LEFT;
+	button_expectation = EXPECT_LEFT;
 	dragrace_advance_player_car();
 }
 
@@ -335,7 +330,7 @@ void dragrace_disable( void ) {
 	lamp_tristate_off(LM_ROUTE_66_ARROW);
 
 	global_flag_off(GLOBAL_FLAG_DRAGRACE_ENABLED);
-	global_flag_off(GLOBAL_FLAG_DIVERTER_OPENED);
+	global_flag_off(GLOBAL_FLAG_DIVERTER_ENABLED);
 }
 
 void award_lite_dragrace( void ) {
@@ -363,9 +358,9 @@ CALLSET_ENTRY (dragrace, device_update) {
 	}
 
 	if (multi_ball_play()) {
-		global_flag_off(GLOBAL_FLAG_DIVERTER_OPENED);
+		global_flag_off(GLOBAL_FLAG_DIVERTER_ENABLED);
 	} else {
-		global_flag_on(GLOBAL_FLAG_DIVERTER_OPENED);
+		global_flag_on(GLOBAL_FLAG_DIVERTER_ENABLED);
 	}
 }
 

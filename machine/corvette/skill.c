@@ -149,7 +149,7 @@ void skillshot_rollover_disable( void ) {
 	lamp_tristate_off (LM_MIDDLE_ROLLOVER);
 	lamp_tristate_off (LM_RIGHT_ROLLOVER);
 
-	global_flag_on (GLOBAL_FLAG_LOOP_GATE_OPENED);
+	global_flag_on (GLOBAL_FLAG_LOOP_GATE_ENABLED);
 
 	task_kill_gid (GID_SKILLSHOT_ROLLOVER_TIMER);
 }
@@ -163,7 +163,7 @@ void skillshot_rollover_timer( void ) {
 void skillshot_rollover_enable( void ) {
 	current_rollover = SW_MIDDLE_ROLLOVER;
 	global_flag_on(GLOBAL_FLAG_SKILLSHOT_ROLLOVER_ENABLED);
-	global_flag_off (GLOBAL_FLAG_LOOP_GATE_OPENED);
+	global_flag_off (GLOBAL_FLAG_LOOP_GATE_ENABLED);
 
 	// kill any existing task, just to make sure
 	task_kill_gid (GID_SKILLSHOT_ROLLOVER_TIMER);
@@ -287,7 +287,7 @@ void skill_menu_draw(void) {
 
 	bool draw_flashing_items1 = skill_menu_draw_count % 2;        // ON-OFF-ON-OFF
 	bool draw_flashing_items2 = skill_menu_draw_count % 3 > 0;    // ON--ON--OFF--
-	bool draw_flashing_items3 = skill_menu_draw_count % 4 >= 2; // ON-----OFF---
+	bool draw_flashing_items3 = skill_menu_draw_count % 4 >= 2;   // ON-----OFF---
 
 	// every 5 seconds toggle left hand side of the menu screen between instructions for the menu and instructions for the shot
 	skill_menu_draw_count++;
@@ -305,10 +305,10 @@ void skill_menu_draw(void) {
 		current_skill_menu_text = skill_menu_text[0];
 		if (draw_flashing_items1) {
 			sprintf("PLAYER %d UP", player_up);
-			font_render_string_left (&font_var5, 32, 27, sprintf_buffer);
+			font_render_string_center (&font_var5, 32, 29, sprintf_buffer);
 		}
 		sprintf_score (scores[player_up - 1]);
-		font_render_string_right (&font_var5, 96, 27, sprintf_buffer);
+		font_render_string_center (&font_var5, 96, 29, sprintf_buffer);
 
 	}
 

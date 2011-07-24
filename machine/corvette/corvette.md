@@ -291,13 +291,14 @@ Racetrack Errors:
 [highscores]
 
 [flags]
-ZR1 Multiball Running:
 ZR1 Multiball Lite Lock Lit:
 ZR1 Multiball Lock Lit:
-Torque Jackpot Lit:
-Horsepower Jackpot Lit:
 
 [globalflags]
+ZR1 Multiball Running:
+Torque Jackpot Lit:
+Horsepower Jackpot Lit:
+Ball Held In Engine:
 Skillshot Menu Enabled:
 Skillshot Rollover Enabled:
 Skillshot Skidpad Enabled:
@@ -307,10 +308,10 @@ ZR1 Working:
 ZR1 Solenoids Powered:
 Racetrack Working:
 Dragrace In Progress:
-Loop Gate Opened:
-ZR1 Up Rev Gate Opened:
-ZR1 Low Rev Gate Opened:
-Diverter Opened:
+Loop Gate Enabled:
+ZR1 Up Rev Gate Enabled:
+ZR1 Low Rev Gate Enabled:
+Diverter Enabled:
 
 [deffs]
 ZR1 Ball Locked: page(MACHINE_PAGE), PRI_GAME_QUICK4, D_PAUSE
@@ -318,7 +319,9 @@ ZR1 MB Lit: page(MACHINE_PAGE), PRI_GAME_QUICK5, D_QUEUED+D_TIMEOUT
 ZR1 MB Start: page(MACHINE_PAGE), PRI_GAME_QUICK6, D_PAUSE
 ZR1 MB Running: runner, page(MACHINE_PAGE), PRI_GAME_MODE5
 ZR1 MB HP JP: page(MACHINE_PAGE), PRI_GAME_QUICK7, D_SCORE
-ZR1 MB TRQ JP: page(MACHINE_PAGE), PRI_GAME_QUICK7, D_SCORE 
+ZR1 MB TRQ JP: page(MACHINE_PAGE), PRI_GAME_QUICK7, D_SCORE
+ 
+ZR1 Rev Mode: page(MACHINE_PAGE), PRI_VIDEO_MODE, D_PAUSE
 
 Kickback Enabled: page(MACHINE_PAGE), PRI_GAME_QUICK2, D_QUEUED+D_TIMEOUT
 Jet: page(MACHINE_PAGE), PRI_GAME_QUICK1, D_SCORE+D_RESTARTABLE

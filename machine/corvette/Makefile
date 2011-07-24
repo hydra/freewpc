@@ -60,7 +60,7 @@ PINMAME_OTHER_ROMS = corvsnd*
 # This works safely for any file that only uses CALLSET_ENTRY functions, deffs,
 # and leffs.  RTTs must go into GAME_OBJS.
 
-GAME_OBJS = zr1.o racetrack.o
+GAME_OBJS = zr1.o racetrack.o button_expectation.o
 
 GAME2_OBJS = corvette_amode.o leffs.o sounds.o
 
