@@ -130,10 +130,10 @@ CALLSET_ENTRY (simple, end_ball, tilt) {
 
 
 //
-// XXX
+// XXX remove this when gate testing is completed
 //
-#ifdef CONFIG_DEVELOPMENT_TESTS_ENABLED
-CALLSET_ENTRY(development, sw_left_standup_1) {
+#ifdef CONFIG_GATE_TESTS_ENABLED
+CALLSET_ENTRY(gate_test, sw_left_standup_1) {
 	if (global_flag_test (GLOBAL_FLAG_ZR1_LOW_REV_GATE_OPENED)) {
 		global_flag_off (GLOBAL_FLAG_ZR1_LOW_REV_GATE_OPENED);
 	} else {
@@ -141,7 +141,7 @@ CALLSET_ENTRY(development, sw_left_standup_1) {
 	}
 }
 
-CALLSET_ENTRY(development, sw_left_standup_2) {
+CALLSET_ENTRY(gate_test, sw_left_standup_2) {
 	if (global_flag_test (GLOBAL_FLAG_ZR1_UP_REV_GATE_OPENED)) {
 		global_flag_off (GLOBAL_FLAG_ZR1_UP_REV_GATE_OPENED);
 	} else {
@@ -149,7 +149,7 @@ CALLSET_ENTRY(development, sw_left_standup_2) {
 	}
 }
 
-CALLSET_ENTRY(development, sw_left_standup_3) {
+CALLSET_ENTRY(gate_test, sw_left_standup_3) {
 	if (global_flag_test (GLOBAL_FLAG_LOOP_GATE_OPENED)) {
 		global_flag_off (GLOBAL_FLAG_LOOP_GATE_OPENED);
 	} else {
@@ -157,10 +157,9 @@ CALLSET_ENTRY(development, sw_left_standup_3) {
 	}
 }
 
-CALLSET_ENTRY(development, lamp_update) {
+CALLSET_ENTRY(gate_test, lamp_update) {
 	lamp_on_if(LM_LEFT_STANDUP_1, global_flag_test (GLOBAL_FLAG_ZR1_LOW_REV_GATE_OPENED));
 	lamp_on_if(LM_LEFT_STANDUP_2, global_flag_test (GLOBAL_FLAG_ZR1_UP_REV_GATE_OPENED));
 	lamp_on_if(LM_LEFT_STANDUP_3, global_flag_test (GLOBAL_FLAG_LOOP_GATE_OPENED));
 }
-
 #endif
