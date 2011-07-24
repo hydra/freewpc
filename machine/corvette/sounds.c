@@ -52,7 +52,13 @@ CALLSET_ENTRY (sounds, inner_loop_combo_shot)
 	sound_start (ST_SAMPLE, SND_ENGINE_REV_05, SL_2S, PRI_GAME_QUICK5);
 }
 
+static void extra_ball_award_task(void) {
+	sound_start (ST_MUSIC, SND_EXTRA_BALL_AWARD, SL_2S, PRI_EB);
+	task_sleep_sec(2);
+	sound_start (ST_SPEECH, SPCH_EXTRA_BALL_02, SL_2S, PRI_EB);
+	task_exit();
+}
+
 CALLSET_ENTRY (sounds, extra_ball_award) {
-	music_timed_disable(TIME_2S+TIME_200MS);
-	sound_start (ST_SPEECH, SND_EXTRA_BALL_AWARD, SL_2S, PRI_EB);
+	task_recreate_gid (GID_EXTRA_BALL_AWARD, extra_ball_award_task);
 }
