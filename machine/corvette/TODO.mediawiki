@@ -103,10 +103,11 @@ Collect cars by:
 
 Use the pitstop popper to award the player with things (when pit-in lit).
 
-Light pit-in via slingshot, orbit or jet bumper goals.
+Light pit-in via slingshot, orbit or jet bumper goals?
 
 Possible awards:
-* Light Dragrace
+* Light Dragrace (done)
+* Light Lock (done)
 * 5M (done)
 * 50M (done)
 * +2x Bonus
@@ -114,10 +115,8 @@ Possible awards:
 * Collect Part
 * Le-Mans 24h Multiball
 * V8 Tuner Multiball
-* Extra Ball
+* Extra Ball (done)
 * Quadra Jets
-
-
 
 
 == Le Mans 24h Multiball ==
@@ -142,4 +141,16 @@ Dragrace
 * Allow foul due to red-lighting - http://en.wikipedia.org/wiki/Drag_racing#Basics_of_drag_racing
 * If player stops pressing buttons then spin their car out or otherwise show they crashed (engine died)
 * If player goes too mad to quickly then wheelspin their car (to much power!)
+
+== Brake Test Timed Mode ==
+
+Timed mode, 60 seconds
+
+Display progress meter
+Close loop gate
+Player has to perform braking manouvers to reduce progress meter
+
+Brake: Shooting right orbit to reduces progress meter 1/6th, awards a few points
+Fast Brake: Lighting 3 bank targets and shooting Turbo Boost followed by right orbit reduces meter 1/2, awards lots of points
+Handbrake: Shooting skid-pad (though engine) reduces progress meter 2/6th, awards points
 
