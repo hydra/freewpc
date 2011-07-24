@@ -50,6 +50,7 @@
    3 = divide the timer by the duty value, if remainder > 0 solenoid goes on.
    
    Modes 2 and 3 are less efficient, use mode 0 and 1 whenever possible.
+   Modes 2 and 3 are even more inefficient when the duty value is not a power of 2.
  */
 @@parameter mode
 
@@ -75,7 +76,7 @@ extern __fastram__ U16 @self_timer;
 #define @self_START_TIME        (@timeout * TIME_SCALE)
 #define @self_DUTY_START_TIME   ((@timeout - @ontime) * TIME_SCALE)
 
-#define @SELF_MODE @mode // 0 == AND, 1 == OR
+#define @SELF_MODE @mode
 
 #if (@SELF_MODE == 1)
 //
@@ -138,16 +139,16 @@ extern inline void @self_service (void)
 		else if (@self_timer <= @self_DUTY_START_TIME)
 		{
 #if (@SELF_MODE == 0)		
-			if (unlikely (((U8)@self_timer | @duty) > 0))
+			if (unlikely (((U8)@self_timer & @duty) == 0))
 #endif
 #if (@SELF_MODE == 1)
-			if (unlikely (((U8)@self_timer & @duty) == 0))
+			if (likely (((U8)@self_timer | @duty) > 0))
 #endif			
 #if (@SELF_MODE == 2)
 			if (unlikely ((U8)@self_timer % @duty == 0))
 #endif			
-#if (@SELF_MODE == 3)
-			if (unlikely ((U8)@self_timer % @duty > 0))
+#if (@SELF_MODE == 3) 
+			if (likely ((U8)@self_timer % @duty > 0))
 #endif			
 			{
 				sol_enable (@sol);
