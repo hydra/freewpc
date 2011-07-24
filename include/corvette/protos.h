@@ -22,8 +22,8 @@
 __common__ void ballsave_disable(void);
 
 /* search.c */
-extern __far__(C_STRING(COMMON_PAGE)) void ball_search_monitor_start (void);
-extern __far__(C_STRING(COMMON_PAGE)) void ball_search_monitor_stop (void);
+__common__  void ball_search_monitor_start (void);
+__common__  void ball_search_monitor_stop (void);
 
 /* deffs.c */
 __machine__ void flash_and_exit_deff(U8 flash_count, task_ticks_t flash_delay);
@@ -42,15 +42,15 @@ __machine__ void dmd_flash (task_ticks_t delay);
 
 /* zr1.c */
 
-__machine__ void zr1_shake(void);
-__machine__ void zr1_center(void);
-__machine__ void zr1_float(void);
-__machine__ void zr1_calibrate(void);
-__machine__ void zr1_start_ball_search(void);
-__machine__ void zr1_set_shake_speed(U8 new_shake_speed);
-__machine__ void zr1_set_shake_range(U8 new_shake_range);
-__machine__ bool zr1_mb_can_award_lite_lock(void);
-__machine__ void zr1_mb_award_lite_lock(void);
+void zr1_shake(void);
+void zr1_center(void);
+void zr1_float(void);
+void zr1_calibrate(void);
+void zr1_start_ball_search(void);
+void zr1_set_shake_speed(U8 new_shake_speed);
+void zr1_set_shake_range(U8 new_shake_range);
+bool zr1_mb_can_award_lite_lock(void);
+void zr1_mb_award_lite_lock(void);
 
 /* kickback.c */
 __machine__ void award_kickback (void);
@@ -72,5 +72,5 @@ __machine__ void dragrace_enable( void );
 __machine__ void award_lite_dragrace( void );
 
 /* goal_collect_cars.c */
-void award_car(void);
-bool have_collected_all_cars(void);
+__machine__ void award_car(void);
+__machine__ bool have_collected_all_cars(void);
