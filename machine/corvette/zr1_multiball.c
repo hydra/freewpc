@@ -306,9 +306,6 @@ CALLSET_ENTRY (zr1_multiball, dev_zr1_popper_kick_success) {
 }
 
 CALLSET_ENTRY (zr1_multiball, dev_zr1_popper_enter) {
-	if (!task_find_gid(GID_ZR1_HOLD_BALL_IN_ENGINE)) {
-		global_flag_off(GLOBAL_FLAG_BALL_HELD_IN_ENGINE);
-	}
 	zr1_mb_award_lock ();
 }
 
@@ -382,10 +379,58 @@ CALLSET_ENTRY (zr1_multiball, start_ball) {
 
 
 //
-// ZR1 Rev Mode
+// ZR1 Engine ball lock
 //
 
-void zr1_hold_ball_in_engine ( void );
+#define ZR1_ENGINE_HOLD_TICKS_PER_SECOND 4
+#define ZR1_ENGINE_HOLD_TIME_MAX 15 // (in seconds) any more than this and the zr1 lower rev gate solenoid gets really toasty
+
+U16 zr1_hold_ball_time; // set this when the ball is to about to be held.  See sw_zr1_top_entry handlers.
+
+static void zr1_hold_ball_in_engine_task ( void )
+{
+	U8 hold_timer;
+	global_flag_on (GLOBAL_FLAG_BALL_HELD_IN_ENGINE);
+	global_flag_on (GLOBAL_FLAG_ZR1_LOW_REV_GATE_ENABLED);
+
+	hold_timer = ZR1_ENGINE_HOLD_TIME_MAX * ZR1_ENGINE_HOLD_TICKS_PER_SECOND;
+	while (global_flag_test (GLOBAL_FLAG_BALL_HELD_IN_ENGINE) && hold_timer-- != 0) {
+		task_sleep (TIME_250MS);
+	}
+
+	global_flag_off (GLOBAL_FLAG_BALL_HELD_IN_ENGINE);
+	global_flag_off (GLOBAL_FLAG_ZR1_LOW_REV_GATE_ENABLED);
+
+	task_exit ();
+}
+
+void zr1_hold_ball_in_engine ( void )
+{
+	task_recreate_gid (GID_ZR1_HOLD_BALL_IN_ENGINE, zr1_hold_ball_in_engine_task);
+}
+
+CALLSET_ENTRY (zr1_hold_ball, sw_zr1_bottom_entry, sw_zr1_top_entry, sw_zr1_exit, dev_zr1_popper_enter)
+{
+	if (!global_flag_test(GLOBAL_FLAG_BALL_HELD_IN_ENGINE)) {
+		return;
+	}
+
+	if (sw_last_scheduled_time == zr1_hold_ball_time) {
+		// we only just starting holding the ball, don't cancel on this switch transition, wait for the next one.
+		return;
+	}
+
+	if (!task_find_gid(GID_ZR1_HOLD_BALL_IN_ENGINE)) {
+		return;
+	}
+
+	sound_start (ST_SAMPLE, SND_SPARK_PLUG_01, SL_1S, PRI_MULTIBALL); // XXX
+	global_flag_off(GLOBAL_FLAG_BALL_HELD_IN_ENGINE);
+}
+
+//
+// ZR1 Rev Mode
+//
 
 #define ZR1_REV_MODE_TICKS_PER_SECOND 10
 #define ZR1_REV_MODE_TIME 10
@@ -474,6 +519,7 @@ void zr1_rev_mode_exit(void)
 
 void zr1_rev_mode_task(void)
 {
+	zr1_hold_ball_time = sw_last_scheduled_time;
 	button_expectation = EXPECT_LEFT;
 	music_disable();
 	sound_start (ST_SPEECH, SPCH_FLIP_TO_REV, SL_2S, PRI_MULTIBALL);
@@ -546,47 +592,3 @@ CALLSET_ENTRY (zr1_rev_mode, sw_right_button) {
 }
 
 
-//
-// ZR1 Engine ball lock
-//
-
-#define ZR1_ENGINE_HOLD_TICKS_PER_SECOND 4
-#define ZR1_ENGINE_HOLD_TIME_MAX 15 // (in seconds) any more than this and the zr1 lower rev gate solenoid gets really toasty
-
-static void zr1_hold_ball_in_engine_task ( void )
-{
-	U8 hold_timer;
-	global_flag_on (GLOBAL_FLAG_BALL_HELD_IN_ENGINE);
-	global_flag_on (GLOBAL_FLAG_ZR1_LOW_REV_GATE_ENABLED);
-
-	hold_timer = ZR1_ENGINE_HOLD_TIME_MAX * ZR1_ENGINE_HOLD_TICKS_PER_SECOND;
-	while (global_flag_test (GLOBAL_FLAG_BALL_HELD_IN_ENGINE) && hold_timer-- != 0) {
-		task_sleep (TIME_250MS);
-	}
-
-	global_flag_off (GLOBAL_FLAG_BALL_HELD_IN_ENGINE);
-	global_flag_off (GLOBAL_FLAG_ZR1_LOW_REV_GATE_ENABLED);
-
-	task_exit ();
-}
-
-void zr1_hold_ball_in_engine ( void )
-{
-	task_recreate_gid (GID_ZR1_HOLD_BALL_IN_ENGINE, zr1_hold_ball_in_engine_task);
-}
-
-CALLSET_ENTRY (zr1_hold_ball, sw_zr1_bottom_entry, sw_zr1_top_entry, sw_zr1_exit)
-{
-
-	if (!global_flag_test(GLOBAL_FLAG_BALL_HELD_IN_ENGINE)) {
-		return;
-	}
-	/*
-	if (!task_find_gid(GID_ZR1_HOLD_BALL_IN_ENGINE)) {
-		return;
-	}
-	*/
-
-	sound_start (ST_SAMPLE, SND_SPARK_PLUG_01, SL_1S, PRI_MULTIBALL); // XXX
-	global_flag_off(GLOBAL_FLAG_BALL_HELD_IN_ENGINE);
-}
