@@ -110,7 +110,7 @@ define MACHINE_MAX_BALLS 4
 12: Right Out Lane, ingame
 13: Start Button, start-button, cabinet, intest
 14: Tilt, cabinet, tilt, ingame, noplay
-15: Shooter, edge, noscore, shooter, debounce(TIME_200MS)
+15: Shooter, edge, noscore, noplay, shooter, debounce(TIME_200MS)
 16: Left Return Lane, ingame
 17: Right Return Lane, ingame
 18: Spinner, ingame
