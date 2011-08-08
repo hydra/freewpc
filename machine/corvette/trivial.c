@@ -87,3 +87,26 @@ CALLSET_ENTRY (trivial, end_ball, start_ball)
 CALLSET_ENTRY (trivial, start_player)
 {
 }
+
+// FIXME replay code copied from tz but with an adjusted range
+
+static inline U8 decimal_to_bcd_byte (U8 decimal)
+{
+#ifdef __m6809__
+	U8 quot, rem;
+	DIV10 (decimal, quot, rem);
+	return (quot << 4) + rem;
+#else
+	return ((decimal / 10) << 4) + (decimal % 10);
+#endif
+}
+
+/**
+ * @See MACHINE_REPLAY_CODE_TO_SCORE
+ * @See format.c#replay_score_render()
+ */
+void replay_code_to_score (score_t s, U8 val)
+{
+	// ranges from 500M to 1B
+	s[0] = decimal_to_bcd_byte (4 + val);
+}

@@ -28,6 +28,10 @@ define MACHINE_HAS_UPPER_LEFT_FLIPPER
 define COMBO_COUNT 26
 define MACHINE_MAX_BALLS 4
 
+define MACHINE_REPLAY_CODE_TO_SCORE       replay_code_to_score
+define MACHINE_REPLAY_SCORE_CHOICES       6
+define MACHINE_REPLAY_START_CHOICE        0
+
 # DC - To generate the x/y coordinates I took a screengrab of the lamp-locations diagram in the manual such that the
 # width of the playfield was 409 pixels wide then I pasted the image into mspaint (windows 7 version) and moved the
 # top left of the table so that it was placed at x:70,y:92.
