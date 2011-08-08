@@ -413,7 +413,7 @@ void racetrack_state_calibrate_enter(void) {
 
 	racetrack_calibrate_counter = 0;
 	racetrack_calibrate_previous_state = RT_CALIBRATE_INITIALISE;
-	racetrack_calibrate_state = RT_CALIBRATE_CAR_RETURN;
+	racetrack_calibrate_state = RT_CALIBRATE_CAR_RETURN1;
 
 	racetrack_calibrate_ticks = RACETRACK_CALIBRATE_TICKS;
 	racetrack_calibrate_ticks_remaining = racetrack_calibrate_ticks;
@@ -432,7 +432,7 @@ void racetrack_state_calibrate_run(void) {
 
 		// process new state
 		switch(racetrack_calibrate_state) {
-			case RT_CALIBRATE_CAR_RETURN:
+			case RT_CALIBRATE_CAR_RETURN1:
 
 				/**
 				 * The first time this state is hit the cars can be anywhere on the track
@@ -469,24 +469,15 @@ void racetrack_state_calibrate_run(void) {
 				sol_enable(SOL_RACE_DIRECTION); // forwards
 				racetrack_lanes[LANE_RIGHT].state = LANE_CALIBRATE;
 			break;
-			case RT_CALIBRATE_LEFT_CAR_RETURN:
+			case RT_CALIBRATE_CAR_RETURN2:
 				/**
 				 * The first time this state is hit both cars will be at the end of the track
 				 *
-				 * The goal is to drive the left car to the end of the start of the track and stop
+				 * The goal is to drive the left and right car, at the same time, to the start of the track and stop
 				 */
 				sol_disable(SOL_RACE_DIRECTION); // backwards
 				racetrack_reset_track_state();
 				racetrack_lanes[LANE_LEFT].state = LANE_RETURN;
-			break;
-			case RT_CALIBRATE_RIGHT_CAR_RETURN:
-				/**
-				 * The first time this state is hit the left car will be at the start of the track and the
-				 * right car will be at the end of the track
-				 *
-				 * The goal is to drive the right car to the end of the start of the track and stop
-				 */
-				sol_disable(SOL_RACE_DIRECTION); // backwards
 				racetrack_lanes[LANE_RIGHT].state = LANE_RETURN;
 			break;
 			default:
@@ -509,7 +500,7 @@ void racetrack_state_calibrate_run(void) {
 
 
 	switch(racetrack_calibrate_state) {
-		case RT_CALIBRATE_CAR_RETURN:
+		case RT_CALIBRATE_CAR_RETURN1:
 			sol_disable(SOL_RACE_DIRECTION); // backwards
 
 			if (switch_poll_logical (SW_LEFT_RACE_START) && switch_poll_logical (SW_RIGHT_RACE_START)) {
@@ -543,7 +534,7 @@ void racetrack_state_calibrate_run(void) {
 		case RT_CALIBRATE_RIGHT_CAR_FORWARDS:
 			sol_enable(SOL_RACE_DIRECTION); // forwards
 			if ((racetrack_encoder_mask & RT_EM_END_OF_TRACK_RIGHT) != 0) {
-				racetrack_calibrate_state = RT_CALIBRATE_LEFT_CAR_RETURN;
+				racetrack_calibrate_state = RT_CALIBRATE_CAR_RETURN2;
 				break;
 			}
 
@@ -553,38 +544,28 @@ void racetrack_state_calibrate_run(void) {
 			}
 		break;
 
-		case RT_CALIBRATE_LEFT_CAR_RETURN:
+		case RT_CALIBRATE_CAR_RETURN2:
 			sol_disable(SOL_RACE_DIRECTION); // backwards
 
-			if (switch_poll_logical (SW_LEFT_RACE_START)) {
-				racetrack_calibrate_state = RT_CALIBRATE_RIGHT_CAR_RETURN;
+			if (switch_poll_logical (SW_LEFT_RACE_START) && switch_poll_logical (SW_RIGHT_RACE_START)) {
+				racetrack_calibration_complete();
 				break;
 			}
 
-			// left car should be moving backwards
+			// left and right cars should be moving backwards
 
 			if (racetrack_calibrate_counter >= RACETRACK_CALIBRATE_TIMEOUT_COUNTER) {
 				// both start of track optos should be on
 				racetrack_calibration_failed(CC_CHECK_LEFT_TRACK);
 				break;
 			}
-		break;
-
-		case RT_CALIBRATE_RIGHT_CAR_RETURN:
-			sol_disable(SOL_RACE_DIRECTION); // backwards
-
-			if (switch_poll_logical (SW_RIGHT_RACE_START)) {
-				racetrack_calibration_complete();
-				break;
-			}
-
-			// right car should be moving backwards
 
 			if (racetrack_calibrate_counter >= RACETRACK_CALIBRATE_TIMEOUT_COUNTER) {
 				// both start of track optos should be on
 				racetrack_calibration_failed(CC_CHECK_RIGHT_TRACK);
 				break;
 			}
+
 		break;
 		default:
 			// shut the compiler up
