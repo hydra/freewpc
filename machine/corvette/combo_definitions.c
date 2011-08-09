@@ -439,7 +439,7 @@ const combo_def_t route66_ramp_to_zr1_ramp_to_skidpad_ramp_combo = {
 	DEFAULT_COMBO,
 	COMBO_NAME("R66 ZR1 SP")
 	.fn = callset_route66_ramp_to_zr1_ramp_to_skidpad_ramp_combo_shot,
-	.steps = 5,
+	.steps = 8,
 	.step_list = {
 		&cstp_route_66_entry,
 		&cstp_route_66_exit,
