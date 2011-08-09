@@ -86,7 +86,7 @@ CALLSET_ENTRY(combo, idle_every_second) {
 
 void combo_name_deff (void)
 {
-#if defined(CONFIG_DEBUG_COMBOS)
+#if defined(CONFIG_NAMED_COMBOS)
 	sprintf("%s", last_matched_combo->name);
 #else
 	sprintf("CID:%d CH:%d", last_matched_combo_id, chained_combos);

@@ -104,6 +104,8 @@ typedef struct combo_def_s {
 #if defined(CONFIG_DEBUG_COMBOS) || defined(CONFIG_UNITTEST)
 void dump_combo_step(const combo_step_t *combo_step);
 void dump_combo(const combo_def_t *combo);
+#endif
+#if defined(CONFIG_DEBUG_COMBOS) || defined(CONFIG_UNITTEST) || defined(CONFIG_NAMED_COMBOS)
 #define COMBO_NAME(str) .name = str,
 #else
 #define COMBO_NAME(str)
