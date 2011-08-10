@@ -86,12 +86,30 @@ CALLSET_ENTRY(combo, idle_every_second) {
 
 void combo_name_deff (void)
 {
+	//dmd_sched_transition (&trans_scroll_left);
+
+	U8 count = 16;
+	while (--count > 0) {
 #if defined(CONFIG_NAMED_COMBOS)
-	sprintf("%s", last_matched_combo->name);
+		sprintf("%s", last_matched_combo->name);
 #else
-	sprintf("CID:%d CH:%d", last_matched_combo_id, chained_combos);
+		sprintf("CID:%d CH:%d", last_matched_combo_id, chained_combos);
 #endif
-	flash_and_exit_deff (20, TIME_100MS);
+		dmd_alloc_pair_clean();
+		font_render_string_center (&font_fixed10, 64, 8, sprintf_buffer);
+		dmd_copy_low_to_high();
+		if (count & 1 && chained_combos > 1) {
+			sprintf("%d WAY COMBO", chained_combos);
+			font_render_string_center (&font_fixed10, 64, 24, sprintf_buffer);
+		}
+		if (chained_combos >= 3) {
+			dmd_copy_low_to_high();
+		}
+		dmd_show2 ();
+		task_sleep (TIME_100MS);
+	}
+
+	deff_exit ();
 }
 
 extern const combo_step_t cstp_left_outer_loop_entry;
