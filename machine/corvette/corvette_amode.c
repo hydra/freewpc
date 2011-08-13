@@ -73,6 +73,22 @@ CALLSET_ENTRY (corvette_amode, amode_page)
 {
 	dbprintf("corvette_amode: amode_page - start\n");
 
+#ifdef CONFIG_UKPINBALLPARTY2011
+	dmd_alloc_pair ();
+	dmd_clean_page_low ();
+	font_render_string_center (&font_fixed6, 64, 7, "UK PINBALL");
+	font_render_string_center (&font_fixed6, 64, 20, "PARTY 2011");
+	dmd_show_low ();
+	task_sleep_sec (2);
+
+	dmd_alloc_pair ();
+	dmd_clean_page_low ();
+	font_render_string_center (&font_fixed6, 64, 7, "WRITE IDEAS");
+	font_render_string_center (&font_fixed6, 64, 20, "IN THE BOOK");
+	dmd_show_low ();
+	task_sleep_sec (2);
+#endif
+
 	corvette_amode_scroll_two_cars();
 
 	dbprintf("corvette_amode: amode_page - exit\n");
