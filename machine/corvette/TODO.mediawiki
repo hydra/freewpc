@@ -3,6 +3,7 @@
 * flash pit in/ challenge for pit in ball eject
 * flash route 66 flasher for ball eject
 * enable drive again light when player has e.b.
+* light shot lights applicable to current skill shot menu selection
 
 = Game Ideas =
 

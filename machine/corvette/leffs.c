@@ -194,3 +194,15 @@ void five_combos_shot_leff (void)
 	leff_exit ();
 }
 
+void pitstop_popper_eject_leff (void)
+{
+	lamplist_apply_leff_alternating (LAMPLIST_PIT_AND_CHALLENGE, 0);
+
+	U8 i;
+	for (i=0; i < 16; i++)
+	{
+		lamplist_apply (LAMPLIST_PIT_AND_CHALLENGE, leff_toggle);
+		task_sleep (TIME_100MS);
+	}
+	leff_exit ();
+}

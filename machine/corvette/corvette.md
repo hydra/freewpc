@@ -236,6 +236,7 @@ Yellow Lamps: set, COLOR:yellow
 Green Lamps: set, COLOR:green
 Blue Lamps: set, COLOR:blue
 Build Up: PF:lamp_sort_bottom_to_top
+Pit And Challenge: Pit Stop, Start Challenge
 
 [containers]
 Trough: trough, Trough Release, Trough 4, Trough 3, Trough 2, Trough 1, init_max_count(4)
@@ -352,6 +353,7 @@ Two Combos Shot: PRI_LEFF1, PRI_LEFF2, page(MACHINE2_PAGE)
 Three Combos Shot: PRI_LEFF1, PRI_LEFF2, GI(ALL), page(MACHINE2_PAGE)
 Four Combos Shot: PRI_LEFF1, PRI_LEFF2, GI(ALL), page(MACHINE2_PAGE)
 Five Combos Shot: PRI_LEFF1, PRI_LEFF2, GI(ALL), page(MACHINE2_PAGE)
+Pitstop Popper Eject: shared, PRI_LEFF8, LAMPS(PIT_AND_CHALLENGE), page(MACHINE2_PAGE) 
 
 [fonts]
 supercar9:

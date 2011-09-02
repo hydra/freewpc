@@ -110,3 +110,9 @@ void replay_code_to_score (score_t s, U8 val)
 	// ranges from 500M to 1B
 	s[0] = decimal_to_bcd_byte (4 + val);
 }
+
+CALLSET_ENTRY (trivial, dev_pitstop_popper_kick_attempt) {
+
+	leff_start(LEFF_PITSTOP_POPPER_EJECT);
+	task_sleep_sec(2);
+}
