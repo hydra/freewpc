@@ -11,14 +11,14 @@ __local__ U8 ultra_jet_count;
 void jet_deff (void)
 {
 	dmd_alloc_low_clean ();
-	font_render_string_center (&font_mono5, 96, 5, "ZIG ZAG");
+	font_render_string_center (&font_mono5, 96, 5, "CORNERING");
 	sprintf ("%d", jet_count);
 	font_render_string_center (&font_fixed10, 96, 16, sprintf_buffer);
 
 	if (jet_count == jet_goal)
-		sprintf ("BONUS AWARDED");
+		sprintf ("PIT STOP LIT");
 	else
-		sprintf ("BONUS AT %d", jet_goal);
+		sprintf ("LITE PIT STOP AT %d", jet_goal);
 
 	font_render_string_center (&font_var5, 64, 26, sprintf_buffer);
 	dmd_show_low ();
@@ -36,15 +36,23 @@ void jet_flasher (void)
 void jet_goal_reset (void)
 {
 	jet_count = 0;
-	jet_goal = 25;
+	jet_goal = 10;
 }
 
 
 void jet_goal_award (void)
 {
 	//sound_start (ST_SAMPLE, MUS_TICKET_BOUGHT, SL_1S, PRI_GAME_QUICK5);
+
+	if (!flag_test(FLAG_PIT_STOP_LIT)) {
+		flag_on(FLAG_PIT_STOP_LIT);
+	} else {
+		score(SC_5M);
+	}
+
+	// update the goal hits required to reach the next goal
 	jet_count = 0;
-	if (jet_goal < 50)
+	if (jet_goal < 25)
 		jet_goal += 5;
 }
 

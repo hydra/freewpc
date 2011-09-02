@@ -235,6 +235,8 @@ void pitstop_award_deff(void) {
 
 void pitstop_award_task(void) {
 
+	flag_off(FLAG_PIT_STOP_LIT);
+
 	deff_start_sync(DEFF_PITSTOP_AWARD);
 
 	switch (pitstop_award) {
@@ -266,8 +268,20 @@ void pitstop_award_task(void) {
 	task_exit();
 }
 
+CALLSET_ENTRY(pitstop_award, lamp_update) {
+	lamp_flash_if(LM_PIT_STOP, flag_test(FLAG_PIT_STOP_LIT) && !multi_ball_play());
+}
+
+CALLSET_ENTRY(pitstop_award, start_player) {
+	flag_off(FLAG_PIT_STOP_LIT);
+}
+
 CALLSET_ENTRY(pitstop_award, dev_pitstop_popper_enter) {
 	if (multi_ball_play()) {
+		return;
+	}
+
+	if (!flag_test(FLAG_PIT_STOP_LIT)) {
 		return;
 	}
 

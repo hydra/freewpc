@@ -297,6 +297,7 @@ Racetrack Errors:
 [flags]
 ZR1 Multiball Lite Lock Lit:
 ZR1 Multiball Lock Lit:
+Pit Stop Lit:
 
 [globalflags]
 ZR1 Multiball Running:
